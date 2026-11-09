@@ -14,12 +14,12 @@ html,body{height:100%;margin:0;background:var(--lacquer);color:var(--paper);over
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--lacquer)}
 #game{position:fixed;inset:0;width:100%;height:100%;display:block;image-rendering:pixelated;background:#174a6e}
 #ui{position:fixed;inset:0;pointer-events:none;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:calc(env(safe-area-inset-top,0px) + 8px) calc(env(safe-area-inset-bottom,0px) + 10px);box-sizing:border-box;display:flex;flex-direction:column}
-#ui>*{pointer-events:auto}
+#ui>*{pointer-events:none}
+#ui .me,#ui .side,#ui .menu,#ui #quest,#ui #chat{pointer-events:auto}
 .zh{font-family:var(--f-zh)}
 button{font-family:inherit;color:inherit;cursor:pointer}
 /* HUD */
-.top{display:flex;gap:8px;align-items:flex-start;pointer-events:none}
-.top>*{pointer-events:auto}
+.top{display:flex;gap:8px;align-items:flex-start}
 .me{flex:1;min-width:0;max-width:300px;background:linear-gradient(180deg,rgba(42,28,23,.92),rgba(26,18,16,.88));border:1px solid rgba(217,164,65,.55);border-radius:12px;padding:7px 9px;box-shadow:0 2px 10px rgba(0,0,0,.4)}
 .me-row{display:flex;align-items:center;gap:8px}
 .ava{width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 50% 35%,#c0392b,#5a120c);border:2px solid var(--gold);display:grid;place-items:center;font-family:var(--f-cal);font-size:20px;color:var(--gold2);flex:none}
@@ -46,7 +46,7 @@ button{font-family:inherit;color:inherit;cursor:pointer}
 .cl{padding:2px 0}.cl .cz{font-family:var(--f-zh);font-size:12.5px}.cl .cv{color:var(--muted);font-size:10px}.cl.sys .cz{color:#ffd84a}
 .cl.big{padding:7px 4px;border-bottom:1px solid rgba(217,164,65,.15)}.cl.big .cz{font-size:16px}.cl.big .cv{font-size:12px}
 /* Điều khiển */
-#stick-zone{position:fixed;left:0;bottom:0;width:52%;height:58%;pointer-events:auto;touch-action:none}
+#stick-zone{position:fixed;left:0;bottom:0;width:55%;height:62%;pointer-events:auto;touch-action:none;z-index:2}
 #stick{position:fixed;width:100px;height:100px;margin:-50px 0 0 -50px;border-radius:50%;background:rgba(239,227,200,.12);border:2px solid rgba(217,164,65,.45);pointer-events:none;z-index:3}
 #knob{position:absolute;left:30px;top:30px;width:40px;height:40px;border-radius:50%;background:radial-gradient(circle at 40% 35%,var(--gold2),var(--gold));box-shadow:0 2px 6px rgba(0,0,0,.5)}
 .pad{position:fixed;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 14px);width:200px;height:200px;pointer-events:none;z-index:4}
