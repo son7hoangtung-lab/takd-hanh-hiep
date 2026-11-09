@@ -18,7 +18,7 @@ function renderChat(){const box=$('#chat');box.innerHTML=CHAT.slice(-3).map(c=>`
 $('#chat').addEventListener('click',e=>{const l=e.target.closest('[data-say]');if(l)G.audio.say(l.dataset.say);else U.open('chatlog');});
 
 // ---------- HUD ----------
-const mini=$('#minimap');const mctx=mini.getContext('2d');let miniMap=null,miniT=0;const cache={};
+let goalT=0;const mini=$('#minimap');const mctx=mini.getContext('2d');let miniMap=null,miniT=0;const cache={};
 function set(id,val,prop){if(cache[id+prop]===val)return;cache[id+prop]=val;const el=document.getElementById(id);if(!el)return;if(prop==='w')el.style.width=val;else if(prop==='h')el.innerHTML=val;else el.textContent=val;}
 U.hud=function(){const S=G.S,P=G.P;if(!S||!G.map)return;const st=G.stats();
   set('h-lv','Lv '+S.lv);const ti=G.title(S.lv);set('h-title',ti[1]+' '+ti[2]);
@@ -27,9 +27,12 @@ U.hud=function(){const S=G.S,P=G.P;if(!S||!G.map)return;const st=G.stats();
   const d=new Date();const hh=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');set('h-clock',(G.isNight()?'🌙 ':'☀ ')+hh+(G.raining()?' 🌧':''));
   set('h-region',G.REGIONS[G.map.id].vi);
   // nhiệm vụ
-  const q=G.curQuest();let qt='Đã hết nhiệm vụ chính – hẹn Giai đoạn 2';if(q){const n=q.n||1;qt=S.q.st==='new'?`❗ Gặp <b>${G.npcName(q.npc)}</b> nhận: ${esc(q.title)}`:S.q.st==='done'?`✔ Về gặp <b>${G.npcName(q.npc)}</b> nhận thưởng`:`<b>${esc(q.title)}</b> · ${S.q.p}/${n}`;}
-  if(G.worldBossNow()&&S.wbDay[G.today()]!==1)qt+=`<br><span class="wb">🐉 Giao Long đang ở sông Hồng (Thăng Long)!</span>`;
-  set('quest',qt,'h');
+  goalT-=1;if(goalT<=0){goalT=15;const q=G.curQuest();const g=G.questGoal();let qt;
+    if(!q)qt='<div class="qt">Đã xong cốt truyện Giai đoạn 1 · ôn bài trong 书房</div>';
+    else{const btn=g&&g.ui?'<button class="qgo" data-q="go">📖 Học ngay</button>':g&&g.x!=null?`<button class="qgo ${G.auto?'on':''}" data-q="go">${G.auto?'⏹ Dừng':'🧭 Tự đi'}</button>`:'';
+      qt=`<div class="qh">📜 ${esc(q.title)}</div><div class="qrow"><div class="qt">${g?g.text:''}</div>${btn}</div>`;}
+    if(G.worldBossNow()&&S.wbDay[G.today()]!==1)qt+=`<div class="wb">🐉 Giao Long đang ở sông Hồng (Thăng Long)!</div>`;
+    set('quest',qt,'h');const st2=document.querySelector('[data-open=study]');if(st2)st2.classList.toggle('pulse',!!(g&&g.ui));}
   // chiêu thức
   for(let i=0;i<6;i++){const sk=G.SKILLS[i];const b=document.getElementById('sk'+i);const lock=S.lv<sk.lv;const cd=P.cd[i]/sk.cd;const k=(lock?'L':'')+(cd>0?Math.ceil(P.cd[i]):'')+(P.mp<sk.mp?'m':'');
     if(cache['sk'+i]!==k){cache['sk'+i]=k;b.classList.toggle('lock',lock);b.classList.toggle('nomp',!lock&&P.mp<sk.mp);b.querySelector('.cdn').textContent=lock?'Lv'+sk.lv:(cd>0?Math.ceil(P.cd[i]):'');}
@@ -41,7 +44,7 @@ U.hud=function(){const S=G.S,P=G.P;if(!S||!G.map)return;const st=G.stats();
 function drawMini(){const m=G.map;if(miniMap!==m){miniMap=m;mini.width=m.w;mini.height=m.h;}mctx.imageSmoothingEnabled=false;mctx.drawImage(m.ground,0,0,m.w,m.h);
   mctx.fillStyle='#ff5d5d';G.mobs.forEach(mb=>{if(mb.boss&&mb.hp>0)mctx.fillRect(mb.x/G.T-1.5,mb.y/G.T-1.5,3,3);});
   mctx.fillStyle='#ffd84a';G.npcs.forEach(n=>mctx.fillRect(n.x/G.T-1,n.y/G.T-1,2,2));mctx.fillStyle='#7fe0ff';m.portals.forEach(p=>mctx.fillRect(p.x-1,p.y-1,3,3));
-  mctx.fillStyle='#fff';mctx.fillRect(G.P.x/G.T-2,G.P.y/G.T-2,4,4);mctx.strokeStyle='#b3261e';mctx.lineWidth=1;mctx.strokeRect(G.P.x/G.T-2.5,G.P.y/G.T-2.5,5,5);}
+  const gg=G._goal;if(gg&&gg.x!=null){mctx.fillStyle='#ffd84a';mctx.fillRect(gg.x/G.T-2,gg.y/G.T-2,5,5);}mctx.fillStyle='#fff';mctx.fillRect(G.P.x/G.T-2,G.P.y/G.T-2,4,4);mctx.strokeStyle='#b3261e';mctx.lineWidth=1;mctx.strokeRect(G.P.x/G.T-2.5,G.P.y/G.T-2.5,5,5);}
 
 // ---------- NÚT HÀNH ĐỘNG ----------
 let curAct=null;
@@ -51,16 +54,16 @@ $('#btn-act').addEventListener('click',()=>{G.audio.sfx('click');if(curAct)curAc
 // ---------- ĐIỀU KHIỂN ----------
 let atkHeld=false;const keys={};
 const stick=$('#stick'),knob=$('#knob'),zone=$('#stick-zone');let sid=null,ox=0,oy=0;
-zone.addEventListener('pointerdown',e=>{G.audio.init();G.audio.resume();sid=e.pointerId;ox=e.clientX;oy=e.clientY;stick.style.left=ox+'px';stick.style.top=oy+'px';stick.hidden=false;zone.setPointerCapture(sid);e.preventDefault();});
+zone.addEventListener('pointerdown',e=>{G.audio.init();G.audio.resume();if(G.auto)G.autoStop();sid=e.pointerId;ox=e.clientX;oy=e.clientY;stick.style.left=ox+'px';stick.style.top=oy+'px';stick.hidden=false;zone.setPointerCapture(sid);e.preventDefault();});
 zone.addEventListener('pointermove',e=>{if(e.pointerId!==sid)return;let dx=e.clientX-ox,dy=e.clientY-oy;const L=Math.hypot(dx,dy),R=46;if(L>R){dx=dx/L*R;dy=dy/L*R;}knob.style.transform=`translate(${dx}px,${dy}px)`;G.P.move={x:dx/R,y:dy/R};});
 const endStick=e=>{if(e.pointerId!==sid)return;sid=null;stick.hidden=true;knob.style.transform='';G.P.move={x:0,y:0};};zone.addEventListener('pointerup',endStick);zone.addEventListener('pointercancel',endStick);
 const atk=$('#btn-atk');atk.addEventListener('pointerdown',e=>{G.audio.init();G.audio.resume();atkHeld=true;e.preventDefault();});['pointerup','pointercancel','pointerleave'].forEach(t=>atk.addEventListener(t,()=>atkHeld=false));
 for(let i=0;i<6;i++){const b=document.getElementById('sk'+i);const sk=G.SKILLS[i];b.innerHTML=`<span class="zh">${sk.zh}</span><span class="cdn"></span>`;b.title=sk.vi;b.addEventListener('pointerdown',e=>{e.preventDefault();G.audio.init();G.castSkill(i);});}
-function keyMove(){let x=0,y=0;if(keys.a||keys.arrowleft)x--;if(keys.d||keys.arrowright)x++;if(keys.w||keys.arrowup)y--;if(keys.s||keys.arrowdown)y++;if(sid===null)G.P.move={x,y};}
+function keyMove(){let x=0,y=0;if(G.auto&&Object.values(keys).some(Boolean))G.autoStop();if(keys.a||keys.arrowleft)x--;if(keys.d||keys.arrowright)x++;if(keys.w||keys.arrowup)y--;if(keys.s||keys.arrowdown)y++;if(sid===null)G.P.move={x,y};}
 window.addEventListener('keydown',e=>{if(e.target.closest('input,textarea'))return;const k=e.key.toLowerCase();keys[k]=1;keyMove();if(k==='j'||k===' ')atkHeld=true;if(k>='1'&&k<='6')G.castSkill(+k-1);if(k==='e'&&curAct&&!G.paused)curAct.fn();if(k==='escape')U.close();});
 window.addEventListener('keyup',e=>{const k=e.key.toLowerCase();keys[k]=0;keyMove();if(k==='j'||k===' ')atkHeld=false;});
 document.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>{G.audio.sfx('click');U.open(b.dataset.open);}));
-$('#quest').addEventListener('click',()=>U.open('quest'));
+$('#quest').addEventListener('click',e=>{const b=e.target.closest('[data-q=go]');if(b){G.audio.init();if(G.auto){G.autoStop();G.P.move={x:0,y:0};}else G.autoGo();goalT=0;return;}U.open('quest');});
 
 // ---------- BẢNG (sheet) ----------
 const sheet=$('#sheet'),sbody=$('#sheet-body'),stitle=$('#sheet-title');
@@ -68,17 +71,18 @@ U.close=function(){sheet.hidden=true;G.paused=false;sbody.innerHTML='';U.cur=nul
 $('#sheet-close').addEventListener('click',()=>{G.audio.sfx('click');U.close();});
 const TITLES={bag:['背包','Túi đồ'],quest:['任务','Nhiệm vụ'],study:['书房','Thư phòng'],char:['人物','Nhân vật'],map:['地图','Bản đồ'],rank:['排行','Xếp hạng'],set:['设置','Cài đặt'],enhance:['强化','Cường hóa'],cook:['做饭','Nấu ăn'],shop:['商店','Cửa hàng'],chatlog:['世界频道','Kênh thế giới'],dialog:['','']};
 U.open=function(name,arg){U.cur=name;G.paused=true;G.P.move={x:0,y:0};atkHeld=false;sheet.hidden=false;sheet.dataset.k=name;const t=TITLES[name]||['',''];stitle.innerHTML=`<span class="zh">${t[0]}</span> ${t[1]}`;sbody.scrollTop=0;
-  ({bag:bagPanel,quest:questPanel,study:(b)=>G.learn.panel(b),char:charPanel,map:mapPanel,rank:rankPanel,set:setPanel,enhance:enhPanel,cook:cookPanel,shop:shopPanel,chatlog:chatPanel})[name](sbody,arg);};
+  ({bag:bagPanel,quest:questPanel,study:(b,a)=>G.learn.panel(b,a),char:charPanel,map:mapPanel,rank:rankPanel,set:setPanel,enhance:enhPanel,cook:cookPanel,shop:shopPanel,chatlog:chatPanel})[name](sbody,arg);};
 U.refresh=function(arg){if(U.cur)U.open(U.cur,arg);};
 
 // ---------- HỘI THOẠI NPC ----------
 const GREET=[['你好！','Nǐ hǎo!','Xin chào!'],['今天天气很好。','Jīntiān tiānqì hěn hǎo.','Hôm nay trời đẹp quá.'],['你吃饭了吗？','Nǐ chī fàn le ma?','Ngài ăn cơm chưa?'],['掌门，你好吗？','Zhǎngmén, nǐ hǎo ma?','Chưởng môn khỏe không?'],['你的狗很漂亮！','Nǐ de gǒu hěn piàoliang!','Chó của ngài đẹp quá!'],['欢迎！','Huānyíng!','Hoan nghênh!']];
 const line=(d)=>`<div class="dl" data-say="${esc(d[0])}"><div class="dz">${esc(d[0])} <span class="spk">🔊</span></div><div class="dp">${esc(d[1])}</div><div class="dv">${esc(d[2])}</div></div>`;
+const qLines=q=>q.d||(q.type==='lesson'?(()=>{const l=G.learn.lesson(q.lesson);return [['我们一起学习吧！','Wǒmen yìqǐ xuéxí ba!','Chúng ta cùng học nào!'],['今天学：'+l.zh,'',`Hôm nay học Bài ${l.special?'★':l.n}: ${l.vi}`]];})():[['你好！','Nǐ hǎo!','Xin chào!']]);
 U.dialog=function(n){const S=G.S,q=G.curQuest();U.open('chatlog');U.cur='dialog';stitle.innerHTML=`<span class="zh">${n.zh}</span> ${n.vi}`;
   const por=`<canvas class="npc-por" width="16" height="26"></canvas>`;let lines=[],btns=[];
-  if(q&&q.npc===n.id){if(S.q.st==='new'){lines=q.d;btns.push(['accept',q.type==='talk'?'Đáp lời 好的':'Nhận nhiệm vụ 接受']);}
+  if(q&&q.npc===n.id){if(S.q.st==='new'){lines=qLines(q);btns.push(['accept',q.type==='talk'?'Đáp lời 好的':q.type==='lesson'?'Nhận & học ngay 学习':'Nhận nhiệm vụ 接受']);}
     else if(S.q.st==='done'){lines=[['做得很好！谢谢你！','Zuò de hěn hǎo! Xièxie nǐ!','Làm tốt lắm! Cảm ơn ngài!']];btns.push(['reward','Nhận thưởng 领奖']);}
-    else{lines=[q.d[q.d.length-1]];}}
+    else{const ql=qLines(q);lines=[ql[ql.length-1]];if(q.type==='lesson')btns.push(['study',`Học Bài ${q.lesson>15?'★':q.lesson} 学习`]);}}
   else lines=[GREET[(Math.random()*GREET.length)|0]];
   if(n.role==='enhance')btns.push(['enhance','Cường hóa 强化']);if(n.role==='study')btns.push(['study','Thư phòng 书房']);if(n.shop)btns.push(['shop','Cửa hàng 商店']);btns.push(['bye','Tạm biệt 再见']);
   const qinfo=q&&q.npc===n.id?`<div class="qbox"><b>${esc(q.title)}</b><br>${questDesc(q)}${S.q.st==='active'?` · ${S.q.p}/${q.n||1}`:''}<br><small>Thưởng: ${rewardTxt(q.reward)}</small></div>`:'';
@@ -86,11 +90,11 @@ U.dialog=function(n){const S=G.S,q=G.curQuest();U.open('chatlog');U.cur='dialog'
   const pc=sbody.querySelector('.npc-por').getContext('2d');pc.imageSmoothingEnabled=false;pc.drawImage(G.drawPerson(n.art,0),0,0);
   sbody.querySelectorAll('.dl').forEach(x=>x.onclick=()=>G.audio.say(x.dataset.say));if(S.settings.tts!==0)G.audio.say(lines.map(l=>l[0]).join(''));
   sbody.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{G.audio.sfx('click');const k=b.dataset.b;
-    if(k==='accept'){if(q.type==='talk'){G.giveReward(q.reward);S.q.i++;S.q.st='new';S.q.p=0;U.close();U.toast(`✔ <b>${esc(q.title)}</b>`);}else{S.q.st='active';S.q.p=0;U.close();U.toast(`Nhận nhiệm vụ: <b>${esc(q.title)}</b><br>${questDesc(q)}`,3200);}}
+    if(k==='accept'){if(q.type==='talk'){G.giveReward(q.reward);S.q.i++;S.q.st='new';S.q.p=0;U.close();U.toast(`✔ <b>${esc(q.title)}</b>`);}else{S.q.st='active';S.q.p=0;if(q.type==='lesson'&&G.learn.done(q.lesson)){S.q.st='done';}U.close();if(q.type==='lesson'&&S.q.st==='active'){U.open('study',q.lesson);}else U.toast(`Nhận nhiệm vụ: <b>${esc(q.title)}</b><br>${questDesc(q)}<br><small>Đi theo mũi tên vàng hoặc bấm 🧭 Tự đi</small>`,3600);}}
     else if(k==='reward'){G.giveReward(q.reward);S.q.i++;S.q.st='new';S.q.p=0;U.close();const nq=G.curQuest();if(nq)U.toast(`Nhiệm vụ tiếp: gặp <b>${G.npcName(nq.npc)}</b>`);}
-    else if(k==='bye')U.close();else U.open(k,n.shop);});};
+    else if(k==='bye')U.close();else if(k==='study'&&q&&q.type==='lesson'&&q.npc===n.id&&S.q.st==='active')U.open('study',q.lesson);else U.open(k,n.shop);});};
 function questDesc(q){const mob=q.mob&&Object.values(G.MOB_BASE).flat().find(m=>m.id===q.mob);
-  return {talk:'Trò chuyện',kill:`Diệt ${q.n} ${mob?mob.vi+' ('+mob.zh+')':''}`,learn:`Học ${q.n} từ mới${q.topic?' chủ đề '+G.TOPICS[q.topic].vi:''} trong Thư phòng`,enhance:'Cường hóa thành công 1 lần ở lò rèn',
+  return {lesson:`Học xong Bài ${q.lesson>15?'★':q.lesson} trong 书房 Thư phòng`,talk:'Trò chuyện',kill:`Diệt ${q.n} ${mob?mob.vi+' ('+mob.zh+')':''}`,learn:`Học ${q.n} từ mới${q.topic?' chủ đề '+G.TOPICS[q.topic].vi:''} trong Thư phòng`,enhance:'Cường hóa thành công 1 lần ở lò rèn',
     fish:`Câu ${q.n} con cá (đứng gần nước, bấm Câu cá)`,cook:'Nấu 1 món ở bếp',write:`Luyện viết ${q.n} chữ trong Thư phòng`,speak:`Luyện nói ${q.n} câu trong Thư phòng`,pk:'Đánh bại 1 kẻ PK (chúng sẽ tự tìm đến)',
     boss:`Đánh bại ${G.BOSSES[q.boss]?G.BOSSES[q.boss].vi:'boss'}`,sail:'Lên thuyền ở cầu tàu và ra khơi'}[q.type]||'';}
 function rewardTxt(r){const a=[];if(r.exp)a.push(r.exp+' EXP');if(r.bac)a.push(r.bac+' lượng');if(r.stone)a.push(r.stone+' 玄晶');if(r.item)a.push('trang bị '+G.RARITY[Math.min(r.item,4)].vi+'+');if(r.ingr)a.push('nguyên liệu');return a.join(' · ');}
@@ -161,7 +165,7 @@ function shopPanel(b,kind){const S=G.S;kind=kind||'tea';const goods=[{k:'gao',p:
 // ---------- NHIỆM VỤ ----------
 function questPanel(b){const S=G.S,q=G.curQuest();const D=G.ensureDaily();
   b.innerHTML=`<h4>Nhiệm vụ chính 主线 (${Math.min(S.q.i+1,G.MAIN_QUESTS.length)}/${G.MAIN_QUESTS.length})</h4>${q?`<div class="qbox"><b>${esc(q.title)}</b> — ${S.q.st==='new'?'chưa nhận':S.q.st==='done'?'đã xong, về nhận thưởng':'đang làm'}<br>${questDesc(q)}${S.q.st==='active'?` · <b>${S.q.p}/${q.n||1}</b>`:''}<br>NPC: <b>${G.npcName(q.npc)}</b><br><small>Thưởng: ${rewardTxt(q.reward)}</small>
-   <div class="dls">${q.d.map(line).join('')}</div></div>`:'<p class="hint">Đã hoàn thành toàn bộ cốt truyện Giai đoạn 1.</p>'}
+   <div class="dls">${qLines(q).map(line).join('')}</div></div>`:'<p class="hint">Đã hoàn thành toàn bộ cốt truyện Giai đoạn 1.</p>'}
    <h4>Nhiệm vụ ngày 日常 · ${D.date}</h4>${D.list.map(d=>`<div class="daily ${d.done?'done':''}"><span>${d.done?'✔':'○'} ${esc(d.title)}</span><b>${Math.min(d.p,d.n)}/${d.n}</b></div>`).join('')}
    <h4>Hoạt động theo giờ</h4><p class="hint">🐉 Boss thế giới <b>Giao Long</b> xuất hiện ở bờ sông Hồng (Thăng Long) lúc <b>12:00</b> và <b>20:00</b>, mỗi lần 30 phút.<br>🌙 Ban đêm (19:00–5:00) thích khách xuất hiện trong kinh thành.<br>⚔ Kẻ PK sẽ tự tìm đến khi bạn từ cấp 4.</p>`;
   b.querySelectorAll('.dl').forEach(x=>x.onclick=()=>G.audio.say(x.dataset.say));}
@@ -232,7 +236,7 @@ U.intro=function(cont){const ov=$('#intro');ov.hidden=false;
    <button class="btn big" id="i-go">${cont?'Tiếp tục 继续':'Bắt đầu 开始'}</button><p class="i-help">Kéo nửa trái màn hình để đi · Nút <b>打</b> để đánh · Chiêu thức cần trả lời đúng tiếng Trung</p></div>`;
   const x=ov.querySelector('#i-por').getContext('2d');x.imageSmoothingEnabled=false;x.drawImage(G.drawTakd(0,0,1,'#b3261e',null),0,0);
   ov.querySelector('#i-go').onclick=()=>{G.audio.init();G.audio.resume();G.audio.sfx('gong');ov.hidden=true;G.paused=false;
-    const off=G.offline();G.start();if(!G.S.intro){G.S.intro=1;setTimeout(()=>U.toast('Gặp <b>Lý trưởng</b> (dấu ❗ vàng) ở sân đình để nhận nhiệm vụ đầu tiên',5000),2500);}
+    const off=G.offline();G.start();if(!G.S.intro){G.S.intro=1;setTimeout(()=>U.toast('Đi theo <b>mũi tên vàng</b> tới Lý trưởng, hoặc bấm <b>🧭 Tự đi</b> ở khung nhiệm vụ',5500),2500);}
     if(off)setTimeout(()=>offlineModal(off),900);};};
 function offlineModal(o){G.paused=true;const ov=$('#fish');ov.hidden=false;
   ov.innerHTML=`<div class="fish-card"><div class="f-title"><span class="zh">托管</span> Ủy thác</div><p>Trong ${o.mins} phút vắng mặt, Takd và Shiba vẫn luyện công.</p><div class="f-catch">+${o.exp} EXP · +${o.bac} lượng</div>

@@ -167,6 +167,45 @@ select,textarea{width:100%;box-sizing:border-box;background:#2a1c17;color:var(--
 .i-story{font-size:13.5px;line-height:1.6;text-align:left;background:rgba(239,227,200,.06);border-left:3px solid var(--son);padding:8px 12px;border-radius:0 10px 10px 0;margin:4px 0}
 .i-help{color:var(--muted);font-size:11.5px}
 #intro .btn{width:100%}
+
+/* Nhiệm vụ: khung chỉ dẫn */
+#quest{max-width:min(340px,100%);padding:6px 8px 6px 10px}
+#quest .qh{font-size:10.5px;color:var(--gold2);font-weight:700;letter-spacing:.02em;margin-bottom:2px}
+#quest .qrow{display:flex;gap:8px;align-items:center}#quest .qt{flex:1;min-width:0}
+.qgo{flex:none;background:linear-gradient(180deg,#e0b34a,#b8862e);color:#1a1210;border:none;border-radius:9px;padding:6px 9px;font-size:12px;font-weight:800;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+.qgo.on{background:#5a1a0c;color:var(--paper)}
+.menu button.pulse{border-color:#ffd84a;box-shadow:0 0 0 2px rgba(255,216,74,.6);animation:pulse 1.2s ease-in-out infinite}
+/* Lộ trình */
+.path-head{display:grid;gap:5px;font-size:13px;margin-bottom:8px}
+.path{display:grid;gap:7px}
+.node{display:flex;align-items:center;gap:10px;background:#2a1c17;border:1px solid rgba(217,164,65,.35);border-radius:12px;padding:8px 10px;text-align:left;width:100%}
+.node .nn{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;background:#3a2a22;border:2px solid rgba(217,164,65,.5);font-variant-numeric:tabular-nums}
+.node .nt{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.3}.node .nt .zh{font-size:17px;color:var(--gold2)}.node .nt small{color:var(--muted);font-size:11px}
+.node .ns{flex:none;font-size:16px}.node.done .nn{background:var(--jade);border-color:var(--ok)}.node.cur{border-color:var(--gold);box-shadow:0 0 0 2px rgba(217,164,65,.35)}.node.cur .nn{background:var(--son2);border-color:var(--gold2)}
+.node.lock{opacity:.45}.node.sp .nn{color:var(--gold2)}
+/* Trình học bài */
+.ls-top{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;gap:8px}.ls-top .zh{color:var(--gold2);font-size:15px}
+.prog.ls{margin:7px 0}.ls-title{font-family:var(--f-cal),var(--f-zh);font-size:22px;color:var(--gold2);margin:4px 0 8px}
+.scene{background:linear-gradient(180deg,#3a2a22,#2a1c17);border:1px solid rgba(217,164,65,.4);border-radius:12px;padding:10px 12px;font-size:14px;line-height:1.55}.sc-place{color:var(--gold2);font-weight:700;font-size:12.5px}
+.chips{display:flex;flex-wrap:wrap;gap:5px}.chip{background:#2a1c17;border:1px solid rgba(217,164,65,.3);border-radius:8px;padding:3px 7px;font-size:12px}.chip.zh.big{font-size:22px;padding:2px 9px}
+.grammar{margin-top:10px;background:#22403c;border-left:3px solid var(--ok);border-radius:0 10px 10px 0;padding:8px 10px;font-size:13px;line-height:1.55}
+.dl .who{font-size:11px;color:#8a6a3a;font-weight:700}.dl.me{background:#f6ead0;border-left:4px solid var(--son)}.dl.nar{background:transparent;color:var(--muted);font-style:italic;font-size:12.5px;padding:2px 4px}
+.dl mark{background:#ffd84a;color:#5a120c;border-radius:3px;padding:0 2px}
+.breakdown{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;font-size:12.5px}.breakdown>div{background:#2a1c17;border-radius:8px;padding:4px 9px}
+.cc{display:flex;gap:12px;align-items:center}.cc-left{flex:none}.cc-right{display:grid;gap:3px;font-size:13.5px}.cc-zh{font-family:var(--f-zh);font-size:54px;line-height:1;color:var(--gold2)}
+.w-pad.sm{width:170px;margin:0}
+.badge{display:inline-block;font-size:11px;font-weight:700;border-radius:6px;padding:2px 7px;margin-top:3px;background:#3a2a22;border:1px solid var(--gold)}
+.badge.t-TH{background:#2f6f3a}.badge.t-CS{background:#2b4a8a}.badge.t-HY{background:#6b2f8a}.badge.t-HT{background:#8a5a1e}.badge.t-GT{background:#5a4636}
+.memo{margin-top:10px;background:#2a1c17;border:1px solid rgba(217,164,65,.35);border-radius:12px;padding:9px 11px;font-size:13.5px;line-height:1.55;display:grid;gap:4px}
+.memo.bad{border-color:var(--bad);background:#3a1a16}.memo.ok{border-color:var(--ok);background:#1e3a26}
+.mastery{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;margin-bottom:8px;gap:8px}.dots{display:flex;gap:3px;flex-wrap:wrap;justify-content:flex-end}
+.dots i{width:9px;height:9px;border-radius:50%;background:#3a2a22;border:1px solid rgba(217,164,65,.4)}.dots i.m1{background:var(--gold)}.dots i.m2{background:var(--ok)}
+.cloze{font-family:var(--f-zh);font-size:26px;color:var(--gold2);line-height:1.5}.blank{display:inline-block;min-width:2em;border-bottom:3px solid var(--paper);color:transparent}
+.ans{min-height:52px;display:flex;flex-wrap:wrap;gap:6px;background:#2a1c17;border:1px dashed rgba(217,164,65,.5);border-radius:12px;padding:8px;align-items:center}
+.toks{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tok{font-family:var(--f-zh);font-size:20px;background:var(--paper);color:var(--ink);border:none;border-radius:9px;padding:7px 11px;min-height:44px}.tok.on{background:#ffd84a}.tok.used{opacity:.25}
+.qz-opts.one{grid-template-columns:1fr}.qz-opts.one button{text-align:left;padding:9px 12px}.qz-opts.one .zh{font-size:18px}.qz-opts.one small{color:var(--muted)}
+.ch.did{box-shadow:inset 0 0 0 3px var(--ok)}.ch.dim{opacity:.45}
 @media (orientation:landscape) and (max-height:500px){.menu{max-width:60vw}#stick-zone{height:80%}.b-zh{font-size:40px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 button:focus-visible{outline:2px solid var(--gold2);outline-offset:2px}
@@ -203,12 +242,15 @@ button:focus-visible{outline:2px solid var(--gold2);outline-offset:2px}
 
 <script src="js/hanzi-writer.min.js"></script>
 <script src="js/data.js"></script>
+<script src="js/curriculum.js"></script>
 <script src="js/strokes.js"></script>
 <script src="js/art.js"></script>
+<script src="js/art2.js"></script>
 <script src="js/world.js"></script>
 <script src="js/audio.js"></script>
 <script src="js/learn.js"></script>
 <script src="js/game.js"></script>
+<script src="js/game2.js"></script>
 <script src="js/ui.js"></script>
 <script>
 (function(){const had=G.load();G.paused=true;G.ui.intro(had);

@@ -320,53 +320,68 @@ G.PK_LOSE = [['我错了，对不起！','Ta sai rồi, xin lỗi!'],['你很厉
 // --- NPC ---
 G.NPCS = {
   kimlien:[
-    {id:'lytruong',zh:'里长',vi:'Lý trưởng',art:'elder',x:40,y:27},
-    {id:'trangba',zh:'茶婆',vi:'Bà hàng nước',art:'woman',x:46,y:32,shop:'tea'},
-    {id:'thoren',zh:'铁匠',vi:'Thợ rèn',art:'smith',x:34,y:30,role:'enhance'},
-    {id:'ngung',zh:'渔翁',vi:'Ông lão đánh cá',art:'fisher',x:42,y:44},
-    {id:'thaydo',zh:'私塾先生',vi:'Thầy đồ',art:'scholar',x:36,y:23,role:'study'}
+    {id:'lytruong',zh:'里长',vi:'Lý trưởng',art:'elder',x:67,y:36},
+    {id:'trangba',zh:'茶婆',vi:'Bà hàng nước',art:'woman',x:63,y:49,shop:'tea'},
+    {id:'thoren',zh:'铁匠',vi:'Thợ rèn',art:'smith',x:46,y:41,role:'enhance'},
+    {id:'ngung',zh:'渔翁',vi:'Ông lão đánh cá',art:'fisher',x:101,y:41},
+    {id:'thaydo',zh:'私塾先生',vi:'Thầy đồ',art:'scholar',x:82,y:41,role:'study'}
   ],
   thanglong:[
-    {id:'quanvo',zh:'武官',vi:'Quan võ',art:'officer',x:38,y:47},
-    {id:'tiensi',zh:'进士',vi:'Ông Tiến sĩ',art:'scholar',x:22,y:24,role:'study'},
-    {id:'thoren2',zh:'铁匠',vi:'Lò rèn kinh thành',art:'smith',x:48,y:36,role:'enhance'},
-    {id:'thuongnhan',zh:'商人',vi:'Thương nhân',art:'merchant',x:44,y:33,shop:'city'},
-    {id:'sukhong',zh:'和尚',vi:'Sư trụ trì',art:'monk',x:28,y:35}
+    {id:'quanvo',zh:'武官',vi:'Quan võ',art:'officer',x:73,y:96},
+    {id:'tiensi',zh:'进士',vi:'Ông Tiến sĩ',art:'scholar',x:47,y:91,role:'study'},
+    {id:'thoren2',zh:'铁匠',vi:'Lò rèn kinh thành',art:'smith',x:60,y:93,role:'enhance'},
+    {id:'thuongnhan',zh:'商人',vi:'Thương nhân',art:'merchant',x:102,y:64,shop:'city'},
+    {id:'sukhong',zh:'和尚',vi:'Sư trụ trì',art:'monk',x:91,y:45}
   ],
   vandon:[
-    {id:'cangchu',zh:'港主',vi:'Cảng chủ',art:'officer',x:16,y:28},
-    {id:'thuongthuyen',zh:'船商',vi:'Chủ thuyền buôn',art:'merchant',x:27,y:28,shop:'port'},
-    {id:'baohiem',zh:'保商',vi:'Nhà bảo hộ hàng hóa',art:'scholar',x:14,y:22},
-    {id:'thoren3',zh:'铁匠',vi:'Thợ rèn bến cảng',art:'smith',x:10,y:30,role:'enhance'}
+    {id:'cangchu',zh:'港主',vi:'Cảng chủ',art:'officer',x:22,y:56},
+    {id:'thuongthuyen',zh:'船商',vi:'Chủ thuyền buôn',art:'merchant',x:32,y:52,shop:'port'},
+    {id:'baohiem',zh:'保商',vi:'Nhà bảo hộ hàng hóa',art:'scholar',x:14,y:51},
+    {id:'thoren3',zh:'铁匠',vi:'Thợ rèn bến cảng',art:'smith',x:10,y:62,role:'enhance'}
   ]
 };
 
 // --- Nhiệm vụ chính (type: talk, kill, boss, fish, cook, learn, write, speak, goto, sail, enhance, pk) ---
 // d = hội thoại khi nhận: [zh, pinyin, vi]
 G.MAIN_QUESTS = [
-  {id:'q1',npc:'lytruong',type:'talk',title:'Trưởng môn về làng',d:[['你好！你叫什么名字？','Nǐ hǎo! Nǐ jiào shénme míngzi?','Chào! Ngài tên là gì?'],['啊，你是越拳门的掌门！','À, ngài là chưởng môn Muay Việt!','À, ngài là chưởng môn Muay Việt!']],reward:{exp:30,bac:50}},
-  {id:'q2',npc:'lytruong',type:'kill',mob:'chuot',n:5,title:'Chuột phá lúa',d:[['田里有很多老鼠。','Tián lǐ yǒu hěn duō lǎoshǔ.','Ngoài đồng có rất nhiều chuột.'],['请你打五只！','Qǐng nǐ dǎ wǔ zhī!','Xin ngài đánh năm con!']],reward:{exp:60,bac:80,item:1}},
-  {id:'q3',npc:'thaydo',type:'learn',n:5,title:'Học chữ với thầy đồ',d:[['学习很重要。','Xuéxí hěn zhòngyào.','Học tập rất quan trọng.'],['你会写汉字吗？先学五个字。','Nǐ huì xiě Hànzì ma? Xiān xué wǔ gè zì.','Ngài biết viết chữ Hán không? Học trước năm chữ.']],reward:{exp:60,stone:3}},
-  {id:'q4',npc:'thoren',type:'enhance',n:1,title:'Rèn chùy',d:[['你的锤子太小了！','Nǐ de chuízi tài xiǎo le!','Chùy của ngài nhỏ quá!'],['给我玄晶，我帮你强化。','Gěi wǒ xuánjīng, wǒ bāng nǐ qiánghuà.','Đưa tôi huyền tinh, tôi cường hóa cho.']],reward:{exp:50,bac:60}},
-  {id:'q5',npc:'trangba',type:'kill',mob:'ran',n:6,title:'Rắn ở hồ sen',d:[['我很怕蛇！','Wǒ hěn pà shé!','Tôi rất sợ rắn!'],['莲花池里有蛇。','Liánhuā chí lǐ yǒu shé.','Trong hồ sen có rắn.']],reward:{exp:90,bac:90,item:1}},
-  {id:'q6',npc:'ngung',type:'fish',n:3,title:'Câu cá với ông lão',d:[['你喜欢吃鱼吗？','Nǐ xǐhuan chī yú ma?','Ngài thích ăn cá không?'],['我们去钓三条鱼吧。','Wǒmen qù diào sān tiáo yú ba.','Chúng ta đi câu ba con cá nhé.']],reward:{exp:80,bac:50,ingr:{gao:2}}},
-  {id:'q7',npc:'ngung',type:'cook',n:1,title:'Bữa cơm đầu tiên',d:[['你饿了吗？','Nǐ è le ma?','Ngài đói chưa?'],['用鱼做菜吧！','Yòng yú zuò cài ba!','Lấy cá nấu món đi!']],reward:{exp:60,ingr:{thit:1,gao:2}}},
-  {id:'q8',npc:'thaydo',type:'write',n:3,title:'Luyện viết ba chữ',d:[['写字要慢慢写。','Xiě zì yào mànmàn xiě.','Viết chữ phải viết từ từ.'],['请写三个字。','Qǐng xiě sān gè zì.','Xin hãy viết ba chữ.']],reward:{exp:90,stone:4}},
-  {id:'q9',npc:'lytruong',type:'kill',mob:'cho',n:6,title:'Chó hoang rừng tre',d:[['竹林里有野狗。','Zhúlín lǐ yǒu yěgǒu.','Trong rừng tre có chó hoang.'],['它们很大，很多！','Tāmen hěn dà, hěn duō!','Chúng rất to, rất nhiều!']],reward:{exp:140,bac:120,item:2}},
-  {id:'q10',npc:'thaydo',type:'speak',n:3,title:'Luyện nói',d:[['你会说汉语吗？','Nǐ huì shuō Hànyǔ ma?','Ngài biết nói tiếng Hán không?'],['请说三句。','Qǐng shuō sān jù.','Xin hãy nói ba câu.']],reward:{exp:100,stone:4}},
-  {id:'q11',npc:'lytruong',type:'kill',mob:'sontac',n:8,title:'Dẹp sơn tặc',d:[['山贼来了！他们要我们的钱。','Shānzéi lái le! Tāmen yào wǒmen de qián.','Sơn tặc đến rồi! Chúng muốn tiền của chúng ta.'],['掌门，请你帮我们！','Zhǎngmén, qǐng nǐ bāng wǒmen!','Chưởng môn, xin giúp chúng tôi!']],reward:{exp:220,bac:200,item:2}},
-  {id:'q12',npc:'lytruong',type:'boss',boss:'kimlien',title:'Thủy Yêu hồ sen',d:[['莲池里有一个水妖！','Liánchí lǐ yǒu yí gè shuǐyāo!','Trong hồ sen có một con thủy yêu!'],['打败它，你就能去升龙城。','Dǎbài tā, nǐ jiù néng qù Shēnglóng chéng.','Đánh bại nó, ngài có thể đi thành Thăng Long.']],reward:{exp:400,bac:400,item:3}},
-  {id:'q13',npc:'quanvo',type:'talk',title:'Vào kinh thành',d:[['欢迎来升龙城！','Huānyíng lái Shēnglóng chéng!','Chào mừng đến thành Thăng Long!'],['皇上很喜欢学习的人。','Huángshang hěn xǐhuan xuéxí de rén.','Hoàng thượng rất quý người ham học.']],reward:{exp:150,bac:150}},
-  {id:'q14',npc:'tiensi',type:'learn',n:15,title:'Văn Miếu khai bút',d:[['这是文庙。','Zhè shì Wénmiào.','Đây là Văn Miếu.'],['学十五个字，我给你宝贝。','Xué shíwǔ gè zì, wǒ gěi nǐ bǎobèi.','Học mười lăm chữ, ta tặng ngài bảo vật.']],reward:{exp:300,stone:8,item:3}},
-  {id:'q15',npc:'quanvo',type:'kill',mob:'soi',n:10,title:'Sói ngoài thành',d:[['城外有很多狼。','Chéng wài yǒu hěn duō láng.','Ngoài thành có rất nhiều sói.']],reward:{exp:350,bac:300,item:2}},
-  {id:'q16',npc:'sukhong',type:'kill',mob:'thichkhach',n:8,title:'Thích khách đêm',d:[['晚上有黑衣人来寺里。','Wǎnshang yǒu hēiyī rén lái sì lǐ.','Buổi tối có người áo đen đến chùa.']],reward:{exp:420,bac:320,item:3}},
-  {id:'q17',npc:'quanvo',type:'pk',n:1,title:'Trừng trị kẻ PK',d:[['有人在路上打人！','Yǒu rén zài lù shang dǎ rén!','Có kẻ đánh người trên đường!'],['你去看看。','Nǐ qù kànkan.','Ngài đi xem thử.']],reward:{exp:300,bac:300}},
-  {id:'q18',npc:'quanvo',type:'kill',mob:'ho',n:6,title:'Hổ dữ',d:[['山上的老虎很大！','Shān shang de lǎohǔ hěn dà!','Hổ trên núi rất to!']],reward:{exp:520,bac:400,item:3}},
-  {id:'q19',npc:'quanvo',type:'boss',boss:'thanglong',title:'Hắc Phong Trại',d:[['黑风寨主很厉害。','Hēifēng zhàizhǔ hěn lìhai.','Trại chủ Hắc Phong rất lợi hại.'],['打败他，你就可以去云屯港。','Dǎbài tā, nǐ jiù kěyǐ qù Yúntún gǎng.','Đánh bại hắn, ngài có thể đi cảng Vân Đồn.']],reward:{exp:1200,bac:1000,item:4}},
-  {id:'q20',npc:'cangchu',type:'talk',title:'Cửa biển Vân Đồn',d:[['这里是云屯港，有很多船。','Zhèlǐ shì Yúntún gǎng, yǒu hěn duō chuán.','Đây là cảng Vân Đồn, có rất nhiều thuyền.']],reward:{exp:400,bac:400}},
-  {id:'q21',npc:'baohiem',type:'learn',topic:'bh',n:6,title:'Bảo hộ hàng hóa',d:[['船上的货物有风险。','Chuán shang de huòwù yǒu fēngxiǎn.','Hàng hóa trên thuyền có rủi ro.'],['学这些字，你就懂保险了。','Xué zhèxiē zì, nǐ jiù dǒng bǎoxiǎn le.','Học mấy chữ này, ngài sẽ hiểu bảo hiểm.']],reward:{exp:600,stone:10,item:4}},
-  {id:'q22',npc:'thuongthuyen',type:'sail',title:'Ra khơi',d:[['你会开船吗？','Nǐ huì kāi chuán ma?','Ngài biết lái thuyền không?'],['坐我的船去海上看看！','Zuò wǒ de chuán qù hǎi shang kànkan!','Ngồi thuyền tôi ra biển xem!']],reward:{exp:500,bac:500}},
-  {id:'q23',npc:'cangchu',type:'kill',mob:'haitac',n:10,title:'Hải tặc quấy cảng',d:[['海盗太多了！','Hǎidào tài duō le!','Hải tặc nhiều quá!']],reward:{exp:900,bac:800,item:4}},
-  {id:'q24',npc:'cangchu',type:'boss',boss:'vandon',title:'Xích Tu Hải Tặc Vương',d:[['海盗王住在东边的岛上。','Hǎidào wáng zhù zài dōngbian de dǎo shang.','Hải tặc vương sống trên đảo phía đông.'],['掌门，去吧！','Zhǎngmén, qù ba!','Chưởng môn, đi đi!']],reward:{exp:4000,bac:3000,item:5}},
-  {id:'q25',npc:'cangchu',type:'talk',title:'Hẹn ngày sang đất Tống',d:[['北边是大宋。','Běibian shì Dà Sòng.','Phía bắc là nước Đại Tống.'],['你准备好了，我们再见！','Nǐ zhǔnbèi hǎo le, wǒmen zàijiàn!','Khi ngài sẵn sàng, ta gặp lại!']],reward:{exp:500,stone:15}}
+  {id:'q1',npc:'lytruong',type:'talk',title:'Trưởng môn về làng',d:[['你好！欢迎回来！','Nǐ hǎo! Huānyíng huílai!','Chào ngài! Mừng ngài trở về!'],['先去学习吧。','Xiān qù xuéxí ba.','Trước hết hãy đi học đã.']],reward:{exp:30,bac:50}},
+  {id:'q2',npc:'thaydo',type:'lesson',lesson:1,title:'Bài 1 · 你好 Xin chào',reward:{exp:80,stone:3}},
+  {id:'q3',npc:'lytruong',type:'kill',mob:'chuot',n:5,title:'Chuột phá lúa',d:[['田里有很多老鼠。','Tián li yǒu hěn duō lǎoshǔ.','Ngoài đồng có rất nhiều chuột.'],['请你打五只！','Qǐng nǐ dǎ wǔ zhī!','Xin ngài đánh năm con!']],reward:{exp:60,bac:80,item:1}},
+  {id:'q4',npc:'trangba',type:'lesson',lesson:2,title:'Bài 2 · 谢谢你 Cảm ơn bạn',reward:{exp:90,stone:3,ingr:{gao:1}}},
+  {id:'q5',npc:'thoren',type:'enhance',n:1,title:'Rèn chùy',d:[['你的锤太小了！','Nǐ de chuí tài xiǎo le!','Chùy của ngài nhỏ quá!'],['我帮你强化。','Wǒ bāng nǐ qiánghuà.','Tôi cường hóa giúp ngài.']],reward:{exp:50,bac:60}},
+  {id:'q6',npc:'thaydo',type:'lesson',lesson:3,title:'Bài 3 · 你叫什么名字',reward:{exp:100,stone:3}},
+  {id:'q7',npc:'trangba',type:'kill',mob:'ran',n:6,title:'Rắn ở hồ sen',d:[['我很怕蛇！','Wǒ hěn pà shé!','Tôi rất sợ rắn!'],['湖里有蛇。','Hú li yǒu shé.','Dưới hồ có rắn.']],reward:{exp:90,bac:90,item:1}},
+  {id:'q8',npc:'lytruong',type:'lesson',lesson:4,title:'Bài 4 · 她是谁 Cô ấy là ai',reward:{exp:110,stone:3}},
+  {id:'q9',npc:'ngung',type:'fish',n:3,title:'Câu cá ở bến đò',d:[['你喜欢吃鱼吗？','Nǐ xǐhuan chī yú ma?','Ngài thích ăn cá không?'],['我们去钓三条鱼吧。','Wǒmen qù diào sān tiáo yú ba.','Chúng ta đi câu ba con cá nhé.']],reward:{exp:80,bac:50,ingr:{gao:2,rau:1}}},
+  {id:'q10',npc:'thoren',type:'lesson',lesson:5,title:'Bài 5 · 一二三 Số đếm',reward:{exp:120,stone:4}},
+  {id:'q11',npc:'ngung',type:'cook',n:1,title:'Bữa cơm bên bến đò',d:[['你饿了吗？','Nǐ è le ma?','Ngài đói chưa?'],['用鱼做菜吧！','Yòng yú zuò cài ba!','Lấy cá nấu món đi!']],reward:{exp:60,ingr:{thit:1,gao:2}}},
+  {id:'q12',npc:'ngung',type:'lesson',lesson:6,title:'Bài 6 · 我家有几个人',reward:{exp:130,stone:4}},
+  {id:'q13',npc:'lytruong',type:'kill',mob:'cho',n:6,title:'Chó hoang rừng tre',d:[['竹林里有野狗。','Zhúlín li yǒu yěgǒu.','Trong rừng tre có chó hoang.'],['它们很大，很多！','Tāmen hěn dà, hěn duō!','Chúng rất to, rất nhiều!']],reward:{exp:140,bac:120,item:2}},
+  {id:'q14',npc:'thaydo',type:'write',n:3,title:'Luyện viết ba chữ',d:[['写字要慢慢写。','Xiě zì yào mànmàn xiě.','Viết chữ phải viết từ từ.']],reward:{exp:90,stone:4}},
+  {id:'q15',npc:'thaydo',type:'speak',n:3,title:'Luyện nói ba câu',d:[['你会说汉语吗？','Nǐ huì shuō Hànyǔ ma?','Ngài biết nói tiếng Hán không?']],reward:{exp:100,stone:4}},
+  {id:'q16',npc:'lytruong',type:'kill',mob:'sontac',n:8,title:'Dẹp sơn tặc',d:[['山贼来了！','Shānzéi lái le!','Sơn tặc đến rồi!'],['掌门，请你帮我们！','Zhǎngmén, qǐng nǐ bāng wǒmen!','Chưởng môn, xin giúp chúng tôi!']],reward:{exp:220,bac:200,item:2}},
+  {id:'q17',npc:'lytruong',type:'boss',boss:'kimlien',title:'Thủy Yêu hồ Kim Liên',d:[['湖里有一个水妖！','Hú li yǒu yí gè shuǐyāo!','Trong hồ có một con thủy yêu!'],['打败它，你就能去升龙城。','Dǎbài tā, nǐ jiù néng qù Shēnglóng chéng.','Đánh bại nó, ngài có thể lên thành Thăng Long.']],reward:{exp:400,bac:400,item:3}},
+  {id:'q18',npc:'quanvo',type:'talk',title:'Vào kinh thành',d:[['欢迎来升龙城！','Huānyíng lái Shēnglóng chéng!','Chào mừng đến thành Thăng Long!'],['去文庙学习吧。','Qù Wénmiào xuéxí ba.','Hãy đến Văn Miếu học tập.']],reward:{exp:150,bac:150}},
+  {id:'q19',npc:'tiensi',type:'lesson',lesson:7,title:'Bài 7 · 我会说汉语',reward:{exp:300,stone:6}},
+  {id:'q20',npc:'quanvo',type:'kill',mob:'soi',n:10,title:'Sói ngoài thành',d:[['城外有很多狼。','Chéng wài yǒu hěn duō láng.','Ngoài thành có rất nhiều sói.']],reward:{exp:350,bac:300,item:2}},
+  {id:'q21',npc:'quanvo',type:'lesson',lesson:8,title:'Bài 8 · 今天几号',reward:{exp:320,stone:6}},
+  {id:'q22',npc:'sukhong',type:'kill',mob:'thichkhach',n:8,title:'Thích khách áo đen',d:[['黑衣人来寺里。','Hēiyī rén lái sì li.','Người áo đen đến chùa.']],reward:{exp:420,bac:320,item:3}},
+  {id:'q23',npc:'thuongnhan',type:'lesson',lesson:9,title:'Bài 9 · 我想买水果',reward:{exp:340,stone:6,ingr:{rau:2}}},
+  {id:'q24',npc:'quanvo',type:'pk',n:1,title:'Trừng trị kẻ PK',d:[['有人在路上打人！','Yǒu rén zài lù shang dǎ rén!','Có kẻ đánh người trên đường!']],reward:{exp:300,bac:300}},
+  {id:'q25',npc:'sukhong',type:'lesson',lesson:10,title:'Bài 10 · 你在哪儿工作',reward:{exp:360,stone:6}},
+  {id:'q26',npc:'quanvo',type:'kill',mob:'ho',n:6,title:'Hổ dữ ngoài thành',d:[['山上的老虎很大！','Shān shang de lǎohǔ hěn dà!','Hổ trên núi rất to!']],reward:{exp:520,bac:400,item:3}},
+  {id:'q27',npc:'thoren2',type:'lesson',lesson:16,title:'Bài đặc biệt · 江湖 (1)',reward:{exp:380,stone:8}},
+  {id:'q28',npc:'thoren2',type:'lesson',lesson:17,title:'Bài đặc biệt · 江湖 (2)',reward:{exp:400,stone:8,item:3}},
+  {id:'q29',npc:'quanvo',type:'boss',boss:'thanglong',title:'Hắc Phong Trại',d:[['黑风寨主很厉害。','Hēifēng zhàizhǔ hěn lìhai.','Trại chủ Hắc Phong rất lợi hại.'],['打败他，你就可以去云屯港。','Dǎbài tā, nǐ jiù kěyǐ qù Yúntún gǎng.','Đánh bại hắn, ngài có thể đi cảng Vân Đồn.']],reward:{exp:1200,bac:1000,item:4}},
+  {id:'q30',npc:'cangchu',type:'talk',title:'Cửa biển Vân Đồn',d:[['这里是云屯港，有很多船。','Zhèli shì Yúntún gǎng, yǒu hěn duō chuán.','Đây là cảng Vân Đồn, có rất nhiều thuyền.']],reward:{exp:400,bac:400}},
+  {id:'q31',npc:'thuongthuyen',type:'lesson',lesson:11,title:'Bài 11 · 书在桌子上',reward:{exp:500,stone:8}},
+  {id:'q32',npc:'baohiem',type:'lesson',lesson:18,title:'Bài đặc biệt · 保险 Bảo hộ hàng hóa',reward:{exp:600,stone:10,item:4}},
+  {id:'q33',npc:'thuongthuyen',type:'sail',title:'Ra khơi',d:[['你会开船吗？','Nǐ huì kāi chuán ma?','Ngài biết lái thuyền không?'],['坐我的船去海上看看！','Zuò wǒ de chuán qù hǎi shang kànkan!','Ngồi thuyền tôi ra biển xem!']],reward:{exp:500,bac:500}},
+  {id:'q34',npc:'cangchu',type:'lesson',lesson:12,title:'Bài 12 · 现在几点',reward:{exp:550,stone:8}},
+  {id:'q35',npc:'cangchu',type:'kill',mob:'haitac',n:10,title:'Hải tặc quấy cảng',d:[['海盗太多了！','Hǎidào tài duō le!','Hải tặc nhiều quá!']],reward:{exp:900,bac:800,item:4}},
+  {id:'q36',npc:'thuongthuyen',type:'lesson',lesson:13,title:'Bài 13 · 天气怎么样',reward:{exp:600,stone:8}},
+  {id:'q37',npc:'thuongthuyen',type:'lesson',lesson:14,title:'Bài 14 · Giấc mơ nghìn năm sau',reward:{exp:650,stone:10}},
+  {id:'q38',npc:'cangchu',type:'lesson',lesson:15,title:'Bài 15 · 我是骑马来的',reward:{exp:700,stone:10,item:4}},
+  {id:'q39',npc:'cangchu',type:'boss',boss:'vandon',title:'Xích Tu Hải Tặc Vương',d:[['海盗王住在东边的岛上。','Hǎidào wáng zhù zài dōngbian de dǎo shang.','Hải tặc vương sống trên đảo phía đông.']],reward:{exp:4000,bac:3000,item:5}},
+  {id:'q40',npc:'cangchu',type:'talk',title:'Hẹn ngày sang đất Tống',d:[['你学完了HSK一级！','Nǐ xué wán le HSK yī jí!','Ngài đã học xong HSK 1!'],['我们再见！','Wǒmen zàijiàn!','Hẹn gặp lại!']],reward:{exp:500,stone:15}}
 ];
