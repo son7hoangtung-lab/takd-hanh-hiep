@@ -105,6 +105,7 @@ function kimlien(){const W=260,H=200;const m=new Map('kimlien',W,H,'grass');cons
   m.amb('trau',28,8,226,60,9,{tiles:['paddy','dirt']});m.amb('trau',38,152,90,192,3,{tiles:['paddy','dirt']});m.amb('co',28,8,226,60,16,{tiles:['paddy','lotus']});m.amb('co',100,156,160,186,6,{tiles:['lotus']});
   m.amb('vit',142,118,162,126,6,{water:1});m.amb('vit',104,160,156,180,8,{water:1});m.amb('ga',88,76,168,132,18,{tiles:['grass','meadow','dirt','floor','flowers','cobble']});
   m.amb('dan',88,76,168,132,26,{tiles:['dirt','floor','cobble']});m.amb('sampan',240,2,256,196,3,{water:1});
+  m.labels=[[128,34,'Cánh đồng lúa phía Bắc'],[130,184,'Hồ sen Kim Liên'],[128,92,'Làng Kim Liên'],[248,96,'Sông Kim Ngưu'],[40,104,'Rừng tre'],[18,190,'Trại sơn tặc'],[64,172,'Ruộng phía Tây Nam'],[202,172,'Ruộng phía Đông Nam'],[238,114,'Bến đò']];
   m.start=[128,108];return m;}
 
 // ================= KINH THÀNH THĂNG LONG =================

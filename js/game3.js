@@ -24,7 +24,7 @@ G.useRage=function(){if((G.P.rage||0)<G.rageMax||G.learn.active)return;let ok=0,
   ask();};
 // ---- chạm để đi / nhắm mục tiêu ----
 G.tapGround=function(x,y){if(G.paused)return;const s=S();s.meditate=false;G.chase=null;const m=G.map,P=G.P;const tx=x/T|0,ty=y/T|0;
-  if(m.blocked(tx,ty,!!P.boat)){return;}const path=G.findPath(m,P.x/T|0,P.y/T|0,tx,ty,!!P.boat,30000);if(path)G.auto={path,i:0,goal:null};};
+  if(m.blocked(tx,ty,!!P.boat)){return;}const path=G.findPath(m,P.x/T|0,P.y/T|0,tx,ty,!!P.boat,90000);if(path)G.auto={path,i:0,goal:null};else G.ui.toast('Không tìm được đường');};
 G.tapNpc=function(n){if(G.paused)return;S().meditate=false;G.chase=null;if(dist(n,G.P)<40){G.ui.dialog(n);return;}const m=G.map,P=G.P;const path=G.findPath(m,P.x/T|0,P.y/T|0,n.x/T|0,n.y/T|0,false,30000);if(path)G.auto={path,i:0,goal:{kind:'npc',npc:n.id,x:n.x,y:n.y}};};
 G.tapMob=function(mb){if(G.paused)return;S().meditate=false;G.chase=mb;G.target=mb;G.autoStop&&(G.auto=null);};
 // ---- mỗi khung ----

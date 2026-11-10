@@ -192,7 +192,17 @@ button{font-family:inherit;color:inherit;cursor:pointer}
 .cname{font-family:var(--f-cal);font-size:26px;color:var(--gold2)}
 .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:5px;margin-top:8px}.stats div{background:#2a1c17;border-radius:8px;padding:6px 9px;font-size:12.5px;display:flex;justify-content:space-between;gap:6px}
 .skillrow{display:flex;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid rgba(217,164,65,.12);font-size:13px}.skillrow.lock{opacity:.5}.skillrow canvas{width:36px;height:28px;image-rendering:pixelated}
-#bigmap{width:100%;image-rendering:pixelated;border:1px solid var(--gold);border-radius:10px}
+#bigmap{width:100%;display:block;border-radius:8px;cursor:pointer}
+.mapbar{display:flex;align-items:center;gap:6px;margin-bottom:6px}.mapbar .sp{flex:1}.btn.sm{padding:5px 10px;font-size:12px}
+.mapwrap{position:relative;max-height:62vh;overflow:auto;border-radius:10px;box-shadow:0 0 0 1px var(--gold);-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y}
+.mapin{position:relative}
+.you{position:absolute;width:0;height:0;pointer-events:none}
+.you i{position:absolute;left:-9px;top:-9px;width:18px;height:18px;border-radius:50%;background:#e8352a;box-shadow:0 0 0 3px #fff,0 0 10px 3px rgba(232,53,42,.8)}
+.you i::after{content:"";position:absolute;inset:-14px;border-radius:50%;border:3px solid #ff5a4a;animation:youp 1.4s ease-out infinite}
+.you span{position:absolute;left:0;top:-36px;transform:translateX(-50%);white-space:nowrap;background:#e8352a;color:#fff;font:800 11px var(--f-ui);padding:2px 7px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,.5)}
+@keyframes youp{from{transform:scale(.4);opacity:1}to{transform:scale(1.6);opacity:0}}
+.legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:11px;color:var(--muted);margin:6px 2px}.legend i{display:inline-block;width:10px;height:10px;margin-right:4px;vertical-align:-1px;border-radius:2px}
+.rgv{font-size:16px;color:var(--gold2)}
 .rank{display:grid;gap:2px}.rr{display:grid;grid-template-columns:28px 1fr auto 52px;gap:6px;font-size:13px;padding:5px 6px;border-radius:6px;align-items:center}.rr:nth-child(odd){background:#2a1c17}.rr.me{background:var(--son2);font-weight:700}
 .rr .no{color:var(--muted);font-variant-numeric:tabular-nums}.rr .rs{font-family:var(--f-zh);font-size:12px;color:var(--muted)}.rr b{text-align:right;font-variant-numeric:tabular-nums}
 .tg{display:flex;gap:10px;align-items:center;padding:10px 0;font-size:14px;border-bottom:1px solid rgba(217,164,65,.15)}.tg input{width:22px;height:22px;accent-color:var(--son)}
@@ -247,6 +257,18 @@ select,textarea{width:100%;box-sizing:border-box;background:#2a1c17;color:var(--
 @media (orientation:landscape) and (max-height:500px){#stick-zone{height:80%}.b-zh{font-size:40px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 button:focus-visible{outline:2px solid var(--gold2);outline-offset:2px}
+/* chú thích nhỏ (i): bấm để xem từ tiếng Trung */
+.ic{font-size:16px;line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.6))}
+.ih{position:absolute;top:-3px;right:-3px;width:13px;height:13px;border-radius:50%;background:rgba(47,111,98,.92);color:#fff;font:italic 800 8.5px/13px Georgia,serif;text-align:center;box-shadow:0 0 0 1px var(--gold2);z-index:2;cursor:pointer}
+.ih::after{content:"";position:absolute;inset:-8px}
+.ih.inl{position:relative;display:inline-block;top:-5px;right:auto;margin-left:3px;vertical-align:baseline}
+#tip{position:fixed;z-index:30;min-width:120px;max-width:220px;background:linear-gradient(180deg,#2a1c17,#140c09);box-shadow:var(--rim);border-radius:10px;padding:7px 10px;pointer-events:auto;text-align:center}
+#tip .tz{font:900 26px var(--f-zh);color:var(--gold2);line-height:1.15}#tip .tp{color:#7fe0ff;font-weight:700;font-size:13px}#tip .tv{font-size:12px;color:var(--paper)}#tip .tsay{margin-top:4px;border:0;border-radius:8px;background:var(--jade);color:#fff;font:700 11px var(--f-ui);padding:3px 9px}
+.zs{font-family:var(--f-zh);font-size:.82em;color:var(--muted);font-weight:500}
+#btn-atk{flex-direction:column;gap:1px}#btn-atk .ic{font-size:30px}#btn-atk em{font:800 12px var(--f-ui);font-style:normal;color:var(--gold2)}
+.qs .ic{font-size:15px}.qs em{position:absolute;left:0;right:0;bottom:-1px;font:700 7px var(--f-ui);font-style:normal;color:var(--muted);text-align:center;white-space:nowrap}.qs .ic{margin-top:-6px}
+.sk .vn{font:800 10.5px/1.1 var(--f-ui);text-align:center;padding:0 3px}
+.ctab{font-size:9.5px}
 </style>
 
 <canvas id="gl"></canvas>
@@ -255,25 +277,26 @@ button:focus-visible{outline:2px solid var(--gold2);outline-offset:2px}
 <div id="stick" hidden><div id="knob"></div></div>
 <div id="hud">
   <div id="pframe"><div class="ava" id="ava">拳<span class="lv" id="h-lv">Lv 1</span></div>
-    <div class="pinfo"><div class="pname"><span>Kị sỹ Takd</span><button id="pkstate">练功</button></div><div id="h-title"></div>
+    <div class="pinfo"><div class="pname"><span>Kị sỹ Takd</span><button id="pkstate"></button></div><div id="h-title"></div>
       <div class="bars"><div class="bar"><i id="h-hp"></i><span id="h-hpt"></span></div><div class="bar"><i id="h-mp"></i><span id="h-mpt"></span></div><div class="bar" style="height:6px"><i id="h-sp"></i></div></div>
       <div class="money"><span>💰 <b id="h-bac">0</b></span><span>💎 <b id="h-stone">0</b></span></div><div id="buffs"></div></div></div>
   <div id="target" hidden><div class="tn" id="t-name"></div><div class="tb"><i id="t-hp"></i><span id="t-hpt"></span></div></div>
-  <div id="mapframe"><div class="mapring"><canvas id="minimap" width="200" height="200"></canvas><span class="nz">北</span></div>
+  <div id="mapframe"><div class="mapring"><canvas id="minimap" width="200" height="200"></canvas><span class="nz">B</span></div>
     <button class="zoombtn" id="zin" aria-label="Phóng to">+</button><button class="zoombtn" id="zout" aria-label="Thu nhỏ">−</button>
     <div class="mapinfo"><b id="h-region"></b><span id="h-clock"></span></div>
-    <div class="icons"><button class="ico" data-open="rank"><span class="zh">榜</span><em>X.hạng</em></button><button class="ico" data-open="char"><span class="zh">就</span><em>T.tựu</em></button><button class="ico" id="i-auto"><span class="zh">自</span><em>Tự động</em></button>
-      <button class="ico" data-open="quest"><span class="zh">礼</span><em>Năng động</em></button><button class="ico" data-open="study"><span class="zh">学</span><em>Thư phòng</em></button><button class="ico" data-open="map"><span class="zh">图</span><em>Bản đồ</em></button></div></div>
+    <div class="icons"><button class="ico" data-open="rank" data-h="排行榜|páihángbǎng|bảng xếp hạng"><span class="ic">🏆</span><em>X.hạng</em></button><button class="ico" data-open="char" data-h="成就|chéngjiù|thành tựu"><span class="ic">🎖️</span><em>T.tựu</em></button><button class="ico" id="i-auto" data-h="自动|zìdòng|tự động"><span class="ic">⚔️</span><em>Tự động</em></button>
+      <button class="ico" data-open="quest" data-h="任务|rènwu|nhiệm vụ"><span class="ic">📜</span><em>N.vụ</em></button><button class="ico" data-open="study" data-h="书房|shūfáng|thư phòng"><span class="ic">📚</span><em>Thư phòng</em></button><button class="ico" data-open="map" data-h="地图|dìtú|bản đồ"><span class="ic">🗺️</span><em>Bản đồ</em></button></div></div>
   <div id="quest"></div>
-  <div id="toolbar" class="fold"><button class="ico" id="tb-toggle"><span class="zh">☰</span><em>Menu</em></button><button class="ico" data-open="bag"><span class="zh">囊</span><em>Rương đồ</em></button>
-    <div class="more"><button class="ico" data-open="char"><span class="zh">人</span><em>Nhân vật</em></button><button class="ico" data-open="skills"><span class="zh">武</span><em>Võ công</em></button><button class="ico" data-open="rank"><span class="zh">友</span><em>Quan hệ</em></button>
-      <button class="ico" data-open="guild"><span class="zh">帮</span><em>Bang hội</em></button><button class="ico" data-open="pet"><span class="zh">伴</span><em>Đồng hành</em></button><button class="ico" data-open="life"><span class="zh">生</span><em>Kỹ năng sống</em></button><button class="ico" data-open="set"><span class="zh">设</span><em>Tùy chọn</em></button></div></div>
-  <div id="chatbox"><div class="ctabs"><button class="ctab on" data-ch="all">Chung</button><button class="ctab" data-ch="mat">Mật</button><button class="ctab" data-ch="bang">Bang</button><button class="ctab" data-ch="ban">Bạn</button><button class="ctab" data-ch="sys">H.thống</button><button class="ctab" data-ch="tu">Tự tạo</button></div>
+  <div id="toolbar" class="fold"><button class="ico" id="tb-toggle"><span class="ic">☰</span><em>Menu</em></button><button class="ico" data-open="bag" data-h="背包|bēibāo|túi đồ, rương đồ"><span class="ic">🎒</span><em>Rương đồ</em></button>
+    <div class="more"><button class="ico" data-open="char" data-h="人物|rénwù|nhân vật"><span class="ic">👤</span><em>Nhân vật</em></button><button class="ico" data-open="skills" data-h="武功|wǔgōng|võ công"><span class="ic">🥋</span><em>Võ công</em></button><button class="ico" data-open="rank" data-h="朋友|péngyou|bạn bè"><span class="ic">🤝</span><em>Quan hệ</em></button>
+      <button class="ico" data-open="guild" data-h="帮会|bānghuì|bang hội"><span class="ic">🏯</span><em>Bang hội</em></button><button class="ico" data-open="pet" data-h="同伴|tóngbàn|đồng hành"><span class="ic">🐕</span><em>Đồng hành</em></button><button class="ico" data-open="life" data-h="生活|shēnghuó|cuộc sống"><span class="ic">🎣</span><em>Kỹ năng sống</em></button><button class="ico" data-open="set" data-h="设置|shèzhì|cài đặt"><span class="ic">⚙️</span><em>Tùy chọn</em></button></div></div>
+  <div id="chatbox"><div class="ctabs"><button class="ctab on" data-ch="all">Chung</button><button class="ctab" data-ch="mat">Mật</button><button class="ctab" data-ch="bang">Bang</button><button class="ctab" data-ch="ban">Bạn</button><button class="ctab" data-ch="sys">Hệ thống</button><button class="ctab" data-ch="tu">Riêng</button></div>
     <div id="chat"></div><div class="emo" id="emo"></div></div>
   <div id="bottom"><div id="qbar"></div><div id="expbar"><i id="h-exp"></i><span id="h-expt"></span></div></div>
 </div>
+<div id="tip" hidden></div>
 <button id="btn-act" hidden></button>
-<div class="pad"><button id="btn-atk" aria-label="Đánh">打</button><button class="sk" id="sk0"></button><button class="sk" id="sk1"></button><button class="sk" id="sk2"></button><button class="sk" id="sk3"></button><button class="sk" id="sk4"></button><button class="sk" id="sk5"></button></div>
+<div class="pad"><button id="btn-atk" aria-label="Đánh" data-h="打|dǎ|đánh"><span class="ic">⚔️</span><em>Đánh</em></button><button class="sk" id="sk0"></button><button class="sk" id="sk1"></button><button class="sk" id="sk2"></button><button class="sk" id="sk3"></button><button class="sk" id="sk4"></button><button class="sk" id="sk5"></button></div>
 <div id="toasts"></div><div id="banner"></div><div id="fade"></div>
 <div id="quiz" hidden></div>
 <div id="sheet" hidden><div class="sh-head"><div id="sheet-title"></div><button id="sheet-close">✕ Đóng</button></div><div id="sheet-body"></div></div>
