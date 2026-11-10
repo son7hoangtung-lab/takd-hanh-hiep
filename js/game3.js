@@ -3,10 +3,10 @@
 const T=G.T, dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 G.PKMODES=[['luyen','练功','Luyện công','#7ed37a'],['phe','阵营','PK phe','#5aa8ff'],['bang','帮会','PK bang','#ffd84a'],['dosat','屠杀','Đồ sát','#ff5d5d']];
 function S(){return G.S;}
-G.initExtra=function(){const s=S();if(s.mounted==null)s.mounted=true;if(s.run==null)s.run=true;if(!s.pkMode)s.pkMode='luyen';if(s.sp==null)s.sp=100;if(!s.slots)s.slots=['s0','s1','s2','s3','s4','s5','kimsang','hoikhi','food'];
+G.initExtra=function(){const s=S();G.storyInit();if(s.mounted==null)s.mounted=!!s.gear.horse;if(!s.gear.horse)s.mounted=false;if(s.run==null)s.run=true;if(!s.pkMode)s.pkMode='luyen';if(s.sp==null)s.sp=100;if(!s.slots)s.slots=['s0','s1','s2','s3','s4','s5','kimsang','hoikhi','food'];
   if(!s.food)s.food={};if(s.food.kimsang==null)s.food.kimsang=3;if(s.food.hoikhi==null)s.food.hoikhi=2;G.P.rage=G.P.rage||0;};
 G.speedMul=function(){const s=S();if(G.P.boat)return 1;if(s.meditate)return 0;if(s.mounted)return 1.3;return s.run&&s.sp>0?1:0.55;};
-G.toggleMount=function(){const s=S();if(G.P.boat)return;s.mounted=!s.mounted;s.meditate=false;G.audio.sfx(s.mounted?'bark':'click');G.ui.toast(s.mounted?'🐎 Lên ngựa 上马':'Xuống ngựa 下马',1200);};
+G.toggleMount=function(){const s=S();if(G.P.boat)return;if(!s.gear.horse){G.ui.toast('Chưa có ngựa – làm nhiệm vụ ở Phu dịch trạm để được tặng ngựa');return;}s.mounted=!s.mounted;s.meditate=false;G.audio.sfx(s.mounted?'bark':'click');G.ui.toast(s.mounted?'🐎 Lên ngựa 上马':'Xuống ngựa 下马',1200);};
 G.toggleRun=function(){const s=S();s.run=!s.run;G.ui.toast(s.run?'Chạy 跑':'Đi bộ 走',1000);};
 G.toggleMeditate=function(){const s=S();if(G.P.boat)return;if(G.mobs.some(m=>m.hp>0&&m.st==='chase'&&dist(m,G.P)<160)){G.ui.toast('Đang bị tấn công, không thể ngồi thiền');return;}s.meditate=!s.meditate;if(s.meditate){s.mounted=false;G.autoStop&&G.autoStop();G.ui.toast('🧘 Ngồi thiền 打坐 – hồi nhanh sinh lực, nội lực, thể lực',2200);}};
 G.toggleAuto=function(){const s=S();s.autoFight=!s.autoFight;G.chase=null;if(G.autoStop)G.autoStop();G.ui.toast(s.autoFight?'⚔ Bật tự động chiến đấu 自动战斗':'Tắt tự động chiến đấu',1500);};
@@ -41,7 +41,43 @@ G.extUpdate3=function(dt){const s=S(),P=G.P;if(!s)return;const st=G.stats();cons
     if(d>reach){if(pathT<=0||!G.auto){pathT=0.8;const path=G.findPath(G.map,P.x/T|0,P.y/T|0,c.x/T|0,c.y/T|0,!!P.boat,20000);if(path){path.pop();G.auto={path,i:0,goal:null};}}}
     else{G.auto=null;P.move={x:0,y:0};P.face=c.x>=P.x?1:-1;P.dir={x:(c.x-P.x)/(d||1),y:(c.y-P.y)/(d||1)};G.attack();}}
   if(G.target&&(G.target.hp<=0||dist(G.target,P)>420))G.target=null;
-  if(!G.target){const b=G.mobs.find(m=>m.boss&&m.hp>0&&m.st==='chase');if(b)G.target=b;}};
+  if(!G.target){const b=G.mobs.find(m=>m.boss&&m.hp>0&&m.st==='chase');if(b)G.target=b;}
+  G.mobs.forEach(m=>{if(m.boss&&!m.wb&&m.hp>0&&m.hp<m.max)bossChallenge(m);});};
+// ===== HÀNH TRÌNH TỪ TAY TRẮNG =====
+G.RANKS=[['农夫','nóngfū','Nông phu'],['武生','wǔshēng','Võ sinh'],['侠客','xiákè','Hiệp khách'],['掌门','zhǎngmén','Chưởng môn'],['城主','chéngzhǔ','Thành chủ'],['镇守','zhènshǒu','Trấn thủ'],['王','wáng','Vương'],['霸主','bàzhǔ','Bá chủ thiên hạ']];
+G.GEAR={shiba:['柴犬','Chó Shiba','🐕'],staff:['竹棍','Gậy tre','🎋'],armor:['铠甲','Giáp trụ','🛡️'],horse:['战马','Chiến mã','🐎'],mace:['铜锤','Chùy đồng','🔨']};
+G.storyInit=function(){const s=S();if(!s.v2){// bản cũ: bắt đầu lại hành trình, giữ tiến độ học
+    s.v2=1;s.q={i:0,st:'new',p:0};s.gear={};s.rank=0;s.conq={};s.taxTs={};s.bosses={};s.unlocked={kimlien:1};s.mounted=false;s.map='kimlien';s.x=null;s.y=null;s.equip=s.equip||{};}
+  s.gear=s.gear||{};s.rank=s.rank||0;s.conq=s.conq||{};s.taxTs=s.taxTs||{};s.cards=s.cards||{};};
+G.rankName=function(){const r=G.RANKS[S().rank||0];return r[2];};
+G.playerKind=function(){const g=S().gear||{};if(!g.armor)return g.staff||g.mace?'takd1':'takd0';return g.mace?'takd':'takd2';};
+G.npcCond=function(c,mapId){const s=S();if(c==='noShiba')return !(s.gear&&s.gear.shiba);if(c==='conq')return !!(s.conq&&s.conq[mapId]);return true;};
+// chỉ số theo trang bị câu chuyện
+const _stats=G.stats;G.stats=function(){const st=_stats();const g=(S()&&S().gear)||{};
+  if(g.mace){st.atk+=10;st.crit+=3;}else if(g.staff)st.atk+=3;else st.atk=Math.round(st.atk*0.85);if(g.armor){st.def+=6;st.hp+=40;}return st;};
+// phần thưởng: trang bị câu chuyện, danh hiệu
+const _give=G.giveReward;G.giveReward=function(r){_give(r);if(!r)return;const s=S();
+  if(r.gear&&!s.gear[r.gear]){s.gear[r.gear]=1;const g=G.GEAR[r.gear];G.ui.toast(`${g[2]} Nhận được <b>${g[1]}</b> <span class="zs">${g[0]}</span>`,3500);G.audio.sfx('gong');
+    if(r.gear==='horse'){s.mounted=true;}if(r.gear==='shiba'){G.shiba.x=G.P.x-20;G.shiba.y=G.P.y;}G.save();}
+  if(r.rank!=null&&r.rank>(s.rank||0))G.setRank(r.rank);};
+G.setRank=function(n){const s=S();s.rank=n;const r=G.RANKS[n];G.ui.big&&G.ui.big('Thăng danh hiệu',r[2],r[0]+' '+r[1]);G.ui.toast(`🎖️ Danh hiệu mới: <b>${r[2]}</b> <span class="zs">${r[0]} ${r[1]}</span>`,4000);G.audio.sfx('gong');G.audio.say(r[0]);};
+// ===== CHIẾM THÀNH =====
+G.TAX={kimlien:30,thanglong:80,vandon:120};
+G.conquer=function(id){const s=S();if(s.conq[id])return;s.conq[id]=Date.now();s.taxTs[id]=Date.now();const reg=G.REGIONS[id];
+  G.ui.big&&G.ui.big('Chiếm được',reg.vi,'占领 '+reg.zh);G.ui.toast(`🚩 Cờ Muay Việt đã cắm trên <b>${reg.vi}</b>!<br>Mỗi giờ thu <b>${G.TAX[id]||30} lượng</b> thuế – gặp Lý trưởng để thu.`,5000);
+  if((s.rank||0)<4)G.setRank(4);G.audio.say('占领'+reg.zh);
+  // lính về theo
+  (G.NPCS[id]||[]).filter(n=>n.cond==='conq').forEach(n=>{if(!G.npcs.find(x=>x.id===n.id))G.npcs.push(Object.assign({},n,{x:n.x*T+T/2,y:n.y*T+T/2,f:0}));});G.save();};
+G.taxDue=function(id){const s=S();if(!s.conq[id])return 0;const h=Math.min(24,(Date.now()-(s.taxTs[id]||Date.now()))/36e5);return Math.floor(h*(G.TAX[id]||30));};
+G.collectTax=function(id){const n=G.taxDue(id);if(n<1){G.ui.toast('Chưa đến kỳ thu thuế – quay lại sau');return 0;}S().taxTs[id]=Date.now();G.addBac(n,G.P.x,G.P.y);G.audio.sfx('coin');G.ui.toast(`💰 Thu thuế <b>${n} lượng</b> 收税 shōu shuì`);G.audio.say('收税');return n;};
+const _spawnBoss=G.spawnBoss;G.spawnBoss=function(){if(G.map&&S().conq[G.map.id])return;_spawnBoss();};
+// thủ lĩnh thách đấu: ở 66% và 33% máu phải trả lời câu hỏi, sai thì thủ lĩnh hồi máu
+function bossChallenge(b){const steps=[.66,.33];b._ch=b._ch||0;if(b._ch>=steps.length||b.hp/b.max>steps[b._ch]||G.learn.active)return;b._ch++;
+  G.ui.toast(`⚔️ <b>${b.name.vi}</b> thách đấu chữ nghĩa!`,1800);G.learn.quiz({skill:{zh:'挑战',vi:'Thủ lĩnh thách đấu',col:'#ff5d5d'},onDone:(ok)=>{if(ok){const d=Math.round(b.max*.08);b.hp-=d;G.float(b.x,b.y-40,'破 -'+d,'#ffd84a',true);if(b.hp<=0)G._kill(b);}else{b.hp=Math.min(b.max,b.hp+b.max*.15);G.float(b.x,b.y-40,'Hồi máu +15%','#ff5d5d',true);}}});}
+// thẻ chữ rơi từ quái
+G.gainCard=function(ch,x,y){const s=S();s.cards[ch]=(s.cards[ch]||0)+1;const c=G.CHARS[ch]||{};G.float(x,y-14,'🀄 '+ch,'#c78aff',true);G.ui.toast(`🀄 Thẻ chữ <b class="zh" style="font-size:20px">${ch}</b> ${c.py||''} – ${c.vi||''}`,2200);G.audio.say(ch);};
+function cardPool(){const L=G.LESSONS||[];const done=Object.keys(S().lessons||{}).map(Number);const upto=Math.max(1,...done,0)+1;const set=new Set();L.filter(l=>l.n<=upto&&l.n<=15).forEach(l=>l.words.forEach(w=>[...w].forEach(c=>{if(G.CHARS[c])set.add(c);})));return [...set];}
+G.cardDrop=function(t){if(t.boss||Math.random()>.14)return;const pool=cardPool();if(!pool.length)return;G.drops.push({x:t.x+(Math.random()-.5)*14,y:t.y+6,card:pool[(Math.random()*pool.length)|0]});};
 // gắn vào vòng cập nhật
 const prev=G.extUpdate;G.extUpdate=function(dt,dtRaw){prev&&prev(dt,dtRaw);G.extUpdate3(dt);};
 })();

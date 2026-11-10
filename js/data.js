@@ -244,10 +244,7 @@ G.ENH_RATE = [1,1,1,.95,.9,.8,.7,.55,.45,.35,.25,.15];
 // --- Quái vật: base theo vùng ---
 G.MOB_BASE = {
   kimlien:[
-    {id:'chuot',zh:'狐狸',vi:'Cáo đồng',art:'fox',hp:30,atk:5,spd:42,lv:1,exp:8,drop:'thit'},
-    {id:'ran',zh:'蛤蟆',vi:'Cóc tía',art:'frog',hp:45,atk:8,spd:36,lv:2,exp:12},
-    {id:'cho',zh:'野狗',vi:'Chó hoang',art:'husky',hp:70,atk:11,spd:55,lv:4,exp:18,drop:'thit'},
-    {id:'sontac',zh:'山贼',vi:'Sơn tặc',art:'bandit',hp:110,atk:15,spd:44,lv:6,exp:28}
+    {id:'soirung',zh:'野狼',vi:'Sói rừng',art:'wolf',hp:34,atk:6,spd:46,lv:1,exp:9,drop:'thit'}
   ],
   thanglong:[
     {id:'soi',zh:'野狼',vi:'Sói hoang',art:'wolf',hp:180,atk:22,spd:60,lv:9,exp:40,drop:'thit'},
@@ -270,7 +267,7 @@ G.MOB_TIER = [
   {zh:'首领',vi:'Thủ lĩnh',m:4.2,col:'#ffd84a'}
 ];
 G.BOSSES = {
-  kimlien:{id:'b1',zh:'莲池蟾精',vi:'Liên Trì Thiềm Tinh',art:'bossfrog',hp:1500,atk:24,spd:30,lv:8,exp:400,unlock:'thanglong'},
+  kimlien:{id:'b1',zh:'虎须恶霸',vi:'Ác bá Râu Hùm',art:'cuonghao',hp:1800,atk:26,spd:34,lv:10,exp:600,unlock:'thanglong',leader:1},
   thanglong:{id:'b2',zh:'黑风寨主',vi:'Hắc Phong Trại Chủ',art:'warlord',hp:6000,atk:62,spd:44,lv:18,exp:1500,unlock:'vandon'},
   vandon:{id:'b3',zh:'赤须海盗王',vi:'Xích Tu Hải Tặc Vương',art:'warlord',tint:'#9a2222',hp:16000,atk:110,spd:48,lv:28,exp:4000,unlock:null}
 };
@@ -328,7 +325,10 @@ G.NPCS = {
     {id:'thaydo',zh:'私塾先生',vi:'Thầy đồ',art:'scholar',x:156,y:100,role:'study'},
     {id:'dichtram',zh:'驿站',vi:'Phu dịch trạm',art:'groom',x:91,y:105,role:'teleport'},
     {id:'thaylang',zh:'郎中',vi:'Thầy lang',art:'doctor',x:146,y:115,shop:'medicine'},
-    {id:'caothi',zh:'告示',vi:'Bảng cáo thị',art:'board',x:131,y:90,role:'board'}
+    {id:'caothi',zh:'告示',vi:'Bảng cáo thị',art:'board',x:131,y:90,role:'board'},
+    {id:'chohoang',zh:'小狗',vi:'Chó hoang',art:'shiba',x:76,y:108,cond:'noShiba'},
+    {id:'linh1',zh:'越拳兵',vi:'Lính Muay Việt',art:'soldier',x:138,y:104,cond:'conq'},
+    {id:'linh2',zh:'越拳兵',vi:'Lính Muay Việt',art:'soldier',x:145,y:104,cond:'conq'}
   ],
   thanglong:[
     {id:'quanvo',zh:'武官',vi:'Quan võ',art:'officer',x:73,y:96},
@@ -348,23 +348,28 @@ G.NPCS = {
 // --- Nhiệm vụ chính (type: talk, kill, boss, fish, cook, learn, write, speak, goto, sail, enhance, pk) ---
 // d = hội thoại khi nhận: [zh, pinyin, vi]
 G.MAIN_QUESTS = [
-  {id:'q1',npc:'lytruong',type:'talk',title:'Trưởng môn về làng',d:[['你好！欢迎回来！','Nǐ hǎo! Huānyíng huílai!','Chào ngài! Mừng ngài trở về!'],['先去学习吧。','Xiān qù xuéxí ba.','Trước hết hãy đi học đã.']],reward:{exp:30,bac:50}},
-  {id:'q2',npc:'thaydo',type:'lesson',lesson:1,title:'Bài 1 · 你好 Xin chào',reward:{exp:80,stone:3}},
-  {id:'q3',npc:'lytruong',type:'kill',mob:'chuot',n:5,title:'Cáo phá ruộng',d:[['田里有很多狐狸。','Tián li yǒu hěn duō húli.','Ngoài đồng có rất nhiều cáo.'],['请你打五只！','Qǐng nǐ dǎ wǔ zhī!','Xin ngài đánh năm con!']],reward:{exp:60,bac:80,item:1}},
-  {id:'q4',npc:'trangba',type:'lesson',lesson:2,title:'Bài 2 · 谢谢你 Cảm ơn bạn',reward:{exp:90,stone:3,ingr:{gao:1}}},
-  {id:'q5',npc:'thoren',type:'enhance',n:1,title:'Rèn chùy',d:[['你的锤太小了！','Nǐ de chuí tài xiǎo le!','Chùy của ngài nhỏ quá!'],['我帮你强化。','Wǒ bāng nǐ qiánghuà.','Tôi cường hóa giúp ngài.']],reward:{exp:50,bac:60}},
-  {id:'q6',npc:'thaydo',type:'lesson',lesson:3,title:'Bài 3 · 你叫什么名字',reward:{exp:100,stone:3}},
-  {id:'q7',npc:'trangba',type:'kill',mob:'ran',n:6,title:'Cóc tía bờ ao',d:[['湖边有很多蛤蟆。','Hú biān yǒu hěn duō háma.','Bên hồ có rất nhiều cóc.'],['我很怕！','Wǒ hěn pà!','Tôi sợ lắm!']],reward:{exp:90,bac:90,item:1}},
-  {id:'q8',npc:'lytruong',type:'lesson',lesson:4,title:'Bài 4 · 她是谁 Cô ấy là ai',reward:{exp:110,stone:3}},
-  {id:'q9',npc:'ngung',type:'fish',n:3,title:'Câu cá ở bến đò',d:[['你喜欢吃鱼吗？','Nǐ xǐhuan chī yú ma?','Ngài thích ăn cá không?'],['我们去钓三条鱼吧。','Wǒmen qù diào sān tiáo yú ba.','Chúng ta đi câu ba con cá nhé.']],reward:{exp:80,bac:50,ingr:{gao:2,rau:1}}},
-  {id:'q10',npc:'thoren',type:'lesson',lesson:5,title:'Bài 5 · 一二三 Số đếm',reward:{exp:120,stone:4}},
-  {id:'q11',npc:'ngung',type:'cook',n:1,title:'Bữa cơm bên bến đò',d:[['你饿了吗？','Nǐ è le ma?','Ngài đói chưa?'],['用鱼做菜吧！','Yòng yú zuò cài ba!','Lấy cá nấu món đi!']],reward:{exp:60,ingr:{thit:1,gao:2}}},
-  {id:'q12',npc:'ngung',type:'lesson',lesson:6,title:'Bài 6 · 我家有几个人',reward:{exp:130,stone:4}},
-  {id:'q13',npc:'lytruong',type:'kill',mob:'cho',n:6,title:'Chó hoang rừng tre',d:[['竹林里有野狗。','Zhúlín li yǒu yěgǒu.','Trong rừng tre có chó hoang.'],['它们很大，很多！','Tāmen hěn dà, hěn duō!','Chúng rất to, rất nhiều!']],reward:{exp:140,bac:120,item:2}},
-  {id:'q14',npc:'thaydo',type:'write',n:3,title:'Luyện viết ba chữ',d:[['写字要慢慢写。','Xiě zì yào mànmàn xiě.','Viết chữ phải viết từ từ.']],reward:{exp:90,stone:4}},
-  {id:'q15',npc:'thaydo',type:'speak',n:3,title:'Luyện nói ba câu',d:[['你会说汉语吗？','Nǐ huì shuō Hànyǔ ma?','Ngài biết nói tiếng Hán không?']],reward:{exp:100,stone:4}},
-  {id:'q16',npc:'lytruong',type:'kill',mob:'sontac',n:8,title:'Dẹp sơn tặc',d:[['山贼来了！','Shānzéi lái le!','Sơn tặc đến rồi!'],['掌门，请你帮我们！','Zhǎngmén, qǐng nǐ bāng wǒmen!','Chưởng môn, xin giúp chúng tôi!']],reward:{exp:220,bac:200,item:2}},
-  {id:'q17',npc:'lytruong',type:'boss',boss:'kimlien',title:'Thiềm Tinh hồ Kim Liên',d:[['湖里有一个蟾精！','Hú li yǒu yí gè chánjīng!','Giữa hồ có một con cóc tinh!'],['打败它，你就能去升龙城。','Dǎbài tā, nǐ jiù néng qù Shēnglóng chéng.','Đánh bại nó, ngài có thể lên thành Thăng Long.']],reward:{exp:400,bac:400,item:3}},
+  {id:'k1',npc:'lytruong',type:'talk',title:'Chàng trai tay trắng',d:[['你好！你是谁？','Nǐ hǎo! Nǐ shì shéi?','Chào cậu! Cậu là ai?'],['你没有钱，也没有家。','Nǐ méiyǒu qián, yě méiyǒu jiā.','Cậu không có tiền, cũng chẳng có nhà.'],['先去学习吧！','Xiān qù xuéxí ba!','Trước hết hãy đi học đi!']],reward:{exp:30,bac:30}},
+  {id:'k2',npc:'thaydo',type:'lesson',lesson:1,title:'Bài 1 · 你好 Xin chào',reward:{exp:80,stone:3}},
+  {id:'k3',npc:'chohoang',type:'talk',title:'Chú chó bìa rừng',d:[['汪汪！','Wāngwāng!','Gâu gâu!'],['小狗，你饿了吗？','Xiǎo gǒu, nǐ è le ma?','Cún con, mày đói à?'],['跟我走吧！','Gēn wǒ zǒu ba!','Đi theo ta nhé!']],reward:{exp:40,gear:'shiba'}},
+  {id:'k4',npc:'thoren',type:'talk',title:'Cây gậy tre',d:[['你没有武器吗？','Nǐ méiyǒu wǔqì ma?','Cậu không có vũ khí à?'],['这根竹棍给你。','Zhè gēn zhú gùn gěi nǐ.','Cây gậy tre này cho cậu.']],reward:{exp:40,gear:'staff'}},
+  {id:'k5',npc:'lytruong',type:'kill',mob:'soirung',n:6,title:'Sói bìa rừng',d:[['森林里有很多狼。','Sēnlín li yǒu hěn duō láng.','Trong rừng có rất nhiều sói.'],['请你打六只！','Qǐng nǐ dǎ liù zhī!','Xin cậu đánh sáu con!']],reward:{exp:100,bac:60,item:1}},
+  {id:'k6',npc:'trangba',type:'lesson',lesson:2,title:'Bài 2 · 谢谢你 Cảm ơn bạn',reward:{exp:90,stone:3,ingr:{gao:1}}},
+  {id:'k7',npc:'thoren',type:'enhance',n:1,title:'Học rèn đồ',d:[['东西要强化。','Dōngxi yào qiánghuà.','Đồ phải cường hóa.'],['我帮你。','Wǒ bāng nǐ.','Tôi giúp cậu.']],reward:{exp:60,bac:60}},
+  {id:'k8',npc:'thaydo',type:'lesson',lesson:3,title:'Bài 3 · 你叫什么名字',reward:{exp:100,stone:3}},
+  {id:'k9',npc:'lytruong',type:'kill',mob:'soirung',n:10,title:'Vào rừng hoang',d:[['大森林里的狼更多。','Dà sēnlín li de láng gèng duō.','Trong rừng lớn sói còn nhiều hơn.'],['穿上这件铠甲吧！','Chuān shang zhè jiàn kǎijiǎ ba!','Mặc bộ giáp này vào!']],reward:{exp:150,bac:90,gear:'armor',rank:1}},
+  {id:'k10',npc:'lytruong',type:'lesson',lesson:4,title:'Bài 4 · 她是谁 Cô ấy là ai',reward:{exp:110,stone:3}},
+  {id:'k11',npc:'ngung',type:'fish',n:3,title:'Câu cá ở bến đò',d:[['你喜欢吃鱼吗？','Nǐ xǐhuan chī yú ma?','Cậu thích ăn cá không?'],['我们去钓三条鱼吧。','Wǒmen qù diào sān tiáo yú ba.','Chúng ta đi câu ba con cá nhé.']],reward:{exp:80,bac:60}},
+  {id:'k12',npc:'thoren',type:'lesson',lesson:5,title:'Bài 5 · 一二三 Số đếm',reward:{exp:120,stone:4}},
+  {id:'k13',npc:'ngung',type:'cook',n:1,title:'Bữa cơm bên bến đò',d:[['你饿了吗？','Nǐ è le ma?','Cậu đói chưa?'],['用鱼做菜吧！','Yòng yú zuò cài ba!','Lấy cá nấu món đi!']],reward:{exp:60,ingr:{thit:1,gao:2}}},
+  {id:'k14',npc:'ngung',type:'lesson',lesson:6,title:'Bài 6 · 我家有几个人',reward:{exp:130,stone:4}},
+  {id:'k15',npc:'dichtram',type:'kill',mob:'soirung',n:15,title:'Con ngựa của dịch trạm',d:[['我的马很怕狼。','Wǒ de mǎ hěn pà láng.','Ngựa của tôi rất sợ sói.'],['你打十五只狼，我送你一匹马！','Nǐ dǎ shíwǔ zhī láng, wǒ sòng nǐ yì pǐ mǎ!','Cậu đánh mười lăm con sói, tôi tặng cậu một con ngựa!']],reward:{exp:220,bac:120,gear:'horse',rank:2}},
+  {id:'k16',npc:'thaydo',type:'write',n:3,title:'Luyện viết ba chữ',d:[['写字要慢慢写。','Xiě zì yào mànmàn xiě.','Viết chữ phải viết từ từ.']],reward:{exp:90,stone:4}},
+  {id:'k17',npc:'thaydo',type:'speak',n:3,title:'Luyện nói ba câu',d:[['你会说汉语吗？','Nǐ huì shuō Hànyǔ ma?','Cậu biết nói tiếng Hán không?']],reward:{exp:100,stone:4}},
+  {id:'k18',npc:'thoren',type:'talk',title:'Cây chùy đồng',d:[['你现在很厉害了！','Nǐ xiànzài hěn lìhai le!','Giờ cậu lợi hại lắm rồi!'],['我给你做了一把铜锤。','Wǒ gěi nǐ zuò le yì bǎ tóng chuí.','Tôi làm cho cậu một cây chùy đồng.']],reward:{exp:120,gear:'mace'}},
+  {id:'k19',npc:'thaydo',type:'talk',title:'Lập môn phái Muay Việt',d:[['你想开一个门派吗？','Nǐ xiǎng kāi yí gè ménpài ma?','Cậu muốn lập một môn phái à?'],['好名字：越拳门！','Hǎo míngzi: Yuèquán mén!','Tên hay: Việt Quyền Môn – Muay Việt!']],reward:{exp:200,stone:6,rank:3}},
+  {id:'k20',npc:'lytruong',type:'kill',mob:'soirung',n:12,title:'Sói đầu đàn trong rừng sâu',d:[['森林最里面的狼很大。','Sēnlín zuì lǐmiàn de láng hěn dà.','Sói tận sâu trong rừng rất to.'],['小心！','Xiǎoxīn!','Cẩn thận!']],reward:{exp:300,bac:200,item:2}},
+  {id:'k21',npc:'lytruong',type:'boss',boss:'kimlien',title:'Hạ thủ lĩnh, chiếm làng',d:[['恶霸住在大房子里。','Èbà zhù zài dà fángzi li.','Tên ác bá sống trong ngôi nhà lớn.'],['他每天打人、要钱。','Tā měitiān dǎ rén, yào qián.','Hắn ngày nào cũng đánh người, đòi tiền.'],['请你打败他！','Qǐng nǐ dǎbài tā!','Xin cậu đánh bại hắn!']],reward:{exp:600,bac:500,item:3}},
+  {id:'k22',npc:'lytruong',type:'talk',title:'Chủ làng Kim Liên',d:[['金莲村是你的了！','Jīnlián cūn shì nǐ de le!','Làng Kim Liên là của ngài rồi!'],['每天你可以来收税。','Měitiān nǐ kěyǐ lái shōu shuì.','Mỗi ngày ngài có thể đến thu thuế.'],['下一个：升龙城！','Xià yí gè: Shēnglóng chéng!','Tiếp theo: thành Thăng Long!']],reward:{exp:300,stone:10}},
   {id:'q18',npc:'quanvo',type:'talk',title:'Vào kinh thành',d:[['欢迎来升龙城！','Huānyíng lái Shēnglóng chéng!','Chào mừng đến thành Thăng Long!'],['去文庙学习吧。','Qù Wénmiào xuéxí ba.','Hãy đến Văn Miếu học tập.']],reward:{exp:150,bac:150}},
   {id:'q19',npc:'tiensi',type:'lesson',lesson:7,title:'Bài 7 · 我会说汉语',reward:{exp:300,stone:6}},
   {id:'q20',npc:'quanvo',type:'kill',mob:'soi',n:10,title:'Sói ngoài thành',d:[['城外有很多狼。','Chéng wài yǒu hěn duō láng.','Ngoài thành có rất nhiều sói.']],reward:{exp:350,bac:300,item:2}},

@@ -3,7 +3,7 @@
 const T=G.T, rnd=Math.random;
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 G.amb=[];
-const GREET=[['你好！','Xin chào!'],['你吃饭了吗？','Ăn cơm chưa?'],['今天天气很好。','Hôm nay trời đẹp.'],['掌门好！','Chào chưởng môn!'],['你的狗很漂亮！','Chó của ngài đẹp quá!'],['再见！','Tạm biệt!'],['谢谢！','Cảm ơn!'],['我去买菜。','Tôi đi chợ.'],['我很忙。','Tôi bận lắm.']];
+const GREET=[['你好！','Xin chào!'],['你吃饭了吗？','Ăn cơm chưa?'],['今天天气很好。','Hôm nay trời đẹp.'],['你好，年轻人！','Chào chàng trai!'],['你的狗很漂亮！','Chó của cậu đẹp quá!'],['再见！','Tạm biệt!'],['谢谢！','Cảm ơn!'],['我去买菜。','Tôi đi chợ.'],['我很忙。','Tôi bận lắm.']];
 function pickTile(m,a){for(let k=0;k<60;k++){const tx=a.x0+((rnd()*(a.x1-a.x0+1))|0),ty=a.y0+((rnd()*(a.y1-a.y0+1))|0);const t=m.get(tx,ty);
   if(a.water){if(G.WATERY[t]&&!m.solid[ty*m.w+tx])return {x:tx*T+T/2,y:ty*T+T/2};continue;}
   if(m.solid[ty*m.w+tx]||G.WATERY[t])continue;if(a.tiles&&!a.tiles.includes(t))continue;return {x:tx*T+T/2,y:ty*T+T/2};}return null;}

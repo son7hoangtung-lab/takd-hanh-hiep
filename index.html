@@ -276,6 +276,22 @@ button:focus-visible{outline:2px solid var(--gold2);outline-offset:2px}
 .qs .ic{font-size:15px}.qs em{position:absolute;left:0;right:0;bottom:-1px;font:700 7px var(--f-ui);font-style:normal;color:var(--muted);text-align:center;white-space:nowrap}.qs .ic{margin-top:-6px}
 .sk .vn{font:800 10.5px/1.1 var(--f-ui);text-align:center;padding:0 3px}
 .ctab{font-size:9.5px}
+.mtabs{display:flex;gap:6px;margin-bottom:8px}.mtab{flex:1;border:0;border-radius:10px;padding:8px 6px;background:#2a1c17;box-shadow:0 0 0 1px rgba(201,154,66,.5);font:700 12.5px var(--f-ui);color:var(--muted)}.mtab.on{background:linear-gradient(180deg,#e0b34a,#a07428);color:#1a1210}
+.pgrid{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin:6px 0;font-size:12.5px}.pgrid span{color:var(--muted)}
+#mhint{position:fixed;left:max(8px,env(safe-area-inset-left,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 190px);width:min(290px,72vw);z-index:6;background:linear-gradient(180deg,rgba(46,30,22,.96),rgba(22,14,11,.96));box-shadow:var(--rim);border-radius:12px;padding:8px 10px;font-size:12px;transform:translateX(-120%);transition:transform .35s ease}
+#mhint.show{transform:none}#mhint .mh-h{font-weight:700}#mhint .mh-h .zh{color:var(--gold2);font-size:15px}#mhint .mh-s{color:var(--muted);font-size:10.5px;margin:2px 0 5px}
+#mhint .mh-l{display:flex;flex-direction:column;background:rgba(0,0,0,.3);border-radius:8px;padding:5px 8px}#mhint .mh-l .zh{font-size:20px;color:#fff}#mhint .mh-l small{color:#7fe0ff;font-weight:600}#mhint .mh-l em{font-style:normal;color:var(--paper)}
+#mhint .mh-b{display:flex;gap:5px;margin-top:6px}#mhint .mh-b button{border:0;border-radius:8px;background:#3a2a22;box-shadow:0 0 0 1px rgba(217,164,65,.5);color:var(--paper);font:700 11px var(--f-ui);padding:4px 8px}
+.songrow{display:flex;gap:10px;align-items:center;width:100%;text-align:left;border:0;border-radius:12px;background:#2a1c17;box-shadow:0 0 0 1px rgba(201,154,66,.45);padding:9px 10px;margin:6px 0;color:var(--paper)}.songrow .big{font-size:24px;color:var(--gold2);min-width:84px}.songrow .tag{margin-left:auto}
+.modern{display:flex;gap:8px;align-items:flex-start;justify-content:space-between;border-radius:12px;background:#221713;padding:9px 10px;margin:6px 0;box-shadow:0 0 0 1px rgba(201,154,66,.25)}.modern .big{font-size:20px;color:var(--gold2)}
+.mvocab{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}.mvocab button{border:0;border-radius:8px;background:#3a2a22;color:var(--paper);font-size:11px;padding:3px 7px}
+.songhead{margin:8px 0}.klines{display:flex;flex-direction:column;gap:6px;margin-top:8px}.kl{display:flex;gap:8px;align-items:center;background:#221713;border-radius:10px;padding:7px 8px}
+.kp{border:0;border-radius:50%;width:32px;height:32px;flex:none;background:var(--jade);color:#fff;font-size:13px}
+.kz{font-family:var(--f-zh);font-size:24px;letter-spacing:2px;color:#f5ecd6}.kz span{border-radius:4px;transition:all .12s;cursor:pointer}.kz span.on{background:var(--son);color:#fff;box-shadow:0 0 10px rgba(179,38,30,.8)}.kz.big{font-size:30px}.kz .gap{color:#ffd84a}
+.kpy{color:#7fe0ff;font-size:12px;font-weight:600}.kvi{color:var(--muted);font-size:12px}.opt.right{background:#2e7a2a!important}.opt.wrong{background:#8a1f14!important}
+.gearrow{display:flex;flex-wrap:wrap;gap:6px}.gear{padding:4px 9px;border-radius:999px;background:#3a2a22;box-shadow:0 0 0 1px var(--gold);font-size:12px;font-weight:700}.gear.off{opacity:.38;box-shadow:0 0 0 1px #555}
+.cards{display:flex;flex-wrap:wrap;gap:6px}.card{border:0;border-radius:8px;background:linear-gradient(180deg,#4a2a5a,#2a1630);box-shadow:0 0 0 1px #c78aff;padding:4px 8px;display:flex;flex-direction:column;align-items:center;min-width:46px}.card b{font-size:22px;color:#f0e0ff}.card small{font-size:10px;color:#d8c0f0}
+.skillrow .big{font-size:26px}
 </style>
 
 <canvas id="gl"></canvas>
@@ -294,7 +310,7 @@ button:focus-visible{outline:2px solid var(--gold2);outline-offset:2px}
     <div class="icons"><button class="ico" data-open="rank" data-h="排行榜|páihángbǎng|bảng xếp hạng"><span class="ic">🏆</span><em>X.hạng</em></button><button class="ico" data-open="char" data-h="成就|chéngjiù|thành tựu"><span class="ic">🎖️</span><em>T.tựu</em></button><button class="ico" id="i-auto" data-h="自动|zìdòng|tự động"><span class="ic">⚔️</span><em>Tự động</em></button>
       <button class="ico" data-open="quest" data-h="任务|rènwu|nhiệm vụ"><span class="ic">📜</span><em>N.vụ</em></button><button class="ico" data-open="study" data-h="书房|shūfáng|thư phòng"><span class="ic">📚</span><em>Thư phòng</em></button><button class="ico" data-open="map" data-h="地图|dìtú|bản đồ"><span class="ic">🗺️</span><em>Bản đồ</em></button></div></div>
   <div id="quest"></div>
-  <div id="toolbar" class="fold"><button class="ico" id="tb-toggle"><span class="ic">☰</span><em>Menu</em></button><button class="ico" data-open="bag" data-h="背包|bēibāo|túi đồ, rương đồ"><span class="ic">🎒</span><em>Rương đồ</em></button>
+  <div id="toolbar" class="fold"><button class="ico" id="tb-toggle"><span class="ic">☰</span><em>Menu</em></button><button class="ico" data-open="bag" data-h="背包|bēibāo|túi đồ, rương đồ"><span class="ic">🎒</span><em>Rương đồ</em></button><button class="ico" data-open="songs" data-h="歌曲|gēqǔ|bài hát"><span class="ic">🎵</span><em>Bài hát</em></button>
     <div class="more"><button class="ico" data-open="char" data-h="人物|rénwù|nhân vật"><span class="ic">👤</span><em>Nhân vật</em></button><button class="ico" data-open="skills" data-h="武功|wǔgōng|võ công"><span class="ic">🥋</span><em>Võ công</em></button><button class="ico" data-open="rank" data-h="朋友|péngyou|bạn bè"><span class="ic">🤝</span><em>Quan hệ</em></button>
       <button class="ico" data-open="guild" data-h="帮会|bānghuì|bang hội"><span class="ic">🏯</span><em>Bang hội</em></button><button class="ico" data-open="pet" data-h="同伴|tóngbàn|đồng hành"><span class="ic">🐕</span><em>Đồng hành</em></button><button class="ico" data-open="life" data-h="生活|shēnghuó|cuộc sống"><span class="ic">🎣</span><em>Kỹ năng sống</em></button><button class="ico" data-open="set" data-h="设置|shèzhì|cài đặt"><span class="ic">⚙️</span><em>Tùy chọn</em></button></div></div>
   <div id="chatbox"><div class="ctabs"><button class="ctab on" data-ch="all">Chung</button><button class="ctab" data-ch="mat">Mật</button><button class="ctab" data-ch="bang">Bang</button><button class="ctab" data-ch="ban">Bạn</button><button class="ctab" data-ch="sys">Hệ thống</button><button class="ctab" data-ch="tu">Riêng</button></div>
@@ -323,6 +339,8 @@ button:focus-visible{outline:2px solid var(--gold2);outline-offset:2px}
 <script src="js/game2.js"></script>
 <script src="js/game3.js"></script>
 <script src="js/engine3d.js"></script>
+<script src="js/sonha.js"></script>
+<script src="js/music.js"></script>
 <script src="js/ui.js"></script>
 <script>
 (function(){try{R3.init().catch(e=>{R3.err=String(e&&e.message||e);console.error(e);});}catch(e){R3.err=String(e.message);console.error(e);}

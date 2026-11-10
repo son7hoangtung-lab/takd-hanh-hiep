@@ -150,6 +150,15 @@ B.vanmieu=()=>{const b=new Builder();for(const sx of [-1,1])for(const sz of [-1,
 B.pagoda=()=>{const b=new Builder();b.cyl(0.55,0.6,2.6,MAT.stone,{p:[0,1.3,0]},10);b.box(2.6,0.25,2.6,MAT.wood,{p:[0,2.7,0]});b.box(2.2,1.6,2.2,MAT.lacquer,{p:[0,3.6,0],uv:false});roof(b,2.2,2.2,1.2,MAT.roof,{y:4.4,over:0.6,curl:0.55,sag:0.5});b.sph(0.12,MAT.gold,{p:[0,5.7,0]});return b;};
 B.thapbaothien=()=>{const b=new Builder();b.box(4.6,0.8,4.6,MAT.stone,{p:[0,0.4,0]});let y=0.8;for(let i=0;i<12;i++){const w=3.4-i*0.22,h=1.25-i*0.04;b.box(w,h,w,MAT.white,{p:[0,y+h/2,0]});b.box(0.5,h*0.6,0.05,MAT.black,{p:[0,y+h*0.45,w/2+0.01]});
     roof(b,w,w,0.35,MAT.roof,{y:y+h,over:0.35,curl:0.25,sag:0.2,horn:false,nu:8,nv:3});y+=h+0.35;}b.cyl(0.05,0.12,1.6,MAT.gold,{p:[0,y+0.8,0]});return b;};
+// cổ thụ rừng hoang: thân lớn, rễ bạnh, tán tầng tối, dây leo
+B.cothu=(v)=>{const r=rng(171+v);const b=new Builder();const h=4.6+r()*2;b.cyl(0.32,0.7,h,MAT.bark,{p:[0,h/2,0]},9);
+  for(let i=0;i<5;i++){const a=i/5*6.28+r();b.box(0.12,1.2,1.1,MAT.bark,{p:[Math.cos(a)*0.55,0.55,Math.sin(a)*0.55],r:[0,-a,0]});}
+  for(let i=0;i<4;i++){const a=r()*6.28;b.cyl(0.08,0.2,2.6,MAT.bark,{p:[Math.cos(a)*0.9,h-0.6,Math.sin(a)*0.9],r:[Math.sin(a)*0.9,0,-Math.cos(a)*0.9]},5);}
+  for(let i=0;i<9;i++){const a=r()*6.28,d=0.6+r()*1.8;b.cyl(0.02,0.02,2.2+r()*2,MAT.leafDark,{p:[Math.cos(a)*d,h-1.6,Math.sin(a)*d]},3);}
+  const mats=[MAT.leafDark,MAT.leafDark,MAT.leaf];for(let i=0;i<10;i++){const a=r()*6.28,d=r()*2.0;b.sph(1.1+r()*0.7,mats[(r()*3)|0],{p:[Math.cos(a)*d,h+0.2+r()*1.4,Math.sin(a)*d],s:[1.2,0.6,1.1]},1);}return b;};
+// bụi rậm, dương xỉ
+B.bui=(v)=>{const r=rng(181+v);const b=new Builder();for(let i=0;i<5;i++){const a=r()*6.28,d=r()*0.5;b.sph(0.45+r()*0.35,i%2?MAT.leafDark:MAT.leaf,{p:[Math.cos(a)*d,0.35+r()*0.3,Math.sin(a)*d],s:[1.2,0.8,1.2]},1);}
+  for(let i=0;i<6;i++){const a=i/6*6.28;b.cone(0.18,1.2,MAT.leafDark,{p:[Math.cos(a)*0.55,0.5,Math.sin(a)*0.55],r:[Math.sin(a)*1.1,0,-Math.cos(a)*1.1],s:[1,1,0.25]},3);}return b;};
 B.cotco=()=>{const b=new Builder();b.box(1.2,0.6,1.2,MAT.stone,{p:[0,0.3,0]});b.cyl(0.07,0.09,7,MAT.wood,{p:[0,3.8,0]});b.add(new THREE.PlaneGeometry(2.0,1.3),MAT.flag,{p:[1.05,6.5,0]});return b;};
 B.kho=()=>{const b=new Builder();const w=6,d=3.4;b.box(w,2.4,d,MAT.wood,{p:[0,1.2,0]});b.box(1.6,2.0,0.06,MAT.black,{p:[0,1.0,d/2+0.02]});roof(b,w,d,1.5,MAT.thatch,{y:2.4,over:0.6,sag:0.2,horn:false});return b;};
 function junk(scale,sails){const b=new Builder();b.add(new THREE.CylinderGeometry(1,1,6,12,1,true,Math.PI/2,Math.PI),MAT.wood,{p:[0,0.9,0],r:[0,0,Math.PI/2],s:[1,1,0.75]});for(const s of [-1,1])b.cone(0.75,1.6,MAT.wood,{p:[s*3.6,1.0,0],r:[0,0,-s*Math.PI/2],s:[1,1,0.75]});
@@ -158,7 +167,7 @@ function junk(scale,sails){const b=new Builder();b.add(new THREE.CylinderGeometr
 B.junk=()=>junk(1.2,2);B.sailboat=()=>junk(0.9,1);B.bigship=()=>junk(1.7,3);
 B.gate=B.conglang;B.portal=B.conglang;B.chest=()=>{const b=new Builder();b.box(0.8,0.5,0.55,MAT.wood,{p:[0,0.25,0]});b.box(0.82,0.1,0.57,MAT.gold,{p:[0,0.5,0]});return b;};
 B.rock_=B.rock;
-export const VARIANTS={hut:4,house:4,stall:3,hay:2,banyan:2,bamboo:5,areca:3,palm:2,banana:2,caygao:2,xoan:3,philao:2,duoc:2,reeds:3,karst:4,karst2:2,rock:3};
+export const VARIANTS={cothu:4,bui:3,hut:4,house:4,stall:3,hay:2,banyan:2,bamboo:5,areca:3,palm:2,banana:2,caygao:2,xoan:3,philao:2,duoc:2,reeds:3,karst:4,karst2:2,rock:3};
 export function buildProto(type,v){const f=B[type];if(!f)return null;return f(v||0);}
 // ---------- bụi lúa, cỏ, sen (instanced) ----------
 export function tuftGeo(h,w,blades){const pos=[],nor=[];const n=blades*3;for(let i=0;i<n;i++){const a=i/n*Math.PI*2+Math.sin(i*7.1)*0.6,r=w*0.25*((i*37%10)/10),hh=h*(0.6+((i*53)%10)/22),lean=0.18+((i*29)%10)/40;

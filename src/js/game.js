@@ -57,7 +57,8 @@ G.makeMob=function(base,tier,pos,zi){const t=G.MOB_TIER[tier];const lv=base.lv+t
   return {base,tier,lv,name:{zh:t.zh+base.zh,vi:(t.vi?t.vi+' ':'')+base.vi},hp:Math.round(base.hp*k),max:Math.round(base.hp*k),atk:Math.round(base.atk*(1+(tier*.25))*(1+(lv-base.lv)*.05)),
     spd:base.spd,x:pos.x,y:pos.y,hx:pos.x,hy:pos.y,st:'idle',wt:rnd()*2,tx:pos.x,ty:pos.y,cd:0,f:0,face:1,hitT:0,aggro:tier>=1,zi,water:!!base.water,exp:Math.round(base.exp*t.m*(1+(lv-base.lv)*.1)),tint:base.tint};};
 function spawnZone(zi){const m=G.map,z=m.zones[zi];if(z.night&&!G.isNight())return;const pos=randInZone(z,m);if(!pos)return;const id=z.mobs[(rnd()*z.mobs.length)|0];
-  const base=G.MOB_BASE[m.id].find(b=>b.id===id);const r=rnd();const tier=r<.6?0:r<.8?1:r<.92?2:r<.98?3:4;G.mobs.push(G.makeMob(base,tier,pos,zi));}
+  const b0=G.MOB_BASE[m.id].find(b=>b.id===id);const k=z.lvAdd||0;const base=k?Object.assign({},b0,{lv:b0.lv+k,hp:Math.round(b0.hp*(1+k*.32)),atk:Math.round(b0.atk*(1+k*.2)),exp:Math.round(b0.exp*(1+k*.3))}):b0;
+  const r=rnd();let tier=r<.6?0:r<.8?1:r<.92?2:r<.98?3:4;if(z.elite)tier=Math.max(2,tier);G.mobs.push(G.makeMob(base,tier,pos,zi));}
 G.spawnBoss=function(){const m=G.map;if(!m.boss)return;if(G.mobs.some(x=>x.boss))return;const b=G.BOSSES[m.boss.key];
   const mob=G.makeMob(Object.assign({},b),0,{x:m.boss.x,y:m.boss.y},-1);Object.assign(mob,{boss:b.id,lv:b.lv,hp:b.hp,max:b.hp,atk:b.atk,exp:b.exp,name:{zh:b.zh,vi:b.vi},aggro:true,slamT:4,tint:b.tint});G.mobs.push(mob);};
 G.spawnWorldBoss=function(){const m=G.map;if(!m.worldBoss||G.mobs.some(x=>x.wb))return;const b=G.WORLD_BOSS;
@@ -68,7 +69,7 @@ G.worldBossNow=function(){const d=new Date();return G.WORLD_BOSS.hours.includes(
 G.enterMap=function(id,arrive,boat){const prevMap=G.S.map;G.map=G.getMap(id);G.S.map=id;G.mobs=[];G.bots=[];G.fx=[];G.drops=[];G.texts=[];G.pk=null;
   const m=G.map;let px,py;if(arrive){px=arrive[0]*T+T/2;py=arrive[1]*T+T/2;}else if(G.S.x!=null&&prevMap===id&&!G.map.blocked(G.S.x/T|0,G.S.y/T|0,!!boat)){px=G.S.x;py=G.S.y;}else{px=m.start[0]*T+T/2;py=m.start[1]*T+T/2;}
   G.P.x=px;G.P.y=py;G.P.boat=!!boat&&m.isWater(px/T|0,py/T|0);
-  G.npcs=(G.NPCS[id]||[]).map(n=>Object.assign({},n,{x:n.x*T+T/2,y:n.y*T+T/2,f:0}));G.npcs.forEach(n=>{if(m.blocked(n.x/T|0,n.y/T|0,false))console.warn('NPC blocked',n.id);});
+  G.npcs=(G.NPCS[id]||[]).filter(n=>!n.cond||(G.npcCond?G.npcCond(n.cond,id):true)).map(n=>Object.assign({},n,{x:n.x*T+T/2,y:n.y*T+T/2,f:0}));G.npcs.forEach(n=>{if(m.blocked(n.x/T|0,n.y/T|0,false))console.warn('NPC blocked',n.id);});
   m.zones.forEach((z,i)=>{for(let k=0;k<z.n;k++)spawnZone(i);});
   G.spawnBoss();if(G.worldBossNow()&&m.worldBoss&&G.S.wbDay[today()]!==1)G.spawnWorldBoss();
   // người chơi ảo trên bản đồ
@@ -156,9 +157,9 @@ G._kill=function(t){killed(t);};function killed(t){const S=G.S;t.hp=0;t.deadT=0;
   const ic=t.boss?1:.06*(1+t.tier*1.2);if(rnd()<ic)G.drops.push({x:t.x+(rnd()-.5)*16,y:t.y+(rnd()-.5)*10,item:G.makeItem(t.lv,t.boss?(t.wb?4:2+Object.keys(G.BOSSES).indexOf(G.map.id)):Math.min(t.tier,2),t.boss?.6:t.tier*.15)});
   if(t.boss&&!t.wb&&rnd()<.6)G.drops.push({x:t.x+8,y:t.y+6,item:G.makeItem(t.lv,2,.5)});
   if(t.base.drop==='thit'&&rnd()<.5)G.drops.push({x:t.x,y:t.y+6,ingr:'thit'});if(rnd()<.08+t.tier*.05)G.drops.push({x:t.x-6,y:t.y,stone:1+t.tier});
-  G.questEvent('kill',{id:t.base.id});
+  G.questEvent('kill',{id:t.base.id});if(G.cardDrop)G.cardDrop(t);
   if(t.boss&&!t.wb){const key=G.map.boss.key;const first=!S.bosses[t.boss];S.bosses[t.boss]=1;G.questEvent('boss',{key});G.audio.sfx('gong');G.shake=.6;
-    const b=G.BOSSES[key];if(first&&b.unlock){S.unlocked[b.unlock]=1;G.ui.toast(`🏆 Đánh bại <b>${b.vi}</b>!<br>Đã mở đường đến <b>${G.REGIONS[b.unlock].vi}</b>`,4500);}
+    const b=G.BOSSES[key];if(G.conquer)setTimeout(()=>G.conquer(key),1200);if(first&&b.unlock){S.unlocked[b.unlock]=1;G.ui.toast(`🏆 Đánh bại <b>${b.vi}</b>!<br>Đã mở đường đến <b>${G.REGIONS[b.unlock].vi}</b>`,4500);}
     setTimeout(()=>{if(G.map&&G.map.boss&&G.map.boss.key===key)G.spawnBoss();},90000);}
   if(t.wb){S.wbDay[today()]=1;G.ui.chat('系统','蛟龙被打败了！','Giao Long đã bị đánh bại!','#ffd84a',true);for(let k=0;k<3;k++)G.drops.push({x:t.x+(rnd()-.5)*30,y:t.y+(rnd()-.5)*20,item:G.makeItem(t.lv,3,.6)});}
   if(t.zi>=0)setTimeout(()=>{if(G.map&&G.map.zones[t.zi])spawnZone(t.zi);},7000+rnd()*6000);}
@@ -191,13 +192,13 @@ G.update=function(dtRaw){const dt=dtRaw*G.timeScale;const P=G.P,S=G.S,m=G.map;an
   // cổng
   m.portals.forEach(p=>{if(Math.hypot(P.x-(p.x*T+T/2),P.y-(p.y*T+T/2))<14&&!G.paused&&!G._travel){G._travel=1;setTimeout(()=>G._travel=0,800);G.travel(p);}});
   // Shiba
-  const sb=G.shiba;let goal={x:P.x-P.face*16,y:P.y+6};if(G.drops.length){let nd=null,bd=140;G.drops.forEach(d=>{const dd=Math.hypot(d.x-sb.x,d.y-sb.y);if(dd<bd){bd=dd;nd=d;}});if(nd)goal=nd;}
+  const sb=G.shiba;if(!(S.gear&&S.gear.shiba)){sb.x=P.x;sb.y=P.y;}else{let goal={x:P.x-P.face*16,y:P.y+6};if(G.drops.length){let nd=null,bd=140;G.drops.forEach(d=>{const dd=Math.hypot(d.x-sb.x,d.y-sb.y);if(dd<bd){bd=dd;nd=d;}});if(nd)goal=nd;}
   const gx=goal.x-sb.x,gy=goal.y-sb.y,gl=Math.hypot(gx,gy);if(gl>4){const sp=gl>80?180:110;sb.x+=gx/gl*Math.min(gl,sp*dt);sb.y+=gy/gl*Math.min(gl,sp*dt);sb.ft+=dt*10;sb.f=(sb.ft|0)%2;sb.face=gx>0?1:-1;sb.sit=false;}else{sb.sit=true;}
-  if(gl>400){sb.x=P.x;sb.y=P.y;}
+  if(gl>400){sb.x=P.x;sb.y=P.y;}}
   // nhặt đồ
   for(let i=G.drops.length-1;i>=0;i--){const d=G.drops[i];d.age=(d.age||0)+dt;if(Math.hypot(d.x-sb.x,d.y-sb.y)<8||Math.hypot(d.x-P.x,d.y-P.y)<18||d.age>4){G.drops.splice(i,1);
     if(d.bac){G.addBac(d.bac,d.x,d.y);G.audio.sfx('coin');}if(d.item){G.gainItem(d.item);G.audio.sfx('bark');}if(d.ingr){S.ingr[d.ingr]=(S.ingr[d.ingr]||0)+1;G.float(d.x,d.y-12,'+1 '+G.INGR[d.ingr].vi,'#e8dcc0');}
-    if(d.stone){S.stone+=d.stone;G.float(d.x,d.y-12,'+'+d.stone+' 玄晶','#7fe0ff');}}}
+    if(d.stone){S.stone+=d.stone;G.float(d.x,d.y-12,'+'+d.stone+' 玄晶','#7fe0ff');}if(d.card&&G.gainCard)G.gainCard(d.card,d.x,d.y);}}
   // quái
   G.mobs.forEach(mb=>{if(mb.hp<=0){mb.deadT+=dt;return;}mb.hitT-=dt;mb.cd-=dt;const d=dist(mb,P);
     const reach=!P.boat||mb.water||mb.boss;const seeR=mb.boss?150:(mb.aggro?95:0);

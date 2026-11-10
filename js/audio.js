@@ -31,6 +31,7 @@ A.music=function(name){if(!ctx){cur=name;return;}if(cur===name&&timer)return;cur
     if(st.swell&&step%32===0){note(st.base/2,next,beat*28,'sine',.06,musicGain,2);}
     next+=beat;step++;}},100);};
 A.stop=function(){if(timer)clearInterval(timer);timer=null;};
+A.ctx=()=>ctx;A.mdest=()=>musicGain;A.genStop=function(){if(timer)clearInterval(timer);timer=null;cur=null;};
 A.sfx=function(k){if(!ctx)return;const t=ctx.currentTime;
   switch(k){
     case 'hit':note(180,t,.08,'square',.18);note(90,t,.12,'sine',.3);break;

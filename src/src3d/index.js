@@ -85,8 +85,19 @@ function loadMap(m){if(curMap===m)return;if(mapGroup){scene.remove(mapGroup);map
   // cổng dịch chuyển
   m.portals.forEach(p=>{const ring=new THREE.Mesh(new THREE.RingGeometry(0.9,1.4,32),new THREE.MeshBasicMaterial({color:0x7fe0ff,transparent:true,opacity:0.7,side:THREE.DoubleSide,depthWrite:false}));ring.rotation.x=-Math.PI/2;ring.position.set(p.x+0.5,groundH(p.x+.5,p.y+.5)+0.08,p.y+0.5);ring.userData.portal=p;mapGroup.add(ring);
     const col=new THREE.Mesh(new THREE.CylinderGeometry(1.1,1.1,3,24,1,true),new THREE.MeshBasicMaterial({color:0x7fe0ff,transparent:true,opacity:0.18,side:THREE.DoubleSide,depthWrite:false,blending:THREE.AdditiveBlending}));col.position.set(p.x+0.5,ring.position.y+1.5,p.y+0.5);col.userData.portal=p;mapGroup.add(col);});
-  // bảng cáo thị là NPC tĩnh
+  // cờ Muay Việt (hiện khi đã chiếm vùng này)
+  flagGrp=new THREE.Group();flagGrp.visible=false;const fm=flagMat();(m.flags||[]).forEach(([fx,fy])=>{const g=new THREE.Group();const pole=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.08,6,6),new THREE.MeshLambertMaterial({color:0x5a3a1a}));pole.position.y=3;pole.castShadow=true;g.add(pole);
+    const top=new THREE.Mesh(new THREE.SphereGeometry(0.14,8,6),new THREE.MeshStandardMaterial({color:0xd9a441,metalness:.8,roughness:.3}));top.position.y=6.05;g.add(top);
+    const cloth=new THREE.Mesh(new THREE.PlaneGeometry(1.9,1.25,10,4),fm);cloth.position.set(0.98,5.2,0);cloth.castShadow=true;cloth.userData.base=cloth.geometry.attributes.position.array.slice();g.add(cloth);g.userData.cloth=cloth;
+    g.position.set(fx+0.5,groundH(fx+.5,fy+.5),fy+0.5);flagGrp.add(g);});mapGroup.add(flagGrp);
   scene.add(mapGroup);}
+let flagGrp=null,_flagMat=null;
+function flagMat(){if(_flagMat)return _flagMat;const c=document.createElement('canvas');c.width=192;c.height=128;const x=c.getContext('2d');x.fillStyle='#b3261e';x.fillRect(0,0,192,128);x.strokeStyle='#d9a441';x.lineWidth=10;x.strokeRect(5,5,182,118);
+  x.fillStyle='#f2d27a';x.font='900 84px "Noto Serif SC",serif';x.textAlign='center';x.textBaseline='middle';x.fillText('越',96,68);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;
+  return _flagMat=new THREE.MeshLambertMaterial({map:t,side:THREE.DoubleSide});}
+R3._flags=()=>flagGrp&&[flagGrp.visible,flagGrp.children.length,flagGrp.parent&&flagGrp.parent.parent===scene];
+function updFlags(t){if(!flagGrp)return;const on=!!(G.S.conq&&G.S.conq[curMap.id]);flagGrp.visible=on;if(!on)return;
+  flagGrp.children.forEach((g,gi)=>{const cl=g.userData.cloth;const pos=cl.geometry.attributes.position,b=cl.userData.base;for(let i=0;i<pos.count;i++){const x0=b[i*3]+0.95;pos.array[i*3+2]=Math.sin(x0*3-t*5+gi)*0.12*x0;}pos.needsUpdate=true;});}
 
 // ---------------- hiển thị thực thể ----------------
 const views=new Map();const pools={};
@@ -125,7 +136,8 @@ function syncView(v,dt,t){const e=v.e;const wx=e.x/T,wz=e.y/T;const dx=e.x-v.px,
   if(v.aura)v.aura.material.opacity=0.35+Math.sin(t*4)*0.2;}
 function syncPlayer(v,dt,t){const P=G.P,S=G.S;const e=P;const wx=e.x/T,wz=e.y/T;const dx=e.x-v.px,dz=e.y-v.py;const sp=Math.hypot(dx,dz)/Math.max(dt,1e-3)/T;v.px=e.x;v.py=e.y;v.spd=v.spd*0.75+sp*0.25;
   if(Math.hypot(dx,dz)>0.05)v.tyaw=Math.atan2(dx,dz);if(v.tyaw==null)v.tyaw=0;let d=v.tyaw-v.yaw;while(d>Math.PI)d-=Math.PI*2;while(d<-Math.PI)d+=Math.PI*2;v.yaw+=d*Math.min(1,dt*9);
-  const y=standH(wx,wz);const mounted=S.mounted!==false&&!P.boat&&!S.meditate;const rider=v.rider;
+  const want=G.playerKind?G.playerKind():'takd';if(v.rider.kind!==want){const nr=poolGet(want);if(nr){poolPut(v.rider);v.rider=nr;}}
+  const y=standH(wx,wz);const mounted=S.mounted!==false&&!P.boat&&!S.meditate&&!!(S.gear&&S.gear.horse);const rider=v.rider;
   if(P.boat){v.holder.visible=false;rider.holder.visible=true;if(!v.boat){v.boat=poolGet('sampan');}v.boat.holder.visible=true;v.boat.holder.position.set(wx,-0.27,wz);v.boat.holder.rotation.y=v.yaw+Math.PI/2;v.boat.creature.update(dt,true,t);
     rider.holder.position.set(wx,0.1,wz);rider.holder.rotation.y=v.yaw;play(rider,'idle');rider.mixer.update(dt);return;}
   if(v.boat){v.boat.holder.visible=false;}
@@ -222,7 +234,7 @@ R3.render=function(){if(!R3.ready||!G.map)return;const now=performance.now();con
   const sky=new THREE.Color(rain?0x9aa8b0:0xbfd8e8).lerp(new THREE.Color(0x2a3a66),dk);scene.background.copy(sky);scene.fog.color.copy(sky);
   R3.aura.position.set(px,(G.S.mounted?3.2:2.6)+groundH(px,pz),pz);R3.aura.intensity=dk*7;
   sun.position.set(cam.tx-30,50,cam.tz+20);sun.target.position.set(cam.tx,0,cam.tz);
-  if(water){water.material.uniforms.t.value=t;water.material.uniforms.night.value=dk*0.45;}
+  updFlags(t);  if(water){water.material.uniforms.t.value=t;water.material.uniforms.night.value=dk*0.45;}
   // đèn lồng gần nhất
   const near=R3.lamps.map(l=>({l,d:(l.x-px)**2+(l.z-pz)**2})).sort((a,b)=>a.d-b.d);lights.forEach((L,i)=>{const n=near[i];if(n&&dk>0.05){L.position.set(n.l.x,n.l.y,n.l.z);L.intensity=dk*(n.l.k==='lantern'?6:9);}else L.intensity=0;});
   MAT.lantern.emissive.setRGB(0.4+dk*0.9,0.06+dk*0.25,0.03);
@@ -231,7 +243,7 @@ R3.render=function(){if(!R3.ready||!G.map)return;const now=performance.now();con
   // thực thể trong tầm
   const R2=(cam.dist*1.6+16)**2;const seen=new Set();const near2=(e)=>(e.x/T-cam.tx)**2+(e.y/T-cam.tz)**2<R2;
   const handle=(e,type)=>{if(!near2(e))return;const v=ensure(e,type);if(!v)return;seen.add(e);if(type==='player')syncPlayer(v,dt,t);else syncView(v,dt,t);};
-  handle(P,'player');if(!P.boat)handle(G.shiba,'shiba');G.npcs.forEach(n=>{if(n.art!=='board')handle(n,'npc');});G.mobs.forEach(m=>handle(m,'mob'));G.bots.forEach(b=>handle(b,'bot'));if(G.pk&&G.pk.hp>0)handle(G.pk,'pk');(G.amb||[]).forEach(a=>handle(a,'amb'));
+  handle(P,'player');if(!P.boat&&G.S.gear&&G.S.gear.shiba)handle(G.shiba,'shiba');G.npcs.forEach(n=>{if(n.art!=='board')handle(n,'npc');});G.mobs.forEach(m=>handle(m,'mob'));G.bots.forEach(b=>handle(b,'bot'));if(G.pk&&G.pk.hp>0)handle(G.pk,'pk');(G.amb||[]).forEach(a=>handle(a,'amb'));
   views.forEach((v,e)=>{if(!seen.has(e)){if(v.rider)poolPut(v.rider);if(v.boat)poolPut(v.boat);v.rider=null;v.boat=null;poolPut(v);views.delete(e);}});
   syncFx();syncDrops(t);
   // mây đen khi mưa
@@ -247,7 +259,7 @@ function overlay(t){const W=ov.width,H=ov.height;DPR=W/window.innerWidth;SW=W;SH
     octx.font=`600 ${Math.round(13*DPR)}px "Noto Sans SC",system-ui,sans-serif`;octx.fillText(b.zh,X,Y-hh+14*DPR);octx.font=`500 ${Math.round(9.5*DPR)}px "Be Vietnam Pro",system-ui`;octx.fillStyle='#5a4636';octx.fillText(b.vi,X,Y-6*DPR);};
   const near=(e,r)=>(e.x/T-cam.tx)**2+(e.y/T-cam.tz)**2<(r||cam.dist*1.3+10)**2;const showSmall=cam.dist<45;
   // tên mình
-  const me=label(P.x,P.y,'Kị sỹ Takd',G.S.pkMode&&G.S.pkMode!=='luyen'?'#ff8a7a':'#7fe0ff','Muay Việt · '+G.title(G.S.lv)[2],G.S.mounted!==false&&!P.boat?3.0:2.2);
+  const me=label(P.x,P.y,'Kị sỹ Takd',G.S.pkMode&&G.S.pkMode!=='luyen'?'#ff8a7a':'#7fe0ff',((G.S.rank||0)>=3?'Muay Việt · ':'')+(G.rankName?G.rankName():''),G.S.mounted!==false&&!P.boat?3.0:2.2);
   const q=G.curQuest&&G.curQuest();
   G.npcs.forEach(n=>{if(!near(n))return;const s=label(n.x,n.y,n.vi,'#ffe6a0',n.zh,n.art==='board'?2.6:2.15);if(s&&q&&q.npc===n.id&&G.S.q.st!=='active'){octx.font=`900 ${fs*2}px system-ui`;octx.fillStyle=G.S.q.st==='done'?'#9fe07a':'#ffd84a';octx.strokeStyle='#000';octx.lineWidth=3*DPR;const yy=s[1]-fs*1.6+Math.sin(t*4)*3*DPR;octx.strokeText(G.S.q.st==='done'?'?':'!',s[0],yy);octx.fillText(G.S.q.st==='done'?'?':'!',s[0],yy);}});
   if(showSmall)G.mobs.forEach(mb=>{if(mb.hp<=0||!near(mb))return;const kk=KINDS[kindOf(mb,'mob')];const h=(kk?kk.h:1)*(1+(mb.tier||0)*0.12)+0.35;

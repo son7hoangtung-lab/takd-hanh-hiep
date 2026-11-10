@@ -14,6 +14,10 @@ const VN=['#5a3a2a','#2f3a5a','#6b4a2e','#3b3b44','#4a5a3a','#7a5a3a','#2a2a30']
 // cấu hình loại: file, chiều cao, màu theo tên vật liệu, ẩn nút, mũ, binh khí
 export const KINDS={
   takd:{f:'adventurer',h:1.78,tint:{Green:'#a8261a',LightGreen:'#d9a441',Brown:'#3a2416',Brown2:'#5a3420',Black:'#1a1210',Grey:'#5a5c64',Gold:'#e8b84a',Hair:'#141010'},hide:['Backpack'],weapon:'mace'},
+  takd0:{f:'adventurer',h:1.76,tint:{Green:'#6b5a3e',LightGreen:'#8a7a58',Brown:'#3a2a1a',Brown2:'#4a3a28',Black:'#2a2018',Grey:'#4a4a44',Gold:'#7a6a4a',Hair:'#141010'},hide:['Backpack']},
+  takd1:{f:'adventurer',h:1.76,tint:{Green:'#6b5a3e',LightGreen:'#8a7a58',Brown:'#3a2a1a',Brown2:'#4a3a28',Black:'#2a2018',Grey:'#4a4a44',Gold:'#7a6a4a',Hair:'#141010'},hide:['Backpack'],weapon:'staff'},
+  takd2:{f:'adventurer',h:1.78,tint:{Green:'#a8261a',LightGreen:'#d9a441',Brown:'#3a2416',Brown2:'#5a3420',Black:'#1a1210',Grey:'#5a5c64',Gold:'#e8b84a',Hair:'#141010'},hide:['Backpack'],weapon:'staff'},
+  cuonghao:{f:'soldier',h:2.35,tint:{Character_Main:'#1c1c24',Red:'#c9a040',Pants:'#2a1a12'},weapon:'hammer',hat:'khan'},
   horse:{f:'deer',h:2.05,tint:{Main:'#6e3c1c',Main_Light:'#8a5632',Main_Dark:'#2a160a',Hooves:'#1a1008'}},
   shiba:{f:'shiba',h:0.72},
   hero_adv:{f:'adventurer',h:1.76,hide:['Backpack'],weapon:'sword',tintKey:'Green'},
@@ -41,7 +45,7 @@ export const KINDS={
   bossfrog:{f:'frog',h:3.2,tint:{Green:'#4a2a6a',Yellow:'#e9a8c0',Red:'#ff3b30'},crown:1},warlord:{f:'orc_brute',h:2.9,tint:{Orc_Main:'#5a6a4a',Orc_Secondary:'#2a2a33'}},
   pirateking:{f:'pirate',h:2.8,weapon:'sword'},serpent:{f:'dragon',h:5.5,tint:{Dragon_Main:'#2f6f62',Dragon_Secondary:'#d9a441'}},
 };
-export const ART2KIND={fox:'fox',rat:'fox',frog:'frog',snake:'frog',husky:'husky',dog:'wolf',wolf:'wolf',bandit:'bandit',tiger:'tiger',golem:'golem',crab:'crab',ghost:'ghost',shark:'shark',bossfrog:'bossfrog',lotusdemon:'bossfrog',warlord:'warlord',serpent:'serpent',
+export const ART2KIND={fox:'fox',rat:'fox',frog:'frog',snake:'frog',husky:'husky',dog:'wolf',wolf:'wolf',bandit:'bandit',tiger:'tiger',golem:'golem',crab:'crab',ghost:'ghost',shark:'shark',bossfrog:'bossfrog',lotusdemon:'bossfrog',warlord:'warlord',cuonghao:'cuonghao',shiba:'shiba',soldier:'soldier',serpent:'serpent',
   elder:'npc_elder',woman:'npc_woman',smith:'npc_smith',fisher:'npc_fisher',scholar:'npc_scholar',officer:'npc_officer',merchant:'npc_merchant',monk:'npc_monk',groom:'npc_groom',doctor:'npc_doctor'};
 const ANIM={idle:['Idle','Man_Idle','Frog_Idle','Flying_Idle','Idle_Neutral','Skeleton_Idle'],walk:['Walk','Man_Walk','Frog_Jump','Flying_Idle'],run:['Gallop','Run','Man_Run','Frog_Jump','Fast_Flying'],
   attack:['Attack','Sword_Slash','Weapon','Punch','Bite_Front','Frog_Attack','Attack_Headbutt','Headbutt','Man_SwordSlash','Dagger_Attack','Man_Punch'],hit:['HitRecieve','HitReact','Idle_HitReact_Left','RecieveHit','Hit'],
@@ -56,6 +60,7 @@ function weapon(kind){wm();const g=new THREE.Group();const add=(geo,m,p,r)=>{con
   else if(kind==='sword'){add(new THREE.BoxGeometry(0.05,0.8,0.012),WM.blade,[0,0.55,0]);add(new THREE.BoxGeometry(0.16,0.03,0.05),WM.gold,[0,0.14,0]);add(new THREE.CylinderGeometry(0.02,0.02,0.2,6),WM.dark,[0,0.03,0]);}
   else if(kind==='dagger'){add(new THREE.BoxGeometry(0.04,0.35,0.01),WM.blade,[0,0.28,0]);add(new THREE.CylinderGeometry(0.018,0.018,0.14,5),WM.dark,[0,0.04,0]);}
   else if(kind==='hammer'){add(new THREE.CylinderGeometry(0.02,0.02,0.5,5),WM.dark,[0,0.2,0]);add(new THREE.BoxGeometry(0.16,0.09,0.09),WM.iron,[0,0.45,0]);}
+  else if(kind==='staff'){const bm=new THREE.MeshLambertMaterial({color:0xb8a860});add(new THREE.CylinderGeometry(0.022,0.026,1.9,6),bm,[0,0.45,0]);for(let k=0;k<5;k++)add(new THREE.CylinderGeometry(0.03,0.03,0.03,6),WM.dark,[0,-0.3+k*0.38,0]);}
   else if(kind==='spear'){add(new THREE.CylinderGeometry(0.018,0.018,2.0,5),WM.dark,[0,0.5,0]);add(new THREE.ConeGeometry(0.04,0.25,4),WM.blade,[0,1.6,0]);add(new THREE.SphereGeometry(0.05,5,4),WM.red,[0,1.45,0]);}
   return g;}
 function hat(kind){wm();const g=new THREE.Group();if(kind==='non'){const m=new THREE.Mesh(new THREE.ConeGeometry(0.3,0.2,14,1,true),WM.hat);m.position.y=0.17;m.castShadow=true;g.add(m);}

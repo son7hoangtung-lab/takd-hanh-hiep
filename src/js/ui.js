@@ -23,6 +23,7 @@ U.tip=function(el,zh,vi){const py=U.py(zh);tip.innerHTML=`<div class="tz">${zh}<
 document.addEventListener('click',e=>{const b=e.target.closest('.ih');if(b){e.preventDefault();e.stopPropagation();U.tip(b,b.dataset.tz,b.dataset.tv);return;}if(!tip.hidden&&!e.target.closest('#tip'))tip.hidden=true;},true);
 document.querySelectorAll('[data-h]').forEach(el=>{const [zh,,vi]=el.dataset.h.split('|');if(el.dataset.h.split('|')[1])PY[zh]=el.dataset.h.split('|')[1];el.insertAdjacentHTML('beforeend',U.ih(zh,vi,1));});
 
+U.big=function(top,main,sub){const b=$('#banner');b.innerHTML=`<div class="b-sub">${top}</div><div class="b-vi" style="font-size:30px">${main}</div><div class="b-sub">${sub||''}</div>`;b.classList.remove('show');void b.offsetWidth;b.classList.add('show');};
 U.banner=function(id){const r=G.REGIONS[id];const b=$('#banner');b.innerHTML=`<div class="b-zh">${r.zh}</div><div class="b-vi">${r.vi}</div><div class="b-sub">${r.sub}</div>`;b.classList.remove('show');void b.offsetWidth;b.classList.add('show');};
 U.fade=function(cb){const f=$('#fade');f.classList.add('on');setTimeout(()=>{cb();setTimeout(()=>f.classList.remove('on'),80);},380);};
 
@@ -35,7 +36,7 @@ function renderChat(){const box=$('#chat');const L=chList();if(!L.length){box.in
 $('#chat').addEventListener('click',e=>{const l=e.target.closest('[data-say]');if(l)G.audio.say(l.dataset.say);U.open('chatlog');});
 document.querySelectorAll('.ctab').forEach(b=>b.addEventListener('click',()=>{CH=b.dataset.ch;document.querySelectorAll('.ctab').forEach(x=>x.classList.toggle('on',x===b));renderChat();}));
 const EMO=[['你好！','Xin chào!'],['谢谢！','Cảm ơn!'],['加油！','Cố lên!'],['一起打怪吧！','Cùng đánh quái nhé!'],['哈哈哈','Ha ha ha'],['厉害！','Lợi hại!'],['等一下','Đợi chút'],['再见！','Tạm biệt!']];
-const REPLY=[['你好，掌门！','Chào chưởng môn!'],['好的！','Được!'],['走吧！','Đi thôi!'],['哈哈，你真厉害！','Ha ha, ngài giỏi thật!'],['不客气。','Không có gì.'],['我也去！','Tôi cũng đi!']];
+const REPLY=[['你好，朋友！','Chào bạn!'],['好的！','Được!'],['走吧！','Đi thôi!'],['哈哈，你真厉害！','Ha ha, ngài giỏi thật!'],['不客气。','Không có gì.'],['我也去！','Tôi cũng đi!']];
 $('#emo').innerHTML=EMO.map((e,i)=>`<button data-e="${i}" title="${e[0]}">${e[1]}</button>`).join('');
 $('#emo').addEventListener('click',e=>{const b=e.target.closest('[data-e]');if(!b)return;const m=EMO[+b.dataset.e];G.audio.init();G.audio.say(m[0]);U.chat('Takd',m[0],m[1],'#ffd84a',false,CH==='all'||CH==='sys'?'all':CH);
   G.P.say={zh:m[0],vi:m[1],t:3};if(Math.random()<.75)setTimeout(()=>{const all=G.allBots();const bt=all[(Math.random()*all.length)|0];const r=REPLY[(Math.random()*REPLY.length)|0];U.chat(bt.name,r[0],r[1],bt.sect.col,false,CH==='all'||CH==='sys'?'all':CH);},1400+Math.random()*1600);});
@@ -44,7 +45,7 @@ $('#emo').addEventListener('click',e=>{const b=e.target.closest('[data-e]');if(!
 let goalT=0;const mini=$('#minimap');const mctx=mini.getContext('2d');let miniMap=null,miniT=0;const cache={};
 function set(id,val,prop){if(cache[id+prop]===val)return;cache[id+prop]=val;const el=document.getElementById(id);if(!el)return;if(prop==='w')el.style.width=val;else if(prop==='h')el.innerHTML=val;else el.textContent=val;}
 U.hud=function(){const S=G.S,P=G.P;if(!S||!G.map)return;const st=G.stats();
-  set('h-lv','Lv '+S.lv);const ti=G.title(S.lv);set('h-title',ti[2]+' '+U.ih(ti[1],ti[2]),'h');
+  set('h-lv','Lv '+S.lv);const rk=G.RANKS[S.rank||0];set('h-title',rk[2]+' '+U.ih(rk[0],rk[2]),'h');
   set('h-hp',Math.max(0,P.hp/st.hp*100).toFixed(1)+'%','w');set('h-mp',Math.max(0,P.mp/st.mp*100).toFixed(1)+'%','w');set('h-exp',(S.exp/G.expNeed(S.lv)*100).toFixed(1)+'%','w');
   set('h-hpt',Math.ceil(Math.max(0,P.hp))+'/'+st.hp);set('h-mpt',Math.ceil(Math.max(0,P.mp))+'/'+st.mp);set('h-sp',(S.sp||0).toFixed(0)+'%','w');set('h-expt',(S.exp/G.expNeed(S.lv)*100).toFixed(1)+'%');
   const pm=G.PKMODES.find(x=>x[0]===(S.pkMode||'luyen'));if(cache.pk!==pm[0]){cache.pk=pm[0];const pb=$('#pkstate');pb.innerHTML=pm[2]+U.ih(pm[1],pm[2]);pb.style.color=pm[3];}
@@ -118,31 +119,32 @@ $('#quest').addEventListener('click',e=>{const b=e.target.closest('[data-q=go]')
 
 // ---------- BẢNG (sheet) ----------
 const sheet=$('#sheet'),sbody=$('#sheet-body'),stitle=$('#sheet-title');
-U.close=function(){sheet.hidden=true;G.paused=false;sbody.innerHTML='';U.cur=null;G.save();};
+U.close=function(){if(U.cur==='songs'&&G.music)G.music.stop();sheet.hidden=true;G.paused=false;sbody.innerHTML='';U.cur=null;G.save();};
 $('#sheet-close').addEventListener('click',()=>{G.audio.sfx('click');U.close();});
-const TITLES={skills:['武功','Võ công'],guild:['帮会','Bang hội · Tổ đội'],pet:['同伴','Đồng hành'],life:['生活','Kỹ năng sống'],medicine:['药铺','Hiệu thuốc'],bag:['背包','Túi đồ'],quest:['任务','Nhiệm vụ'],study:['书房','Thư phòng'],char:['人物','Nhân vật'],map:['地图','Bản đồ'],rank:['排行','Xếp hạng'],set:['设置','Cài đặt'],enhance:['强化','Cường hóa'],cook:['做饭','Nấu ăn'],shop:['商店','Cửa hàng'],chatlog:['世界频道','Kênh thế giới'],dialog:['','']};
+const TITLES={songs:['歌曲','Học qua bài hát'],skills:['武功','Võ công'],guild:['帮会','Bang hội · Tổ đội'],pet:['同伴','Đồng hành'],life:['生活','Kỹ năng sống'],medicine:['药铺','Hiệu thuốc'],bag:['背包','Túi đồ'],quest:['任务','Nhiệm vụ'],study:['书房','Thư phòng'],char:['人物','Nhân vật'],map:['地图','Bản đồ'],rank:['排行','Xếp hạng'],set:['设置','Cài đặt'],enhance:['强化','Cường hóa'],cook:['做饭','Nấu ăn'],shop:['商店','Cửa hàng'],chatlog:['世界频道','Kênh thế giới'],dialog:['','']};
 U.open=function(name,arg){U.cur=name;G.paused=true;G.P.move={x:0,y:0};atkHeld=false;sheet.hidden=false;sheet.dataset.k=name;const t=TITLES[name]||['',''];stitle.innerHTML=`${t[1]} ${t[0]?U.ih(t[0],t[1]):''}`;sbody.scrollTop=0;
-  ({bag:bagPanel,quest:questPanel,study:(b,a)=>G.learn.panel(b,a),char:charPanel,map:mapPanel,rank:rankPanel,set:setPanel,enhance:enhPanel,cook:cookPanel,shop:(b,k)=>k==='medicine'?medPanel(b):shopPanel(b,k),chatlog:chatPanel,skills:skillsPanel,guild:guildPanel,pet:petPanel,life:lifePanel})[name](sbody,arg);};
+  ({bag:bagPanel,quest:questPanel,study:(b,a)=>G.learn.panel(b,a),char:charPanel,map:mapPanel,rank:rankPanel,set:setPanel,enhance:enhPanel,cook:cookPanel,shop:(b,k)=>k==='medicine'?medPanel(b):shopPanel(b,k),chatlog:chatPanel,skills:skillsPanel,guild:guildPanel,pet:petPanel,life:lifePanel,songs:(b,a)=>G.songsPanel(b,a)})[name](sbody,arg);};
 U.refresh=function(arg){if(U.cur)U.open(U.cur,arg);};
 
 // ---------- HỘI THOẠI NPC ----------
 const GREET=[['你好！','Nǐ hǎo!','Xin chào!'],['今天天气很好。','Jīntiān tiānqì hěn hǎo.','Hôm nay trời đẹp quá.'],['你吃饭了吗？','Nǐ chī fàn le ma?','Ngài ăn cơm chưa?'],['掌门，你好吗？','Zhǎngmén, nǐ hǎo ma?','Chưởng môn khỏe không?'],['你的狗很漂亮！','Nǐ de gǒu hěn piàoliang!','Chó của ngài đẹp quá!'],['欢迎！','Huānyíng!','Hoan nghênh!']];
 const line=(d)=>`<div class="dl" data-say="${esc(d[0])}"><div class="dz">${esc(d[0])} <span class="spk">🔊</span></div><div class="dp">${esc(d[1])}</div><div class="dv">${esc(d[2])}</div></div>`;
 const qLines=q=>q.d||(q.type==='lesson'?(()=>{const l=G.learn.lesson(q.lesson);return [['我们一起学习吧！','Wǒmen yìqǐ xuéxí ba!','Chúng ta cùng học nào!'],['今天学：'+l.zh,'',`Hôm nay học Bài ${l.special?'★':l.n}: ${l.vi}`]];})():[['你好！','Nǐ hǎo!','Xin chào!']]);
-U.dialog=function(n){const S=G.S,q=G.curQuest();U.open('chatlog');U.cur='dialog';stitle.innerHTML=`<span class="zh">${n.zh}</span> ${n.vi}`;
+U.dialog=function(n){const S=G.S,q=G.curQuest();U.open('chatlog');U.cur='dialog';stitle.innerHTML=`${n.vi} ${U.ih(n.zh,n.vi)}`;
   const por=`<canvas class="npc-por" width="16" height="26"></canvas>`;let lines=[],btns=[];
   if(q&&q.npc===n.id){if(S.q.st==='new'){lines=qLines(q);btns.push(['accept',q.type==='talk'?'Đáp lời 好的':q.type==='lesson'?'Nhận & học ngay 学习':'Nhận nhiệm vụ 接受']);}
     else if(S.q.st==='done'){lines=[['做得很好！谢谢你！','Zuò de hěn hǎo! Xièxie nǐ!','Làm tốt lắm! Cảm ơn ngài!']];btns.push(['reward','Nhận thưởng 领奖']);}
     else{const ql=qLines(q);lines=[ql[ql.length-1]];if(q.type==='lesson')btns.push(['study',`Học Bài ${q.lesson>15?'★':q.lesson} 学习`]);}}
   else lines=[GREET[(Math.random()*GREET.length)|0]];
-  if(n.role==='enhance')btns.push(['enhance','Cường hóa 强化']);if(n.role==='teleport')btns.push(['map','Truyền tống 传送']);if(n.role==='board')btns.push(['quest','Xem cáo thị 告示']);if(n.role==='study')btns.push(['study','Thư phòng 书房']);if(n.shop)btns.push(['shop','Cửa hàng 商店']);btns.push(['bye','Tạm biệt 再见']);
+  if(n.id==='lytruong'&&S.conq&&S.conq[G.map.id])btns.push(['tax',`Thu thuế (${G.taxDue(G.map.id)} lượng)`]);if(n.role==='enhance')btns.push(['enhance','Cường hóa 强化']);if(n.role==='teleport')btns.push(['map','Truyền tống 传送']);if(n.role==='board')btns.push(['quest','Xem cáo thị 告示']);if(n.role==='study')btns.push(['study','Thư phòng 书房']);if(n.shop)btns.push(['shop','Cửa hàng 商店']);btns.push(['bye','Tạm biệt 再见']);
   const qinfo=q&&q.npc===n.id?`<div class="qbox"><b>${esc(q.title)}</b><br>${questDesc(q)}${S.q.st==='active'?` · ${S.q.p}/${q.n||1}`:''}<br><small>Thưởng: ${rewardTxt(q.reward)}</small></div>`:'';
   sbody.innerHTML=`<div class="dlg">${por}<div class="dls">${lines.map(line).join('')}</div></div>${qinfo}<div class="row wrap">${btns.map(b=>`<button class="btn ${b[0]==='bye'?'ghost':''}" data-b="${b[0]}">${b[1]}</button>`).join('')}</div>`;
-  const pc=sbody.querySelector('.npc-por').getContext('2d');pc.imageSmoothingEnabled=false;pc.drawImage(G.drawPerson(n.art,0),0,0);
+  const pc=sbody.querySelector('.npc-por').getContext('2d');pc.imageSmoothingEnabled=false;try{pc.drawImage(n.art==='shiba'?G.drawShiba(0,true):G.drawPerson(n.art,0),0,0);}catch(e){}
   sbody.querySelectorAll('.dl').forEach(x=>x.onclick=()=>G.audio.say(x.dataset.say));if(S.settings.tts!==0)G.audio.say(lines.map(l=>l[0]).join(''));
   sbody.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{G.audio.sfx('click');const k=b.dataset.b;
     if(k==='accept'){if(q.type==='talk'){G.giveReward(q.reward);S.q.i++;S.q.st='new';S.q.p=0;U.close();U.toast(`✔ <b>${esc(q.title)}</b>`);}else{S.q.st='active';S.q.p=0;if(q.type==='lesson'&&G.learn.done(q.lesson)){S.q.st='done';}U.close();if(q.type==='lesson'&&S.q.st==='active'){U.open('study',q.lesson);}else U.toast(`Nhận nhiệm vụ: <b>${esc(q.title)}</b><br>${questDesc(q)}<br><small>Đi theo mũi tên vàng hoặc bấm 🧭 Tự đi</small>`,3600);}}
     else if(k==='reward'){G.giveReward(q.reward);S.q.i++;S.q.st='new';S.q.p=0;U.close();const nq=G.curQuest();if(nq)U.toast(`Nhiệm vụ tiếp: gặp <b>${G.npcName(nq.npc)}</b>`);}
+    else if(k==='tax'){G.collectTax(G.map.id);U.close();}
     else if(k==='bye')U.close();else if(k==='study'&&q&&q.type==='lesson'&&q.npc===n.id&&S.q.st==='active')U.open('study',q.lesson);else U.open(k,n.shop);});};
 function questDesc(q){const mob=q.mob&&Object.values(G.MOB_BASE).flat().find(m=>m.id===q.mob);
   return {lesson:`Học xong Bài ${q.lesson>15?'★':q.lesson} trong 书房 Thư phòng`,talk:'Trò chuyện',kill:`Diệt ${q.n} ${mob?mob.vi+' ('+mob.zh+')':''}`,learn:`Học ${q.n} từ mới${q.topic?' chủ đề '+G.TOPICS[q.topic].vi:''} trong Thư phòng`,enhance:'Cường hóa thành công 1 lần ở lò rèn',
@@ -156,14 +158,16 @@ function itemRow(it,eq){const n=G.itemName(it),r=G.RARITY[it.r];const s=G.itemSt
 function paintIcons(box){box.querySelectorAll('canvas.ic').forEach(c=>{const x=c.getContext('2d');x.imageSmoothingEnabled=false;x.drawImage(G.drawItemIcon(c.dataset.slot,c.dataset.c),0,0);});}
 function bagPanel(b,selId){const S=G.S;const eq=G.SLOTS.map(s=>S.equip[s.id]?itemRow(S.equip[s.id],true):`<div class="item empty"><div class="in"><span class="zh">${s.zh}</span> ${s.vi} – trống</div></div>`).join('');
   const bag=S.bag.slice().sort((a,b)=>G.itemPower(b)-G.itemPower(a));const fishN=Object.values(S.fish).reduce((a,b)=>a+b,0);
-  b.innerHTML=`<div class="money">💰 ${S.bac.toLocaleString('vi-VN')} lượng · 💎 ${S.stone} 玄晶 · Lực chiến <b>${G.power()}</b></div><h4>Trang bị 装备</h4><div class="items">${eq}</div>
+  b.innerHTML=`<div class="money">💰 ${S.bac.toLocaleString('vi-VN')} lượng · 💎 ${S.stone} 玄晶 · Lực chiến <b>${G.power()}</b></div><h4>Hành trang câu chuyện</h4><div class="gearrow">${Object.keys(G.GEAR).map(k=>{const g=G.GEAR[k];return `<span class="gear ${S.gear[k]?'':'off'}">${g[2]} ${g[1]}</span>`;}).join('')}</div>
+   <h4>Trang bị ${U.ih('装备','trang bị')}</h4><div class="items">${eq}</div>
+   <h4>Thẻ chữ ${U.ih('字卡','thẻ chữ')} <small>(quái rừng hoang rơi ra – bấm để nghe)</small></h4><div class="cards">${Object.keys(S.cards||{}).map(c=>`<button class="card" data-card="${c}"><b class="zh">${c}</b><small>${(G.CHARS[c]||{}).py||''} ×${S.cards[c]}</small></button>`).join('')||'<p class="hint">Chưa có thẻ nào.</p>'}</div>
    <h4>Hành trang (${bag.length}/60) <button class="mini-btn" id="sellj">Bán đồ Phàm/Tinh</button></h4><div class="items">${bag.map(i=>itemRow(i)).join('')||'<p class="hint">Chưa có gì. Đánh quái và boss để nhặt đồ – Shiba sẽ chạy đi nhặt giúp.</p>'}</div>
    <h4>Thuốc 药品</h4><div class="foods">${G.POTIONS.map(r=>`<div class="food"><span class="zh">${r.zh}</span> ${r.vi} ×${S.food[r.id]||0} <small>${r.desc}</small> <button class="mini-btn" data-use="${r.id}" ${S.food[r.id]?'':'disabled'}>Dùng</button></div>`).join('')}</div>
    <h4>Thức ăn 食物</h4><div class="foods">${G.RECIPES.map(r=>`<div class="food"><span class="zh">${r.zh}</span> ${r.vi} ×${S.food[r.id]||0} <small>${r.desc}</small> <button class="mini-btn" data-eat="${r.id}" ${S.food[r.id]?'':'disabled'}>Ăn</button></div>`).join('')}</div>
    <h4>Cá & nguyên liệu</h4><p class="hint">Cá: ${fishN} con${fishN?' – '+Object.entries(S.fish).filter(e=>e[1]).map(([k,v])=>k+'×'+v).join(', '):''}<br>${Object.keys(G.INGR).map(k=>G.INGR[k].zh+' '+G.INGR[k].vi+' ×'+(S.ingr[k]||0)).join(' · ')}</p><div id="detail"></div>`;
   paintIcons(b);b.querySelectorAll('.item[data-id]').forEach(x=>x.onclick=()=>detail(b,x.dataset.id));
   b.querySelector('#sellj').onclick=()=>{let g=0;S.bag=S.bag.filter(i=>{if(i.r<=1&&!i.e){g+=8*i.lv*(i.r+1);return false;}return true;});G.addBac(g);U.toast(`Đã bán, thu ${g} lượng`);G.audio.sfx('coin');bagPanel(b);};
-  b.querySelectorAll('[data-eat]').forEach(x=>x.onclick=()=>eat(x.dataset.eat,b));b.querySelectorAll('[data-use]').forEach(x=>x.onclick=()=>{G.useItem(x.dataset.use);bagPanel(b);});
+  b.querySelectorAll('[data-card]').forEach(x=>x.onclick=()=>{const c=x.dataset.card;const d=G.CHARS[c]||{};U.tip(x,c,(d.vi||'')+(d.tip?' – '+d.tip:''));});b.querySelectorAll('[data-eat]').forEach(x=>x.onclick=()=>eat(x.dataset.eat,b));b.querySelectorAll('[data-use]').forEach(x=>x.onclick=()=>{G.useItem(x.dataset.use);bagPanel(b);});
   if(selId)detail(b,selId);}
 function findItem(id){const S=G.S;for(const k in S.equip)if(S.equip[k]&&S.equip[k].id===id)return {it:S.equip[k],eq:k};const it=S.bag.find(i=>i.id===id);return it?{it}:null;}
 function detail(b,id){const f=findItem(id);if(!f)return;const it=f.it;const S=G.S;const cur=S.equip[it.slot];const diff=cur&&!f.eq?Math.round(G.itemPower(it)-G.itemPower(cur)):null;
@@ -218,7 +222,8 @@ function medPanel(b){const S=G.S;b.innerHTML=`<div class="money">💰 ${S.bac.to
   b.querySelectorAll('[data-m]').forEach(x=>x.onclick=()=>{const p=G.POTIONS.find(q=>q.id===x.dataset.m),n=+x.dataset.n;if(S.bac<p.price*n)return U.toast('Không đủ bạc');S.bac-=p.price*n;S.food[p.id]=(S.food[p.id]||0)+n;G.audio.sfx('coin');G.audio.say(p.zh);medPanel(b);});}
 function skillsPanel(b){const S=G.S;b.innerHTML=`<p class="hint">Mỗi chiêu cần <b>niệm chú</b> – trả lời đúng tiếng Trung để phát huy toàn lực. Nộ khí 怒 đầy thì tung <b>越魂破 Việt Hồn Phá</b> (3 câu liên hoàn).</p>`+G.SKILLS.map(s=>`<div class="skillrow ${S.lv<s.lv?'lock':''}"><span class="zh big" style="color:${s.col}">${s.zh}</span><div><b>${s.vi}</b> · Lv ${s.lv} · ${s.mp} nội · hồi ${s.cd}s<br><small>${s.desc}</small></div></div>`).join('')+`<div class="skillrow"><span class="zh big" style="color:#ff5d5d">越魂破</span><div><b>Nộ · Việt Hồn Phá</b> · cần 100 nộ khí<br><small>Trả lời 3 câu, mỗi câu đúng tăng ×2 sát thương diện rộng.</small></div></div>`;}
 function guildPanel(b){const S=G.S;const mates=G.allBots().filter(x=>x.guild==='越拳门').slice(0,8);b.innerHTML=`<div class="qbox"><span class="zh big">越拳门</span> <b>Môn phái Muay Việt</b> · Chưởng môn: <b>Kị sỹ Takd</b><br><small>Bang hội & tổ đội đầy đủ sẽ mở ở Đợt 2 (Thăng Long).</small></div><h4>Môn đồ trực tuyến</h4>${mates.length?mates.map(m=>`<div class="rr"><span class="rn" style="color:${m.sect.col}">${esc(m.name)}</span><span class="rs">${m.sect.zh}</span><b>Lv${G.botLevel(m)}</b></div>`).join(''):'<p class="hint">Chưa có môn đồ – hãy lên cấp để chiêu mộ.</p>'}`;}
-function petPanel(b){const S=G.S;b.innerHTML=`<div class="skillrow"><span class="zh big">柴犬</span><div><b>Shiba</b> – luôn theo sau, tự nhặt bạc và đồ rơi.</div></div><div class="skillrow"><span class="zh big">战马</span><div><b>Chiến mã</b> – ${S.mounted?'đang cưỡi':'đang dắt'}. Cưỡi ngựa đi nhanh hơn 30%, không tốn thể lực. Ô <b>马</b> để lên/xuống.</div></div><p class="hint">Hệ thống nuôi dưỡng đồng hành mở ở Đợt 2.</p>`;}
+function petPanel(b){const S=G.S,g=S.gear||{};b.innerHTML=`<div class="skillrow ${g.shiba?'':'lock'}"><span class="big">🐕</span><div><b>Shiba</b> ${U.ih('柴犬','chó Shiba')}<br><small>${g.shiba?'Luôn theo sau, chạy đi nhặt bạc và đồ rơi.':'Chưa có – có một chú chó hoang ở bìa rừng phía tây làng.'}</small></div></div>
+  <div class="skillrow ${g.horse?'':'lock'}"><span class="big">🐎</span><div><b>Chiến mã</b> ${U.ih('战马','chiến mã')}<br><small>${g.horse?(S.mounted?'Đang cưỡi':'Đang dắt')+'. Cưỡi ngựa đi nhanh hơn 30%, không tốn thể lực. Ô 🐎 để lên/xuống.':'Chưa có – Phu dịch trạm sẽ tặng khi anh dẹp được sói rừng.'}</small></div></div>`;}
 function lifePanel(b){const S=G.S;b.innerHTML=`<div class="skillrow"><span class="zh big">钓鱼</span><div><b>Câu cá</b> · đã câu ${S.stats.fished}<br><small>Đứng sát bờ ao, sông, hồ rồi bấm nút Câu cá.</small></div></div><div class="skillrow"><span class="zh big">做饭</span><div><b>Nấu ăn</b> · đã nấu ${S.stats.cooked||0}<br><small>Đến bếp (quán nước, trại) để nấu từ cá + gạo + rau.</small></div></div><div class="skillrow"><span class="zh big">强化</span><div><b>Rèn đúc</b><br><small>Gặp Thợ rèn để cường hóa tới +12.</small></div></div>`;}
 
 // ---------- NHIỆM VỤ ----------
@@ -239,9 +244,23 @@ function charPanel(b){const S=G.S,st=G.stats(),ti=G.title(S.lv);
   const x=b.querySelector('#por').getContext('2d');x.imageSmoothingEnabled=false;x.drawImage(G.drawTakd(0,0,1,'#b3261e',null),0,0);const y=b.querySelector('#shp').getContext('2d');y.drawImage(G.drawShiba(0,1),0,0);}
 
 // ---------- BẢN ĐỒ ----------
-let mapZoom=1;
-function mapPanel(b){const S=G.S,m=G.map,T=G.T,K=5;const reg=G.REGIONS[m.id];
-  b.innerHTML=`<div class="mapbar"><b>📍 ${reg?reg.vi:''}</b>${reg?U.ih(reg.zh,reg.vi):''}<span class="sp"></span><button class="btn ghost sm" id="mz">${mapZoom>1?'🔍 Toàn cảnh':'🔍 Phóng to'}</button></div>
+let mapZoom=1,mapTab='local',provSel=null;
+const mapTabs=()=>`<div class="mtabs"><button class="mtab ${mapTab==='local'?'on':''}" data-mt="local">📍 Khu vực</button><button class="mtab ${mapTab==='world'?'on':''}" data-mt="world">🗺️ Sơn Hà Xã Tắc ${U.ih('山河社稷','núi sông xã tắc – đất nước')}</button></div>`;
+function bindTabs(b){b.querySelectorAll('[data-mt]').forEach(x=>x.onclick=()=>{mapTab=x.dataset.mt;mapPanel(b);});}
+function worldPanel(b){const S=G.S;provSel=provSel||(G.PROVINCES.find(p=>p.map===G.map.id)||G.PROVINCES[0]).id;
+  b.innerHTML=mapTabs()+`<div class="mapwrap"><div class="mapin" style="width:${mapZoom*100}%"><canvas id="sonha" style="width:100%;display:block;border-radius:8px"></canvas></div></div>
+   <div class="legend"><span>🚩 Đã chiếm</span><span>⚔ Đã mở đường</span><span>🔒 Chưa mở</span><span>Chạm một vùng để xem</span><button class="btn ghost sm" id="mz">${mapZoom>1?'🔍 Toàn cảnh':'🔍 Phóng to'}</button></div><div id="provcard"></div>`;
+  bindTabs(b);const c=b.querySelector('#sonha');const draw=()=>{G.drawSonHa(c,provSel);card();};
+  const card=()=>{const p=G.PROVINCES.find(q=>q.id===provSel);const st=G.provStatus(p);const stTxt={conq:'🚩 Đã chiếm – cờ Muay Việt tung bay',open:'⚔️ Đã mở đường – chưa chiếm',lock:'🔒 Chưa mở – hạ thủ lĩnh vùng trước',soon:'⏳ Sắp mở (đợt sau)',far:'🌄 Vùng đất xa – giai đoạn sau'}[st];
+    const here=G.map.id===p.map;b.querySelector('#provcard').innerHTML=`<div class="qbox"><b class="rgv">${p.vi}</b> ${U.ih(p.zh,p.vi)} <small>${p.py}</small><br><small>${stTxt}${here?' · <b>Bạn đang ở đây</b>':''}</small>
+      <div class="pgrid"><span>👑 Thủ lĩnh</span><b>${p.boss[0]} ${p.boss[1]!=='?'?U.ih(p.boss[1],p.boss[0]):''}</b><span>🐺 Quái rừng hoang</span><b>${p.mob[0]} ${p.mob[1]!=='?'?U.ih(p.mob[1],p.mob[0]):''}</b><span>📚 Bài học</span><b>${p.ch}</b>${p.lv?`<span>⚔️ Cấp</span><b>${p.lv}</b>`:''}${S.conq[p.id]?`<span>💰 Thuế</span><b>${G.TAX[p.id]||30} lượng/giờ</b>`:''}</div>
+      ${p.map&&S.unlocked[p.map]&&!here?`<button class="btn" id="pgo">Truyền tống đến đây</button>`:''}</div>`;
+    const go=b.querySelector('#pgo');if(go)go.onclick=()=>{U.close();G.teleport(p.map);};};
+  c.onclick=e=>{const p=G.sonHaHit(c,e);if(p){provSel=p.id;G.audio.say(p.zh);draw();}};
+  b.querySelector('#mz').onclick=()=>{mapZoom=mapZoom>1?1:2.2;worldPanel(b);};draw();
+  const wrap=b.querySelector('.mapwrap');if(mapZoom>1)requestAnimationFrame(()=>{wrap.scrollLeft=wrap.scrollWidth*0.42-wrap.clientWidth/2;wrap.scrollTop=wrap.scrollHeight*0.38-wrap.clientHeight/2;});}
+function mapPanel(b){if(mapTab==='world')return worldPanel(b);const S=G.S,m=G.map,T=G.T,K=5;const reg=G.REGIONS[m.id];
+  b.innerHTML=mapTabs()+`<div class="mapbar"><b>📍 ${reg?reg.vi:''}</b>${reg?U.ih(reg.zh,reg.vi):''}<span class="sp"></span><button class="btn ghost sm" id="mz">${mapZoom>1?'🔍 Toàn cảnh':'🔍 Phóng to'}</button></div>
    <div class="mapwrap" id="mapwrap"><div class="mapin" style="width:${mapZoom*100}%"><canvas id="bigmap"></canvas><div class="you" id="you"><i></i><span>Bạn ở đây</span></div></div></div>
    <div class="legend"><span><i style="background:#ff5a4a"></i>Bãi quái</span><span>👑 Boss</span><span><i style="background:#ffd84a;border-radius:50%"></i>NPC</span><span>🚪 Cổng sang vùng khác</span><span>⭐ Mục tiêu nhiệm vụ</span><span>Chạm bản đồ để tự đi</span></div>
    <h4>Các vùng đất · truyền tống</h4>${Object.keys(G.REGIONS).map(id=>{const r=G.REGIONS[id];const un=S.unlocked[id];return `<div class="recipe"><div><b class="rgv">${r.vi}</b> ${U.ih(r.zh,r.vi)}<br><small>${r.sub}</small></div>${id===m.id?'<span class="tag">Đang ở đây</span>':un?`<button class="btn" data-tp="${id}">Đi</button>`:'<span class="tag">🔒</span>'}</div>`;}).join('')}
@@ -276,7 +295,7 @@ function mapPanel(b){const S=G.S,m=G.map,T=G.T,K=5;const reg=G.REGIONS[m.id];
   const wrap=b.querySelector('#mapwrap');if(mapZoom>1)requestAnimationFrame(()=>{wrap.scrollLeft=G.P.x/T/m.w*wrap.scrollWidth-wrap.clientWidth/2;wrap.scrollTop=G.P.y/T/m.h*wrap.scrollHeight-wrap.clientHeight/2;});
   b.querySelector('#mz').onclick=()=>{mapZoom=mapZoom>1?1:2.6;mapPanel(b);};
   c.onclick=e=>{const r=c.getBoundingClientRect();const tx=(e.clientX-r.left)/r.width*m.w,ty=(e.clientY-r.top)/r.height*m.h;if(m.blocked(tx|0,ty|0,!!G.P.boat)){U.toast('Chỗ đó không đi tới được');return;}U.close();G.tapGround(tx*T,ty*T);U.toast('🧭 Đang tự đi tới điểm đã chọn',1500);};
-  b.querySelectorAll('[data-tp]').forEach(x=>x.onclick=()=>{U.close();G.teleport(x.dataset.tp);});}
+  bindTabs(b);  b.querySelectorAll('[data-tp]').forEach(x=>x.onclick=()=>{U.close();G.teleport(x.dataset.tp);});}
 
 // ---------- XẾP HẠNG ----------
 function rankPanel(b){const S=G.S;const rows=G.allBots().map(x=>({name:x.name,sect:x.sect,lv:G.botLevel(x),pw:Math.round(G.botLevel(x)*(80+x.pw*40)),guild:x.guild}));
@@ -320,7 +339,7 @@ U.fishing=function(){G.paused=true;const ov=$('#fish');ov.hidden=false;const P=G
 // ---------- MÀN MỞ ĐẦU ----------
 U.intro=function(cont){const ov=$('#intro');ov.hidden=false;
   ov.innerHTML=`<div class="i-card"><canvas id="i-por" width="36" height="40"></canvas><div class="i-zh">行侠记</div><div class="i-vi">Takd Hành Hiệp</div><div class="i-sub">Võ lâm Đại Việt · vừa đánh vừa học tiếng Trung</div>
-   <p class="i-story">${cont?'Chào mừng chưởng môn trở lại.':'Năm 1010, vua Lý dời đô về Thăng Long. Kị sỹ <b>Takd</b>, chưởng môn phái <b>Muay Việt</b>, cưỡi ngựa cùng chú Shiba trở về làng Kim Liên. Giang hồ dậy sóng, sơn tặc hoành hành, hải tặc chặn biển Đông…'}</p>
+   <p class="i-story">${cont?`Chào mừng <b>${G.rankName?G.rankName():''}</b> Takd trở lại.`:'Năm 1010, vua Lý dời đô về Thăng Long. Ở làng Kim Liên có chàng trai nghèo tên <b>Takd</b> – không tiền, không nhà, không cả vũ khí. Ác bá Râu Hùm ức hiếp dân làng, sói tràn ra từ rừng hoang… Từ hai bàn tay trắng, Takd sẽ luyện võ, học chữ, lập phái <b>Muay Việt</b>, chiếm từng thành và làm chủ <b>Sơn Hà Xã Tắc</b>.'}</p>
    <button class="btn big" id="i-go" disabled>Đang tải 0%</button><p class="i-help">Kéo nửa trái để đi hoặc chạm mặt đất · Chụm 2 ngón để phóng to/thu nhỏ, xoay 2 ngón để xoay góc nhìn · Nút <b>打</b> để đánh · Chiêu thức cần trả lời đúng tiếng Trung</p></div>`;
   const x=ov.querySelector('#i-por').getContext('2d');x.imageSmoothingEnabled=false;x.drawImage(G.drawTakd(0,0,1,'#b3261e',null),0,0);
   const go=ov.querySelector('#i-go');const lbl=cont?'Tiếp tục 继续':'Bắt đầu 开始';
