@@ -13,9 +13,14 @@ head='''<!doctype html><html lang="vi"><head><meta charset="utf-8">
 '''
 open(dist+'/index.html','w',encoding='utf-8').write(head+body+'\n</body></html>')
 for f in os.listdir(root+'/js'):shutil.copy(root+'/js/'+f,dist+'/js/'+f)
+if os.path.isdir(dist+'/assets'):shutil.rmtree(dist+'/assets')
+shutil.copytree(root+'/assets',dist+'/assets')
+assets=[]
+for dp,dn,fn in os.walk(root+'/assets'):
+  for f in fn:assets.append(os.path.relpath(os.path.join(dp,f),root).replace(os.sep,'/'))
 json.dump({"name":"Takd Hành Hiệp 行侠记","short_name":"Takd 行侠","start_url":"./","display":"standalone","orientation":"any","background_color":"#1a1210","theme_color":"#1a1210",
  "icons":[{"src":"icon-192.png","sizes":"192x192","type":"image/png"},{"src":"icon-512.png","sizes":"512x512","type":"image/png"}]},open(dist+'/manifest.webmanifest','w',encoding='utf-8'),ensure_ascii=False)
-files=['./','index.html','manifest.webmanifest','icon-192.png','icon-512.png','icon-180.png']+['js/'+f for f in os.listdir(root+'/js')]
+files=['./','index.html','manifest.webmanifest','icon-192.png','icon-512.png','icon-180.png']+['js/'+f for f in os.listdir(root+'/js')]+assets
 open(dist+'/sw.js','w').write('''const C='takd-%s';const F=%s;
 self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(F)));self.skipWaiting();});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C).map(x=>caches.delete(x)))));self.clients.claim();});

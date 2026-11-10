@@ -129,16 +129,16 @@ function dmgTo(t,raw,crit,col){const def=t.def||t.lv*1.5;let d=Math.max(1,Math.r
   G.float(t.x+(rnd()-.5)*8,t.y-18,(crit?'暴击 ':'')+d,crit?'#ffd84a':(col||'#fff'),crit);G.audio.sfx(crit?'crit':'hit');
   const k=Math.max(0,1-(t.boss?.9:.3));const a=Math.atan2(t.y-G.P.y,t.x-G.P.x);if(!t.boss){t.x+=Math.cos(a)*4*k;t.y+=Math.sin(a)*4*k;}
   if(t.hp<=0)killed(t);}
-function hit(t,mult,col){const st=G.stats();const crit=rnd()*100<st.crit||G._forceCrit;dmgTo(t,st.atk*mult*(.9+rnd()*.2),crit,col);}
-G.attack=function(){const P=G.P;if(P.atkT>0||G.paused)return;P.atkT=.42;P.swing=.22;
-  let best=null,bd=46;targets().forEach(t=>{const d=dist(t,P)-(t.boss?18:0);if(d<bd){bd=d;best=t;}});
+function hit(t,mult,col){G.target=t;G.addRage&&G.addRage(3);const st=G.stats();const crit=rnd()*100<st.crit||G._forceCrit;dmgTo(t,st.atk*mult*(.9+rnd()*.2),crit,col);}
+G.attack=function(){const P=G.P;if(P.atkT>0||G.paused)return;P.atkT=.42;P.swing=.22;G._lastSkillKind=Math.random()<.5?'punch':'slash';
+  let best=null,bd=G.S.mounted?52:46;targets().forEach(t=>{const d=dist(t,P)-(t.boss?18:0);if(d<bd){bd=d;best=t;}});
   if(best){P.face=best.x>=P.x?1:-1;hit(best,1);G.fx.push({k:'slash',x:(P.x+best.x)/2,y:(P.y+best.y)/2-8,t:0,life:.18,face:P.face});}
   else G.audio.sfx('click');};
 G.castSkill=function(i){const S=G.S,P=G.P,sk=G.SKILLS[i];if(!sk||G.paused)return;if(S.lv<sk.lv){G.ui.toast(`🔒 Cấp ${sk.lv} mới học được <b>${sk.vi}</b>`);return;}
   if(P.cd[i]>0)return;if(P.mp<sk.mp){G.ui.toast('Không đủ nội lực 内力不足');return;}
   const mode=S.settings.quiz;const need=mode==='all'||(mode==='big'&&i>=2);
   if(need){G.learn.quiz({skill:sk,onDone:(ok,fast)=>{if(ok){fire(i,fast);}else{P.cd[i]=sk.cd*.5;G.ui.toast('Niệm chú sai – chiêu thất bại');}}});}else fire(i,false);};
-function fire(i,fast){const P=G.P,sk=G.SKILLS[i];P.mp-=sk.mp;P.cd[i]=sk.cd;G.audio.sfx('skill');G._forceCrit=fast;
+function fire(i,fast){const P=G.P,sk=G.SKILLS[i];G._lastSkillKind=sk.kind==='strike'?'punch':sk.kind==='spin'?'kick':'slash';P.mp-=sk.mp;P.cd[i]=sk.cd;G.audio.sfx('skill');G._forceCrit=fast;
   G.float(P.x,P.y-36,sk.zh+' '+sk.vi,sk.col,true);const mul=sk.mult*(fast?1.25:1);const ts=targets();
   switch(sk.kind){
     case 'strike':{let best=null,bd=sk.range+20;ts.forEach(t=>{const d=dist(t,P);if(d<bd){bd=d;best=t;}});if(best){P.face=best.x>=P.x?1:-1;hit(best,mul,sk.col);G.fx.push({k:'burst',x:best.x,y:best.y-8,t:0,life:.35,col:sk.col,r:16});}else G.fx.push({k:'burst',x:P.x+P.face*24,y:P.y-8,t:0,life:.3,col:sk.col,r:10});break;}
@@ -149,7 +149,7 @@ function fire(i,fast){const P=G.P,sk=G.SKILLS[i];P.mp-=sk.mp;P.cd[i]=sk.cd;G.aud
     case 'dash':{const d=P.dir;const hitSet=new Set();P.dashT=.25;P.dashV={x:d.x*sk.range/.25,y:d.y*sk.range/.25};P.dashHit=(t)=>{if(!hitSet.has(t)){hitSet.add(t);hit(t,mul,sk.col);}};break;}
     case 'nova':ts.forEach(t=>{if(dist(t,P)<sk.range)hit(t,mul,sk.col);});for(let k=0;k<3;k++)G.fx.push({k:'ring',x:P.x,y:P.y,r0:6,r1:sk.range*(1-k*.2),t:-k*.12,life:.6,col:k?'#ffd84a':'#ff5d5d'});G.fx.push({k:'flash',t:0,life:.3});G.shake=.5;G.audio.sfx('thunder');break;
   }G._forceCrit=false;};
-function killed(t){const S=G.S;t.hp=0;t.deadT=0;
+G._kill=function(t){killed(t);};function killed(t){const S=G.S;t.hp=0;t.deadT=0;
   if(t===G.pk){S.stats.pk++;const l=G.PK_LOSE[(rnd()*G.PK_LOSE.length)|0];t.say={zh:l[0],vi:l[1],t:3};G.ui.chat(t.b.name,l[0],l[1],'#ff6b6b');G.addBac(30*S.lv,t.x,t.y);if(rnd()<.35)G.drops.push({x:t.x,y:t.y,item:G.makeItem(S.lv,1,.2)});
     G.addExp(25*S.lv,t.x,t.y);G.questEvent('pk',{});setTimeout(()=>{G.pk=null;},1500);return;}
   S.stats.kills++;G.addExp(t.exp,t.x,t.y);const bac=Math.round((4+t.lv*2)*(1+t.tier)*(t.boss?20:1)*(.7+rnd()*.6));G.drops.push({x:t.x+(rnd()-.5)*10,y:t.y,bac});
@@ -162,7 +162,7 @@ function killed(t){const S=G.S;t.hp=0;t.deadT=0;
     setTimeout(()=>{if(G.map&&G.map.boss&&G.map.boss.key===key)G.spawnBoss();},90000);}
   if(t.wb){S.wbDay[today()]=1;G.ui.chat('系统','蛟龙被打败了！','Giao Long đã bị đánh bại!','#ffd84a',true);for(let k=0;k<3;k++)G.drops.push({x:t.x+(rnd()-.5)*30,y:t.y+(rnd()-.5)*20,item:G.makeItem(t.lv,3,.6)});}
   if(t.zi>=0)setTimeout(()=>{if(G.map&&G.map.zones[t.zi])spawnZone(t.zi);},7000+rnd()*6000);}
-function playerHurt(raw,from){const P=G.P;if(P.inv>0)return;const st=G.stats();let d=Math.max(1,Math.round(raw*(.85+rnd()*.3)-st.def*.5));P.hp-=d;P.inv=.25;G.float(P.x,P.y-24,'-'+d,'#ff6b6b');G.audio.sfx('hurt');
+function playerHurt(raw,from){const P=G.P;if(P.inv>0)return;G.S.meditate=false;G.addRage&&G.addRage(5);const st=G.stats();let d=Math.max(1,Math.round(raw*(.85+rnd()*.3)-st.def*.5));P.hp-=d;P.inv=.25;G.float(P.x,P.y-24,'-'+d,'#ff6b6b');G.audio.sfx('hurt');
   if(P.hp<=0)die(from);}
 function die(from){const S=G.S,P=G.P;S.stats.deaths++;const lost=Math.round(S.bac*.1);S.bac-=lost;
   if(from&&from===G.pk){G.ui.chat(from.b.name,'哈哈！你的钱是我的了！','Ha ha! Tiền của ngươi là của ta!','#ff6b6b');if(!S.foes.includes(from.b.name))S.foes.unshift(from.b.name);S.foes.length=Math.min(S.foes.length,10);G.pk=null;}
@@ -170,7 +170,7 @@ function die(from){const S=G.S,P=G.P;S.stats.deaths++;const lost=Math.round(S.ba
 
 // ---------- PK ----------
 let pkTimer=60+rnd()*60;
-function spawnPK(){const S=G.S,P=G.P;if(G.pk||S.lv<4||P.boat)return;const all=G.allBots();let b=all[(rnd()*all.length)|0];if(S.foes.length&&rnd()<.4){const n=S.foes[(rnd()*S.foes.length)|0];b=all.find(x=>x.name===n)||b;}
+function spawnPK(){const S=G.S,P=G.P;if(G.pk||S.lv<4||P.boat||(S.pkMode||'luyen')==='luyen')return;const all=G.allBots();let b=all[(rnd()*all.length)|0];if(S.foes.length&&rnd()<.4){const n=S.foes[(rnd()*S.foes.length)|0];b=all.find(x=>x.name===n)||b;}
   const a=rnd()*Math.PI*2;let x=P.x+Math.cos(a)*180,y=P.y+Math.sin(a)*140;if(G.map.blocked(x/T|0,y/T|0,false)){x=P.x+Math.cos(a)*60;y=P.y+Math.sin(a)*60;if(G.map.blocked(x/T|0,y/T|0,false))return;}
   const st=G.stats();const lv=Math.max(1,S.lv+((rnd()*5)|0)-2);const hp=Math.round(st.hp*(.7+rnd()*.3));
   G.pk={b,x,y,hp,max:hp,lv,atk:Math.round(st.def*.6+lv*5),def:st.def*.6,st:'pk',cd:1,f:0,face:1,hitT:0,base:{id:'pk'},tier:0,
@@ -183,7 +183,7 @@ G.update=function(dtRaw){const dt=dtRaw*G.timeScale;const P=G.P,S=G.S,m=G.map;an
   const st=G.stats();
   // di chuyển
   if(P.dashT>0){P.dashT-=dt;walk(P,P.dashV.x*dt,P.dashV.y*dt,P.boat);targets().forEach(t=>{if(dist(t,P)<26)P.dashHit(t);});G.fx.push({k:'dust',x:P.x,y:P.y,t:0,life:.3});}
-  else{const mv=P.move;const L=Math.hypot(mv.x,mv.y);if(L>.1&&!G.paused){const sp=(P.boat?120:96)+(st.spd||0);const nx=mv.x/L,ny=mv.y/L;P.dir={x:nx,y:ny};if(Math.abs(nx)>.2)P.face=nx>0?1:-1;
+  else{const mv=P.move;const L=Math.hypot(mv.x,mv.y);if(L>.1&&!G.paused){const sp=((P.boat?120:96)+(st.spd||0))*(G.speedMul?G.speedMul():1);const nx=mv.x/L,ny=mv.y/L;P.dir={x:nx,y:ny};if(Math.abs(nx)>.2)P.face=nx>0?1:-1;
     walk(P,nx*sp*Math.min(L,1)*dt,ny*sp*Math.min(L,1)*dt,P.boat);P.ft+=dt*(P.boat?3:9);P.f=(P.ft|0)%4;}else P.f=0;}
   P.atkT-=dt;P.swing-=dt;P.inv-=dt;for(let i=0;i<6;i++)P.cd[i]=Math.max(0,P.cd[i]-dt);P.buffs.atk=Math.max(0,P.buffs.atk-dt);P.buffs.kim=Math.max(0,P.buffs.kim-dt);
   regenT+=dt;if(regenT>1){regenT=0;P.mp=Math.min(st.mp,P.mp+st.mp*.04);if(!targets().some(t=>t.st==='chase'&&dist(t,P)<160))P.hp=Math.min(st.hp,P.hp+st.hp*.02);}
@@ -334,6 +334,6 @@ G.offline=function(){const S=G.S;const mins=Math.min(480,Math.floor((now()-S.las
 
 // ---------- VÒNG LẶP ----------
 let last=0;function loop(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;try{if(!G.paused)G.update(dt);G.render();G.ui.hud();}catch(e){console.error(e);}requestAnimationFrame(loop);}
-G.start=function(){G.resize();window.addEventListener('resize',G.resize);const S=G.S;const st=G.stats();G.P.hp=S.hp||st.hp;G.P.mp=S.mp||st.mp;G.enterMap(S.map||'kimlien',null,S.boat);requestAnimationFrame(loop);
+G.start=function(){if(G.initExtra)G.initExtra();if(window.R3)G.render=window.R3.render;G.resize();window.addEventListener('resize',G.resize);const S=G.S;const st=G.stats();G.P.hp=S.hp||st.hp;G.P.mp=S.mp||st.mp;G.enterMap(S.map||'kimlien',null,S.boat);requestAnimationFrame(loop);
   document.addEventListener('visibilitychange',()=>{if(document.hidden)G.save();});window.addEventListener('pagehide',G.save);};
 })();

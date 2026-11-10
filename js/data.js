@@ -244,13 +244,13 @@ G.ENH_RATE = [1,1,1,.95,.9,.8,.7,.55,.45,.35,.25,.15];
 // --- Quái vật: base theo vùng ---
 G.MOB_BASE = {
   kimlien:[
-    {id:'chuot',zh:'田鼠',vi:'Chuột đồng',art:'rat',hp:30,atk:5,spd:42,lv:1,exp:8,drop:'thit'},
-    {id:'ran',zh:'水蛇',vi:'Rắn nước',art:'snake',hp:45,atk:8,spd:36,lv:2,exp:12},
-    {id:'cho',zh:'野狗',vi:'Chó hoang',art:'dog',hp:70,atk:11,spd:55,lv:4,exp:18,drop:'thit'},
+    {id:'chuot',zh:'狐狸',vi:'Cáo đồng',art:'fox',hp:30,atk:5,spd:42,lv:1,exp:8,drop:'thit'},
+    {id:'ran',zh:'蛤蟆',vi:'Cóc tía',art:'frog',hp:45,atk:8,spd:36,lv:2,exp:12},
+    {id:'cho',zh:'野狗',vi:'Chó hoang',art:'husky',hp:70,atk:11,spd:55,lv:4,exp:18,drop:'thit'},
     {id:'sontac',zh:'山贼',vi:'Sơn tặc',art:'bandit',hp:110,atk:15,spd:44,lv:6,exp:28}
   ],
   thanglong:[
-    {id:'soi',zh:'野狼',vi:'Sói hoang',art:'dog',tint:'#7d7f86',hp:180,atk:22,spd:60,lv:9,exp:40,drop:'thit'},
+    {id:'soi',zh:'野狼',vi:'Sói hoang',art:'wolf',hp:180,atk:22,spd:60,lv:9,exp:40,drop:'thit'},
     {id:'thichkhach',zh:'黑衣刺客',vi:'Thích khách áo đen',art:'bandit',tint:'#2a2a33',hp:230,atk:30,spd:58,lv:12,exp:55},
     {id:'ho',zh:'猛虎',vi:'Mãnh hổ',art:'tiger',hp:340,atk:38,spd:50,lv:14,exp:75,drop:'thit'},
     {id:'tuongda',zh:'石像',vi:'Tượng đá',art:'golem',hp:520,atk:42,spd:28,lv:16,exp:95}
@@ -270,7 +270,7 @@ G.MOB_TIER = [
   {zh:'首领',vi:'Thủ lĩnh',m:4.2,col:'#ffd84a'}
 ];
 G.BOSSES = {
-  kimlien:{id:'b1',zh:'莲池水妖',vi:'Liên Trì Thủy Yêu',art:'lotusdemon',hp:1500,atk:24,spd:30,lv:8,exp:400,unlock:'thanglong'},
+  kimlien:{id:'b1',zh:'莲池蟾精',vi:'Liên Trì Thiềm Tinh',art:'bossfrog',hp:1500,atk:24,spd:30,lv:8,exp:400,unlock:'thanglong'},
   thanglong:{id:'b2',zh:'黑风寨主',vi:'Hắc Phong Trại Chủ',art:'warlord',hp:6000,atk:62,spd:44,lv:18,exp:1500,unlock:'vandon'},
   vandon:{id:'b3',zh:'赤须海盗王',vi:'Xích Tu Hải Tặc Vương',art:'warlord',tint:'#9a2222',hp:16000,atk:110,spd:48,lv:28,exp:4000,unlock:null}
 };
@@ -282,6 +282,7 @@ G.FISH = {
   thanglong:[{zh:'草鱼',vi:'Cá trắm',p:8},{zh:'鲶鱼',vi:'Cá trê',p:7},{zh:'黄鳝',vi:'Lươn',p:9},{zh:'龙鱼',vi:'Cá rồng',p:80,rare:1}],
   vandon:[{zh:'鲳鱼',vi:'Cá chim',p:14},{zh:'墨鱼',vi:'Mực',p:16},{zh:'龙虾',vi:'Tôm hùm',p:35},{zh:'石斑鱼',vi:'Cá mú',p:28},{zh:'海龟',vi:'Đồi mồi (thả lại)',p:0,rare:1},{zh:'金枪鱼',vi:'Cá ngừ',p:60,rare:1}]
 };
+G.POTIONS = [{id:'kimsang',zh:'金疮药',vi:'Kim sang dược',heal:.5,price:30,desc:'Hồi 50% máu'},{id:'hoikhi',zh:'回气丹',vi:'Hồi khí đan',mp:.6,price:30,desc:'Hồi 60% nội lực'}];
 G.RECIPES = [
   {id:'kaoyu',zh:'烤鱼',vi:'Cá nướng',need:{fish:1},heal:.35,desc:'Hồi 35% máu'},
   {id:'mifan',zh:'米饭',vi:'Cơm trắng',need:{gao:1},heal:.2,mp:.3,desc:'Hồi 20% máu, 30% nội lực'},
@@ -320,11 +321,14 @@ G.PK_LOSE = [['我错了，对不起！','Ta sai rồi, xin lỗi!'],['你很厉
 // --- NPC ---
 G.NPCS = {
   kimlien:[
-    {id:'lytruong',zh:'里长',vi:'Lý trưởng',art:'elder',x:67,y:36},
-    {id:'trangba',zh:'茶婆',vi:'Bà hàng nước',art:'woman',x:63,y:49,shop:'tea'},
-    {id:'thoren',zh:'铁匠',vi:'Thợ rèn',art:'smith',x:46,y:41,role:'enhance'},
-    {id:'ngung',zh:'渔翁',vi:'Ông lão đánh cá',art:'fisher',x:101,y:41},
-    {id:'thaydo',zh:'私塾先生',vi:'Thầy đồ',art:'scholar',x:82,y:41,role:'study'}
+    {id:'lytruong',zh:'里长',vi:'Lý trưởng',art:'elder',x:142,y:88},
+    {id:'trangba',zh:'茶婆',vi:'Bà hàng nước',art:'woman',x:125,y:83,shop:'tea'},
+    {id:'thoren',zh:'铁匠',vi:'Thợ rèn',art:'smith',x:100,y:97,role:'enhance'},
+    {id:'ngung',zh:'渔翁',vi:'Ông lão đánh cá',art:'fisher',x:235,y:111},
+    {id:'thaydo',zh:'私塾先生',vi:'Thầy đồ',art:'scholar',x:156,y:100,role:'study'},
+    {id:'dichtram',zh:'驿站',vi:'Phu dịch trạm',art:'groom',x:91,y:105,role:'teleport'},
+    {id:'thaylang',zh:'郎中',vi:'Thầy lang',art:'doctor',x:146,y:115,shop:'medicine'},
+    {id:'caothi',zh:'告示',vi:'Bảng cáo thị',art:'board',x:131,y:90,role:'board'}
   ],
   thanglong:[
     {id:'quanvo',zh:'武官',vi:'Quan võ',art:'officer',x:73,y:96},
@@ -346,11 +350,11 @@ G.NPCS = {
 G.MAIN_QUESTS = [
   {id:'q1',npc:'lytruong',type:'talk',title:'Trưởng môn về làng',d:[['你好！欢迎回来！','Nǐ hǎo! Huānyíng huílai!','Chào ngài! Mừng ngài trở về!'],['先去学习吧。','Xiān qù xuéxí ba.','Trước hết hãy đi học đã.']],reward:{exp:30,bac:50}},
   {id:'q2',npc:'thaydo',type:'lesson',lesson:1,title:'Bài 1 · 你好 Xin chào',reward:{exp:80,stone:3}},
-  {id:'q3',npc:'lytruong',type:'kill',mob:'chuot',n:5,title:'Chuột phá lúa',d:[['田里有很多老鼠。','Tián li yǒu hěn duō lǎoshǔ.','Ngoài đồng có rất nhiều chuột.'],['请你打五只！','Qǐng nǐ dǎ wǔ zhī!','Xin ngài đánh năm con!']],reward:{exp:60,bac:80,item:1}},
+  {id:'q3',npc:'lytruong',type:'kill',mob:'chuot',n:5,title:'Cáo phá ruộng',d:[['田里有很多狐狸。','Tián li yǒu hěn duō húli.','Ngoài đồng có rất nhiều cáo.'],['请你打五只！','Qǐng nǐ dǎ wǔ zhī!','Xin ngài đánh năm con!']],reward:{exp:60,bac:80,item:1}},
   {id:'q4',npc:'trangba',type:'lesson',lesson:2,title:'Bài 2 · 谢谢你 Cảm ơn bạn',reward:{exp:90,stone:3,ingr:{gao:1}}},
   {id:'q5',npc:'thoren',type:'enhance',n:1,title:'Rèn chùy',d:[['你的锤太小了！','Nǐ de chuí tài xiǎo le!','Chùy của ngài nhỏ quá!'],['我帮你强化。','Wǒ bāng nǐ qiánghuà.','Tôi cường hóa giúp ngài.']],reward:{exp:50,bac:60}},
   {id:'q6',npc:'thaydo',type:'lesson',lesson:3,title:'Bài 3 · 你叫什么名字',reward:{exp:100,stone:3}},
-  {id:'q7',npc:'trangba',type:'kill',mob:'ran',n:6,title:'Rắn ở hồ sen',d:[['我很怕蛇！','Wǒ hěn pà shé!','Tôi rất sợ rắn!'],['湖里有蛇。','Hú li yǒu shé.','Dưới hồ có rắn.']],reward:{exp:90,bac:90,item:1}},
+  {id:'q7',npc:'trangba',type:'kill',mob:'ran',n:6,title:'Cóc tía bờ ao',d:[['湖边有很多蛤蟆。','Hú biān yǒu hěn duō háma.','Bên hồ có rất nhiều cóc.'],['我很怕！','Wǒ hěn pà!','Tôi sợ lắm!']],reward:{exp:90,bac:90,item:1}},
   {id:'q8',npc:'lytruong',type:'lesson',lesson:4,title:'Bài 4 · 她是谁 Cô ấy là ai',reward:{exp:110,stone:3}},
   {id:'q9',npc:'ngung',type:'fish',n:3,title:'Câu cá ở bến đò',d:[['你喜欢吃鱼吗？','Nǐ xǐhuan chī yú ma?','Ngài thích ăn cá không?'],['我们去钓三条鱼吧。','Wǒmen qù diào sān tiáo yú ba.','Chúng ta đi câu ba con cá nhé.']],reward:{exp:80,bac:50,ingr:{gao:2,rau:1}}},
   {id:'q10',npc:'thoren',type:'lesson',lesson:5,title:'Bài 5 · 一二三 Số đếm',reward:{exp:120,stone:4}},
@@ -360,7 +364,7 @@ G.MAIN_QUESTS = [
   {id:'q14',npc:'thaydo',type:'write',n:3,title:'Luyện viết ba chữ',d:[['写字要慢慢写。','Xiě zì yào mànmàn xiě.','Viết chữ phải viết từ từ.']],reward:{exp:90,stone:4}},
   {id:'q15',npc:'thaydo',type:'speak',n:3,title:'Luyện nói ba câu',d:[['你会说汉语吗？','Nǐ huì shuō Hànyǔ ma?','Ngài biết nói tiếng Hán không?']],reward:{exp:100,stone:4}},
   {id:'q16',npc:'lytruong',type:'kill',mob:'sontac',n:8,title:'Dẹp sơn tặc',d:[['山贼来了！','Shānzéi lái le!','Sơn tặc đến rồi!'],['掌门，请你帮我们！','Zhǎngmén, qǐng nǐ bāng wǒmen!','Chưởng môn, xin giúp chúng tôi!']],reward:{exp:220,bac:200,item:2}},
-  {id:'q17',npc:'lytruong',type:'boss',boss:'kimlien',title:'Thủy Yêu hồ Kim Liên',d:[['湖里有一个水妖！','Hú li yǒu yí gè shuǐyāo!','Trong hồ có một con thủy yêu!'],['打败它，你就能去升龙城。','Dǎbài tā, nǐ jiù néng qù Shēnglóng chéng.','Đánh bại nó, ngài có thể lên thành Thăng Long.']],reward:{exp:400,bac:400,item:3}},
+  {id:'q17',npc:'lytruong',type:'boss',boss:'kimlien',title:'Thiềm Tinh hồ Kim Liên',d:[['湖里有一个蟾精！','Hú li yǒu yí gè chánjīng!','Giữa hồ có một con cóc tinh!'],['打败它，你就能去升龙城。','Dǎbài tā, nǐ jiù néng qù Shēnglóng chéng.','Đánh bại nó, ngài có thể lên thành Thăng Long.']],reward:{exp:400,bac:400,item:3}},
   {id:'q18',npc:'quanvo',type:'talk',title:'Vào kinh thành',d:[['欢迎来升龙城！','Huānyíng lái Shēnglóng chéng!','Chào mừng đến thành Thăng Long!'],['去文庙学习吧。','Qù Wénmiào xuéxí ba.','Hãy đến Văn Miếu học tập.']],reward:{exp:150,bac:150}},
   {id:'q19',npc:'tiensi',type:'lesson',lesson:7,title:'Bài 7 · 我会说汉语',reward:{exp:300,stone:6}},
   {id:'q20',npc:'quanvo',type:'kill',mob:'soi',n:10,title:'Sói ngoài thành',d:[['城外有很多狼。','Chéng wài yǒu hěn duō láng.','Ngoài thành có rất nhiều sói.']],reward:{exp:350,bac:300,item:2}},
