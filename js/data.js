@@ -368,7 +368,7 @@ G.NPCS = {
 G.MAIN_QUESTS = [
   {id:'k1',npc:'lytruong',type:'talk',title:'Chàng trai tay trắng',d:[['你好！你是谁？','Nǐ hǎo! Nǐ shì shéi?','Chào cậu! Cậu là ai?'],['你没有钱，也没有家。','Nǐ méiyǒu qián, yě méiyǒu jiā.','Cậu không có tiền, cũng chẳng có nhà.'],['先去学习吧！','Xiān qù xuéxí ba!','Trước hết hãy đi học đi!']],reward:{exp:30,bac:30}},
   {id:'k2',npc:'thaydo',type:'lesson',lesson:1,title:'Bài 1 · 你好 Xin chào',reward:{exp:80,stone:3}},
-  {id:'k3',npc:'chohoang',type:'talk',title:'Chú chó bìa rừng',d:[['汪汪！','Wāngwāng!','Gâu gâu!'],['小狗，你饿了吗？','Xiǎo gǒu, nǐ è le ma?','Cún con, mày đói à?'],['跟我走吧！','Gēn wǒ zǒu ba!','Đi theo ta nhé!']],reward:{exp:40,gear:'shiba'}},
+  {id:'k3',npc:'trangba',type:'talk',title:'Bát cơm cho Shiba',d:[['你的狗饿了吗？','Nǐ de gǒu è le ma?','Chó của cậu đói à?'],['给它吃一点儿饭吧。','Gěi tā chī yìdiǎnr fàn ba.','Cho nó ăn chút cơm đi.'],['狗是人的好朋友。','Gǒu shì rén de hǎo péngyou.','Chó là bạn tốt của người.']],reward:{exp:40,ingr:{gao:1}}},
   {id:'k4',npc:'thoren',type:'talk',title:'Cây gậy tre',d:[['你没有武器吗？','Nǐ méiyǒu wǔqì ma?','Cậu không có vũ khí à?'],['这根竹棍给你。','Zhè gēn zhú gùn gěi nǐ.','Cây gậy tre này cho cậu.']],reward:{exp:40,gear:'staff'}},
   {id:'k5',npc:'lytruong',type:'kill',mob:'soirung',n:6,title:'Sói bìa rừng',d:[['森林里有很多狼。','Sēnlín li yǒu hěn duō láng.','Trong rừng có rất nhiều sói.'],['请你打六只！','Qǐng nǐ dǎ liù zhī!','Xin cậu đánh sáu con!']],reward:{exp:100,bac:60,item:1}},
   {id:'k6',npc:'trangba',type:'lesson',lesson:2,title:'Bài 2 · 谢谢你 Cảm ơn bạn',reward:{exp:90,stone:3,ingr:{gao:1}}},

@@ -128,7 +128,7 @@ function mobWalk(mb,dx,dy){const m=G.map;const nx=mb.x+dx,ny=mb.y+dy;const can=(
 function targets(){const arr=G.mobs.filter(m=>m.hp>0);if(G.pk&&G.pk.hp>0)arr.push(G.pk);return arr;}
 function dmgTo(t,raw,crit,col){const def=t.def||t.lv*1.5;let d=Math.max(1,Math.round(raw-def*.4));if(crit)d=Math.round(d*1.8);t.hp-=d;t.hitT=.15;t.aggro=true;if(t.st!=='pk')t.st='chase';
   G.float(t.x+(rnd()-.5)*8,t.y-18,(crit?'暴击 ':'')+d,crit?'#ffd84a':(col||'#fff'),crit);G.audio.sfx(crit?'crit':'hit');
-  const k=Math.max(0,1-(t.boss?.9:.3));const a=Math.atan2(t.y-G.P.y,t.x-G.P.x);if(!t.boss){t.x+=Math.cos(a)*4*k;t.y+=Math.sin(a)*4*k;}
+  if(G.onHit)G.onHit(t,d,crit);
   if(t.hp<=0)killed(t);}
 function hit(t,mult,col){G.target=t;G.addRage&&G.addRage(3);const st=G.stats();const crit=rnd()*100<st.crit||G._forceCrit;dmgTo(t,st.atk*mult*(.9+rnd()*.2),crit,col);}
 G.attack=function(){const P=G.P;if(P.atkT>0||G.paused)return;P.atkT=.42;P.swing=.22;G._lastSkillKind=Math.random()<.5?'punch':'slash';
@@ -157,7 +157,7 @@ G._kill=function(t){killed(t);};function killed(t){const S=G.S;t.hp=0;t.deadT=0;
   const ic=t.boss?1:.06*(1+t.tier*1.2);if(rnd()<ic)G.drops.push({x:t.x+(rnd()-.5)*16,y:t.y+(rnd()-.5)*10,item:G.makeItem(t.lv,t.boss?(t.wb?4:2+Object.keys(G.BOSSES).indexOf(G.map.id)):Math.min(t.tier,2),t.boss?.6:t.tier*.15)});
   if(t.boss&&!t.wb&&rnd()<.6)G.drops.push({x:t.x+8,y:t.y+6,item:G.makeItem(t.lv,2,.5)});
   if(t.base.drop==='thit'&&rnd()<.5)G.drops.push({x:t.x,y:t.y+6,ingr:'thit'});if(rnd()<.08+t.tier*.05)G.drops.push({x:t.x-6,y:t.y,stone:1+t.tier});
-  G.questEvent('kill',{id:t.base.id});if(G.cardDrop)G.cardDrop(t);
+  G.questEvent('kill',{id:t.base.id});if(G.cardDrop)G.cardDrop(t);if(G.radDrop)G.radDrop(t);
   if(t.boss&&!t.wb){const key=G.map.boss.key;const first=!S.bosses[t.boss];S.bosses[t.boss]=1;G.questEvent('boss',{key});G.audio.sfx('gong');G.shake=.6;
     const b=G.BOSSES[key];if(G.conquer)setTimeout(()=>G.conquer(key),1200);if(first&&b.unlock){S.unlocked[b.unlock]=1;G.ui.toast(`🏆 Đánh bại <b>${b.vi}</b>!<br>Đã mở đường đến <b>${G.REGIONS[b.unlock].vi}</b>`,4500);}
     setTimeout(()=>{if(G.map&&G.map.boss&&G.map.boss.key===key)G.spawnBoss();},90000);}
@@ -171,7 +171,7 @@ function die(from){const S=G.S,P=G.P;S.stats.deaths++;const lost=Math.round(S.ba
 
 // ---------- PK ----------
 let pkTimer=60+rnd()*60;
-function spawnPK(){const S=G.S,P=G.P;if(G.pk||S.lv<4||P.boat||(S.pkMode||'luyen')==='luyen')return;const all=G.allBots();let b=all[(rnd()*all.length)|0];if(S.foes.length&&rnd()<.4){const n=S.foes[(rnd()*S.foes.length)|0];b=all.find(x=>x.name===n)||b;}
+function spawnPK(){const S=G.S,P=G.P;if(G.pk||S.lv<4||P.boat||(S.pkMode||'luyen')==='luyen'||(G.inSafe&&G.inSafe(P.x,P.y)))return;const all=G.allBots();let b=all[(rnd()*all.length)|0];if(S.foes.length&&rnd()<.4){const n=S.foes[(rnd()*S.foes.length)|0];b=all.find(x=>x.name===n)||b;}
   const a=rnd()*Math.PI*2;let x=P.x+Math.cos(a)*180,y=P.y+Math.sin(a)*140;if(G.map.blocked(x/T|0,y/T|0,false)){x=P.x+Math.cos(a)*60;y=P.y+Math.sin(a)*60;if(G.map.blocked(x/T|0,y/T|0,false))return;}
   const st=G.stats();const lv=Math.max(1,S.lv+((rnd()*5)|0)-2);const hp=Math.round(st.hp*(.7+rnd()*.3));
   G.pk={b,x,y,hp,max:hp,lv,atk:Math.round(st.def*.6+lv*5),def:st.def*.6,st:'pk',cd:1,f:0,face:1,hitT:0,base:{id:'pk'},tier:0,
@@ -179,7 +179,7 @@ function spawnPK(){const S=G.S,P=G.P;if(G.pk||S.lv<4||P.boat||(S.pkMode||'luyen'
 
 // ---------- CẬP NHẬT ----------
 let chatT=4,saveT=10,wbCheck=5,regenT=0,animT=0;
-G.update=function(dtRaw){const dt=dtRaw*G.timeScale;const P=G.P,S=G.S,m=G.map;animT+=dt;G.anim=animT;if(G.extPre)G.extPre(dt);
+G.update=function(dtRaw){if(G.hitStop>0)G.hitStop-=dtRaw;const dt=dtRaw*G.timeScale*(G.hitStop>0?0.15:1);const P=G.P,S=G.S,m=G.map;animT+=dt;G.anim=animT;if(G.extPre)G.extPre(dt);
   if(G.shake>0)G.shake-=dtRaw;
   const st=G.stats();
   // di chuyển
@@ -198,13 +198,13 @@ G.update=function(dtRaw){const dt=dtRaw*G.timeScale;const P=G.P,S=G.S,m=G.map;an
   // nhặt đồ
   for(let i=G.drops.length-1;i>=0;i--){const d=G.drops[i];d.age=(d.age||0)+dt;if(Math.hypot(d.x-sb.x,d.y-sb.y)<8||Math.hypot(d.x-P.x,d.y-P.y)<18||d.age>4){G.drops.splice(i,1);
     if(d.bac){G.addBac(d.bac,d.x,d.y);G.audio.sfx('coin');}if(d.item){G.gainItem(d.item);G.audio.sfx('bark');}if(d.ingr){S.ingr[d.ingr]=(S.ingr[d.ingr]||0)+1;G.float(d.x,d.y-12,'+1 '+G.INGR[d.ingr].vi,'#e8dcc0');}
-    if(d.stone){S.stone+=d.stone;G.float(d.x,d.y-12,'+'+d.stone+' 玄晶','#7fe0ff');}if(d.card&&G.gainCard)G.gainCard(d.card,d.x,d.y);}}
+    if(d.stone){S.stone+=d.stone;G.float(d.x,d.y-12,'+'+d.stone+' 玄晶','#7fe0ff');}if(d.card&&G.gainCard)G.gainCard(d.card,d.x,d.y);if(d.rad&&G.gainRad)G.gainRad(d.rad,d.x,d.y);}}
   // quái
   G.mobs.forEach(mb=>{if(mb.hp<=0){mb.deadT+=dt;return;}mb.hitT-=dt;mb.cd-=dt;const d=dist(mb,P);
     const reach=!P.boat||mb.water||mb.boss;const seeR=mb.boss?150:(mb.aggro?95:0);
     if(mb.st==='idle'){mb.wt-=dt;if(mb.wt<=0){mb.wt=2+rnd()*3;mb.tx=mb.hx+(rnd()-.5)*70;mb.ty=mb.hy+(rnd()-.5)*50;}
       const vx=mb.tx-mb.x,vy=mb.ty-mb.y,L=Math.hypot(vx,vy);if(L>3){mobWalk(mb,vx/L*mb.spd*.35*dt,vy/L*mb.spd*.35*dt);mb.face=vx>0?1:-1;mb.f=((animT*4)|0)%2;}
-      if(d<seeR&&reach&&P.hp>0)mb.st='chase';}
+      if(d<seeR&&reach&&P.hp>0&&(mb.boss||!(G.inSafe&&G.inSafe(P.x,P.y))))mb.st='chase';}
     else if(mb.st==='chase'){const home=Math.hypot(mb.x-mb.hx,mb.y-mb.hy);if(home>(mb.boss?220:260)||!reach||d>320){mb.st='back';}
       else{const rr=mb.boss?(mb.wb?40:28):16;if(d>rr){const vx=P.x-mb.x,vy=P.y-mb.y;mobWalk(mb,vx/d*mb.spd*dt,vy/d*mb.spd*dt);mb.face=vx>0?1:-1;mb.f=((animT*6)|0)%2;}
         else if(mb.cd<=0){mb.cd=mb.boss?1.1:1.3;playerHurt(mb.atk*(P.buffs.kim>0?.6:1),mb);mb.lunge=.15;}
@@ -241,7 +241,7 @@ G.update=function(dtRaw){const dt=dtRaw*G.timeScale;const P=G.P,S=G.S,m=G.map;an
 // ---------- HÀNH ĐỘNG THEO NGỮ CẢNH ----------
 function nearWater(){const P=G.P,m=G.map;const tx=P.x/T|0,ty=P.y/T|0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){if(m.isWater(tx+dx,ty+dy))return true;}return false;}
 function landNear(){const P=G.P,m=G.map;const tx=P.x/T|0,ty=P.y/T|0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){if(!m.blocked(tx+dx,ty+dy,false))return {x:tx+dx,y:ty+dy};}return null;}
-function contextAction(){const P=G.P,m=G.map;let best=null,bd=30;
+function contextAction(){const P=G.P,m=G.map;let best=null,bd=46;
   G.npcs.forEach(n=>{const d=Math.hypot(n.x-P.x,n.y-P.y);if(d<bd){bd=d;best=n;}});
   if(best){const q=G.curQuest();const mark=q&&q.npc===best.id&&(G.S.q.st!=='active')?' ❗':'';return {zh:'说话',vi:best.vi+mark,fn:()=>G.ui.dialog(best)};}
   for(const c of m.chests){if(Math.hypot(c.x*T+T/2-P.x,c.y*T+T/2-P.y)<26){const key=m.id+c.x+','+c.y;if(G.S.chestDay[key]===today())return {zh:'空',vi:'Rương trống (mai quay lại)',fn:()=>{}};return {zh:'开箱',vi:'Mở rương báu',fn:()=>{G.S.chestDay[key]=today();const it=G.makeItem(G.S.lv+2,3,.5);G.gainItem(it);G.addBac(100*G.S.lv,P.x,P.y);G.audio.sfx('level');}};}}

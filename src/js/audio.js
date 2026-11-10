@@ -3,8 +3,16 @@
 let ctx=null, master=null, musicGain=null, sfxGain=null, timer=null, cur=null, step=0;
 const A = G.audio = {};
 A.init=function(){if(ctx)return;try{ctx=new (window.AudioContext||window.webkitAudioContext)();master=ctx.createGain();master.gain.value=.8;master.connect(ctx.destination);
-  musicGain=ctx.createGain();musicGain.connect(master);sfxGain=ctx.createGain();sfxGain.connect(master);A.apply();}catch(e){ctx=null;}};
-A.apply=function(){if(!ctx)return;const s=G.S&&G.S.settings||{};musicGain.gain.value=s.music===0?0:.22;sfxGain.gain.value=s.sfx===0?0:.5;};
+  musicGain=ctx.createGain();musicGain.connect(master);sfxGain=ctx.createGain();sfxGain.connect(master);A.apply();}catch(e){ctx=null;}A.unlockIOS();};
+// iPhone: nút gạt im lặng tắt Web Audio – phát kèm một <audio> im lặng để chuyển sang chế độ phát nhạc
+A.unlockIOS=function(){try{if(navigator.audioSession)navigator.audioSession.type='playback';}catch(e){}
+  if(A._el)return;try{const n=8000,b=new ArrayBuffer(44+n*2),d=new DataView(b);const w=(o,s)=>{for(let i=0;i<s.length;i++)d.setUint8(o+i,s.charCodeAt(i));};
+    w(0,'RIFF');d.setUint32(4,36+n*2,true);w(8,'WAVEfmt ');d.setUint32(16,16,true);d.setUint16(20,1,true);d.setUint16(22,1,true);d.setUint32(24,8000,true);d.setUint32(28,16000,true);d.setUint16(32,2,true);d.setUint16(34,16,true);w(36,'data');d.setUint32(40,n*2,true);
+    const el=document.createElement('audio');el.src=URL.createObjectURL(new Blob([b],{type:'audio/wav'}));el.loop=true;el.setAttribute('playsinline','');el.volume=0.01;el.play().catch(()=>{});A._el=el;}catch(e){}};
+['touchstart','pointerdown','keydown'].forEach(ev=>document.addEventListener(ev,()=>{if(ctx){if(ctx.state!=='running')ctx.resume();if(A._el&&A._el.paused)A._el.play().catch(()=>{});}},{passive:true}));
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ctx){ctx.resume();if(A._el)A._el.play().catch(()=>{});}});
+A.vol=function(k,d){const s=G.S&&G.S.settings||{};return s[k]==null?d:s[k];};
+A.apply=function(){if(!ctx)return;musicGain.gain.value=A.vol('vMusic',0.7)*0.36;sfxGain.gain.value=A.vol('vSfx',0.8)*0.62;};
 A.resume=function(){if(ctx&&ctx.state==='suspended')ctx.resume();};
 function note(freq,t,dur,type,gain,dest,attack){const o=ctx.createOscillator(),g=ctx.createGain();o.type=type||'triangle';o.frequency.value=freq;
   g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(gain,t+(attack||.005));g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g);g.connect(dest||sfxGain);o.start(t);o.stop(t+dur+.05);}
@@ -54,5 +62,5 @@ A.sfx=function(k){if(!ctx)return;const t=ctx.currentTime;
 let zhVoice=null,viVoice=null;
 function pickVoices(){if(!window.speechSynthesis)return;const vs=speechSynthesis.getVoices();zhVoice=vs.find(v=>/zh[-_]CN/i.test(v.lang))||vs.find(v=>/^zh/i.test(v.lang))||null;viVoice=vs.find(v=>/^vi/i.test(v.lang))||null;}
 if(window.speechSynthesis){pickVoices();try{speechSynthesis.onvoiceschanged=pickVoices;}catch(e){}}
-A.say=function(text,lang){if(!window.speechSynthesis||!text)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text.replace(/[《》]/g,''));u.lang=lang==='vi'?'vi-VN':'zh-CN';const v=lang==='vi'?viVoice:zhVoice;if(v)u.voice=v;u.rate=lang==='vi'?1:.85;speechSynthesis.speak(u);}catch(e){}};
+A.say=function(text,lang){if(!window.speechSynthesis||!text)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text.replace(/[《》]/g,''));u.lang=lang==='vi'?'vi-VN':'zh-CN';const v=lang==='vi'?viVoice:zhVoice;if(v)u.voice=v;u.rate=lang==='vi'?1:A.vol('ttsRate',0.85);u.volume=A.vol('vVoice',1);if(u.volume<=0)return;speechSynthesis.speak(u);}catch(e){}};
 })();

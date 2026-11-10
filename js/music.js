@@ -64,16 +64,16 @@ M.play=function(song,opt){opt=opt||{};const c=A();if(!c)return 0;M.stop();const 
 // ---- nhạc nền theo vùng / ngày đêm ----
 const MOODS={ancient:['jingyesi','songbie','chunxiao'],village:['molihua','chunxiao'],night:['jingyesi','songbie'],city:['songbie','molihua'],sea:['dengguanque','jingyesi']};
 let bgMood=null,bgIdx=0,plays=0,bgT=0;
-function nextBg(){if(!bgMood||!MOODS[bgMood])return;const S=G.S;if(S&&S.settings.music===0){bgT=setTimeout(nextBg,8000);return;}if(G.ui&&G.ui.cur==='songs'){bgT=setTimeout(nextBg,5000);return;}
+function nextBg(){if(!bgMood||!MOODS[bgMood])return;const S=G.S;if(S&&G.audio.vol('vMusic',0.7)<=0){bgT=setTimeout(nextBg,4000);return;}if(G.ui&&G.ui.cur==='songs'){bgT=setTimeout(nextBg,5000);return;}
   const list=MOODS[bgMood];const id=list[bgIdx%list.length];bgIdx++;const song=SONGS.find(s=>s.id===id);plays++;
-  M.play(song,{vol:0.75,onEnd:()=>{bgT=setTimeout(nextBg,7000+Math.random()*6000);}});if(plays%2===1)setTimeout(()=>M.hint(song),2500);}
+  M.play(song,{vol:0.75,onEnd:()=>{bgT=setTimeout(nextBg,1500+Math.random()*1500);}});if(plays%2===1)setTimeout(()=>M.hint(song),2500);}
 const _music=G.audio.music;G.audio.music=function(name){if(!A()){_music(name);return;}
   if(MOODS[name]){if(bgMood===name)return;bgMood=name;bgIdx=0;G.audio.genStop();clearTimeout(bgT);M.stop();bgT=setTimeout(nextBg,600);}
   else{bgMood=null;clearTimeout(bgT);M.stop();_music(name);}};
 // ---- thẻ gợi ý nhạc ----
 M.hint=function(song){if(!G.S||G.paused)return;const li=(Math.random()*song.lines.length)|0;const L=song.lines[li];let el=document.getElementById('mhint');if(!el){el=document.createElement('div');el.id='mhint';document.body.appendChild(el);}
-  el.innerHTML=`<div class="mh-h">🎵 Đang phát: <b>${song.vi}</b> <span class="zh">${song.zh}</span></div><div class="mh-s">${song.from}</div><div class="mh-l"><span class="zh">${L[0]}</span><small>${L[1]}</small><em>${L[2]}</em></div><div class="mh-b"><button data-a="say">🔊 Nghe câu này</button><button data-a="learn">📖 Học bài hát</button><button data-a="x">✕</button></div>`;
-  el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),14000);
+  el.innerHTML=`<div class="mh-h">🎵 Đang phát: <b>${song.vi}</b> <span class="zh">${song.zh}</span></div><div class="mh-s">${song.from}</div><div class="mh-l"><span class="zh">${L[0]}</span><small>${L[1]}</small><em>${L[2]}</em></div><div class="mh-b"><button data-a="say">🔊</button><button data-a="learn">📖 Học bài</button><button data-a="x">✕</button></div>`;
+  el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),9000);
   el.onclick=e=>{const a=e.target.dataset&&e.target.dataset.a;if(!a)return;if(a==='say')G.audio.say(L[0]);if(a==='learn'){el.classList.remove('show');G.ui.open('songs',song.id);}if(a==='x')el.classList.remove('show');};};
 // ---- bảng "Học qua bài hát" (karaoke) ----
 const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
