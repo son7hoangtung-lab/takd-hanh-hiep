@@ -247,10 +247,10 @@ G.MOB_BASE = {
     {id:'soirung',zh:'野狼',vi:'Sói rừng',art:'wolf',hp:34,atk:6,spd:46,lv:1,exp:9,drop:'thit'}
   ],
   thanglong:[
-    {id:'soi',zh:'野狼',vi:'Sói hoang',art:'wolf',hp:180,atk:22,spd:60,lv:9,exp:40,drop:'thit'},
-    {id:'thichkhach',zh:'黑衣刺客',vi:'Thích khách áo đen',art:'bandit',tint:'#2a2a33',hp:230,atk:30,spd:58,lv:12,exp:55},
-    {id:'ho',zh:'猛虎',vi:'Mãnh hổ',art:'tiger',hp:340,atk:38,spd:50,lv:14,exp:75,drop:'thit'},
-    {id:'tuongda',zh:'石像',vi:'Tượng đá',art:'golem',hp:520,atk:42,spd:28,lv:16,exp:95}
+    {id:'ho',zh:'老虎',vi:'Hổ dữ',art:'tiger',hp:150,atk:19,spd:52,lv:10,exp:36,drop:'thit'}
+  ],
+  coloa:[
+    {id:'matroi',zh:'古城鬼火',vi:'Ma trơi thành cổ',art:'matroi',hp:330,atk:36,spd:44,lv:18,exp:72}
   ],
   vandon:[
     {id:'cua',zh:'大螃蟹',vi:'Cua khổng lồ',art:'crab',hp:480,atk:48,spd:34,lv:19,exp:110},
@@ -268,7 +268,8 @@ G.MOB_TIER = [
 ];
 G.BOSSES = {
   kimlien:{id:'b1',zh:'虎须恶霸',vi:'Ác bá Râu Hùm',art:'cuonghao',hp:1800,atk:26,spd:34,lv:10,exp:600,unlock:'thanglong',leader:1},
-  thanglong:{id:'b2',zh:'黑风寨主',vi:'Hắc Phong Trại Chủ',art:'warlord',hp:6000,atk:62,spd:44,lv:18,exp:1500,unlock:'vandon'},
+  thanglong:{id:'b2',zh:'黑风都尉',vi:'Đô úy Hắc Phong',art:'douy',hp:6500,atk:60,spd:44,lv:22,exp:1800,unlock:'coloa',leader:1},
+  coloa:{id:'b4',zh:'石甲将军',vi:'Thạch Giáp tướng quân',art:'thachgiap',hp:11000,atk:86,spd:30,lv:27,exp:2800,unlock:'vandon',leader:1},
   vandon:{id:'b3',zh:'赤须海盗王',vi:'Xích Tu Hải Tặc Vương',art:'warlord',tint:'#9a2222',hp:16000,atk:110,spd:48,lv:28,exp:4000,unlock:null}
 };
 G.WORLD_BOSS = {id:'wb',zh:'蛟龙',vi:'Giao Long (Thuồng luồng sông Hồng)',art:'serpent',hp:30000,atk:70,spd:40,lv:25,exp:6000,hours:[12,20]};
@@ -292,6 +293,7 @@ G.INGR = {gao:{zh:'米',vi:'Gạo'},rau:{zh:'菜',vi:'Rau'},thit:{zh:'肉',vi:'T
 G.REGIONS = {
   kimlien:{zh:'金莲村',vi:'Làng Kim Liên',sub:'Thăng Long ngoại thành · năm 1010',music:'village'},
   thanglong:{zh:'升龙城',vi:'Kinh thành Thăng Long',sub:'Văn Miếu · Chùa Một Cột · sông Hồng',music:'city'},
+  coloa:{zh:'古螺城',vi:'Thành Cổ Loa',sub:'Thành ốc ba vòng · đền An Dương Vương',music:'ancient'},
   vandon:{zh:'云屯港',vi:'Thương cảng Vân Đồn',sub:'Cửa biển Đông · bến thuyền buôn',music:'sea'}
 };
 
@@ -318,7 +320,7 @@ G.PK_LOSE = [['我错了，对不起！','Ta sai rồi, xin lỗi!'],['你很厉
 // --- NPC ---
 G.NPCS = {
   kimlien:[
-    {id:'lytruong',zh:'里长',vi:'Lý trưởng',art:'elder',x:142,y:88},
+    {id:'lytruong',zh:'里长',vi:'Lý trưởng',art:'elder',x:142,y:88,role:'tax'},
     {id:'trangba',zh:'茶婆',vi:'Bà hàng nước',art:'woman',x:125,y:83,shop:'tea'},
     {id:'thoren',zh:'铁匠',vi:'Thợ rèn',art:'smith',x:100,y:97,role:'enhance'},
     {id:'ngung',zh:'渔翁',vi:'Ông lão đánh cá',art:'fisher',x:235,y:111},
@@ -331,11 +333,27 @@ G.NPCS = {
     {id:'linh2',zh:'越拳兵',vi:'Lính Muay Việt',art:'soldier',x:145,y:104,cond:'conq'}
   ],
   thanglong:[
-    {id:'quanvo',zh:'武官',vi:'Quan võ',art:'officer',x:73,y:96},
-    {id:'tiensi',zh:'进士',vi:'Ông Tiến sĩ',art:'scholar',x:47,y:91,role:'study'},
-    {id:'thoren2',zh:'铁匠',vi:'Lò rèn kinh thành',art:'smith',x:60,y:93,role:'enhance'},
-    {id:'thuongnhan',zh:'商人',vi:'Thương nhân',art:'merchant',x:102,y:64,shop:'city'},
-    {id:'sukhong',zh:'和尚',vi:'Sư trụ trì',art:'monk',x:91,y:45}
+    {id:'phudoan',zh:'府尹',vi:'Phủ doãn',art:'elder',x:210,y:118,role:'tax'},
+    {id:'quanvo',zh:'武官',vi:'Quan võ',art:'officer',x:201,y:124},
+    {id:'tiensi',zh:'进士',vi:'Ông Tiến sĩ',art:'scholar',x:166,y:160,role:'study'},
+    {id:'thoren2',zh:'铁匠',vi:'Lò rèn kinh thành',art:'smith',x:192,y:179,role:'enhance'},
+    {id:'thuongnhan',zh:'商人',vi:'Thương nhân',art:'merchant',x:252,y:128,shop:'city'},
+    {id:'sukhong',zh:'和尚',vi:'Sư trụ trì',art:'monk',x:163,y:116},
+    {id:'thaylang2',zh:'郎中',vi:'Thầy thuốc kinh thành',art:'doctor',x:232,y:135,shop:'medicine'},
+    {id:'dichtram2',zh:'驿站',vi:'Dịch trạm kinh thành',art:'groom',x:214,y:190,role:'teleport'},
+    {id:'caothi2',zh:'告示',vi:'Bảng cáo thị',art:'board',x:204,y:124,role:'board'},
+    {id:'linh3',zh:'越拳兵',vi:'Lính Muay Việt',art:'soldier',x:206,y:115,cond:'conq'},
+    {id:'linh4',zh:'越拳兵',vi:'Lính Muay Việt',art:'soldier',x:212,y:115,cond:'conq'}
+  ],
+  coloa:[
+    {id:'ongtu',zh:'庙祝',vi:'Ông từ đền',art:'scholar',x:186,y:112},
+    {id:'truongthon',zh:'村长',vi:'Trưởng thôn Cổ Loa',art:'elder',x:188,y:146,role:'tax'},
+    {id:'thoren4',zh:'铁匠',vi:'Thợ rèn Cổ Loa',art:'smith',x:168,y:72,role:'enhance'},
+    {id:'thaylang3',zh:'郎中',vi:'Thầy lang',art:'doctor',x:226,y:128,shop:'medicine'},
+    {id:'dichtram3',zh:'驿站',vi:'Phu dịch trạm',art:'groom',x:160,y:120,role:'teleport'},
+    {id:'thuongnhan3',zh:'商人',vi:'Người bán hàng',art:'merchant',x:213,y:155,shop:'city'},
+    {id:'linh5',zh:'越拳兵',vi:'Lính Muay Việt',art:'soldier',x:188,y:128,cond:'conq'},
+    {id:'linh6',zh:'越拳兵',vi:'Lính Muay Việt',art:'soldier',x:196,y:128,cond:'conq'}
   ],
   vandon:[
     {id:'cangchu',zh:'港主',vi:'Cảng chủ',art:'officer',x:22,y:56},
@@ -370,23 +388,31 @@ G.MAIN_QUESTS = [
   {id:'k20',npc:'lytruong',type:'kill',mob:'soirung',n:12,title:'Sói đầu đàn trong rừng sâu',d:[['森林最里面的狼很大。','Sēnlín zuì lǐmiàn de láng hěn dà.','Sói tận sâu trong rừng rất to.'],['小心！','Xiǎoxīn!','Cẩn thận!']],reward:{exp:300,bac:200,item:2}},
   {id:'k21',npc:'lytruong',type:'boss',boss:'kimlien',title:'Hạ thủ lĩnh, chiếm làng',d:[['恶霸住在大房子里。','Èbà zhù zài dà fángzi li.','Tên ác bá sống trong ngôi nhà lớn.'],['他每天打人、要钱。','Tā měitiān dǎ rén, yào qián.','Hắn ngày nào cũng đánh người, đòi tiền.'],['请你打败他！','Qǐng nǐ dǎbài tā!','Xin cậu đánh bại hắn!']],reward:{exp:600,bac:500,item:3}},
   {id:'k22',npc:'lytruong',type:'talk',title:'Chủ làng Kim Liên',d:[['金莲村是你的了！','Jīnlián cūn shì nǐ de le!','Làng Kim Liên là của ngài rồi!'],['每天你可以来收税。','Měitiān nǐ kěyǐ lái shōu shuì.','Mỗi ngày ngài có thể đến thu thuế.'],['下一个：升龙城！','Xià yí gè: Shēnglóng chéng!','Tiếp theo: thành Thăng Long!']],reward:{exp:300,stone:10}},
-  {id:'q18',npc:'quanvo',type:'talk',title:'Vào kinh thành',d:[['欢迎来升龙城！','Huānyíng lái Shēnglóng chéng!','Chào mừng đến thành Thăng Long!'],['去文庙学习吧。','Qù Wénmiào xuéxí ba.','Hãy đến Văn Miếu học tập.']],reward:{exp:150,bac:150}},
-  {id:'q19',npc:'tiensi',type:'lesson',lesson:7,title:'Bài 7 · 我会说汉语',reward:{exp:300,stone:6}},
-  {id:'q20',npc:'quanvo',type:'kill',mob:'soi',n:10,title:'Sói ngoài thành',d:[['城外有很多狼。','Chéng wài yǒu hěn duō láng.','Ngoài thành có rất nhiều sói.']],reward:{exp:350,bac:300,item:2}},
-  {id:'q21',npc:'quanvo',type:'lesson',lesson:8,title:'Bài 8 · 今天几号',reward:{exp:320,stone:6}},
-  {id:'q22',npc:'sukhong',type:'kill',mob:'thichkhach',n:8,title:'Thích khách áo đen',d:[['黑衣人来寺里。','Hēiyī rén lái sì li.','Người áo đen đến chùa.']],reward:{exp:420,bac:320,item:3}},
-  {id:'q23',npc:'thuongnhan',type:'lesson',lesson:9,title:'Bài 9 · 我想买水果',reward:{exp:340,stone:6,ingr:{rau:2}}},
-  {id:'q24',npc:'quanvo',type:'pk',n:1,title:'Trừng trị kẻ PK',d:[['有人在路上打人！','Yǒu rén zài lù shang dǎ rén!','Có kẻ đánh người trên đường!']],reward:{exp:300,bac:300}},
-  {id:'q25',npc:'sukhong',type:'lesson',lesson:10,title:'Bài 10 · 你在哪儿工作',reward:{exp:360,stone:6}},
-  {id:'q26',npc:'quanvo',type:'kill',mob:'ho',n:6,title:'Hổ dữ ngoài thành',d:[['山上的老虎很大！','Shān shang de lǎohǔ hěn dà!','Hổ trên núi rất to!']],reward:{exp:520,bac:400,item:3}},
-  {id:'q27',npc:'thoren2',type:'lesson',lesson:16,title:'Bài đặc biệt · 江湖 (1)',reward:{exp:380,stone:8}},
-  {id:'q28',npc:'thoren2',type:'lesson',lesson:17,title:'Bài đặc biệt · 江湖 (2)',reward:{exp:400,stone:8,item:3}},
-  {id:'q29',npc:'quanvo',type:'boss',boss:'thanglong',title:'Hắc Phong Trại',d:[['黑风寨主很厉害。','Hēifēng zhàizhǔ hěn lìhai.','Trại chủ Hắc Phong rất lợi hại.'],['打败他，你就可以去云屯港。','Dǎbài tā, nǐ jiù kěyǐ qù Yúntún gǎng.','Đánh bại hắn, ngài có thể đi cảng Vân Đồn.']],reward:{exp:1200,bac:1000,item:4}},
+  {id:'t1',npc:'phudoan',type:'talk',title:'Vào kinh thành',d:[['欢迎来升龙城！','Huānyíng lái Shēnglóng chéng!','Chào mừng đến thành Thăng Long!'],['黑风都尉住在皇城里。','Hēifēng dūwèi zhù zài huángchéng li.','Đô úy Hắc Phong chiếm giữ Hoàng thành.'],['你先去学习吧。','Nǐ xiān qù xuéxí ba.','Ngài hãy đi học trước đã.']],reward:{exp:150,bac:150}},
+  {id:'t2',npc:'tiensi',type:'lesson',lesson:7,title:'Bài 7 · 我会说汉语',reward:{exp:300,stone:6}},
+  {id:'t3',npc:'quanvo',type:'kill',mob:'ho',n:8,title:'Hổ dữ ngoài thành',d:[['城外的森林里有很多老虎。','Chéng wài de sēnlín li yǒu hěn duō lǎohǔ.','Rừng ngoài thành có rất nhiều hổ.']],reward:{exp:350,bac:300,item:2}},
+  {id:'t4',npc:'quanvo',type:'lesson',lesson:8,title:'Bài 8 · 今天几号',reward:{exp:320,stone:6}},
+  {id:'t5',npc:'sukhong',type:'talk',title:'Chùa Một Cột',d:[['这个寺只有一根柱子。','Zhège sì zhǐ yǒu yì gēn zhùzi.','Ngôi chùa này chỉ có một cây cột.'],['像一朵莲花。','Xiàng yì duǒ liánhuā.','Giống một đóa hoa sen.']],reward:{exp:200,stone:4}},
+  {id:'t6',npc:'thuongnhan',type:'lesson',lesson:9,title:'Bài 9 · 我想买水果',reward:{exp:340,stone:6,ingr:{rau:2}}},
+  {id:'t7',npc:'quanvo',type:'pk',n:1,title:'Trừng trị kẻ PK',d:[['有人在路上打人！','Yǒu rén zài lù shang dǎ rén!','Có kẻ đánh người trên đường!']],reward:{exp:300,bac:300}},
+  {id:'t8',npc:'sukhong',type:'lesson',lesson:10,title:'Bài 10 · 你在哪儿工作',reward:{exp:360,stone:6}},
+  {id:'t9',npc:'quanvo',type:'kill',mob:'ho',n:15,title:'Vào sâu rừng hổ',d:[['森林里面的老虎更大。','Sēnlín lǐmiàn de lǎohǔ gèng dà.','Hổ trong rừng sâu còn to hơn.']],reward:{exp:520,bac:400,item:3}},
+  {id:'t10',npc:'thoren2',type:'lesson',lesson:16,title:'Bài đặc biệt · 江湖 (1)',reward:{exp:380,stone:8}},
+  {id:'t11',npc:'thoren2',type:'lesson',lesson:17,title:'Bài đặc biệt · 江湖 (2)',reward:{exp:400,stone:8,item:3}},
+  {id:'t12',npc:'quanvo',type:'kill',mob:'ho',n:12,title:'Hổ chúa hang sâu',d:[['老虎王住在山洞里。','Lǎohǔ wáng zhù zài shāndòng li.','Hổ chúa sống trong hang núi.'],['小心！','Xiǎoxīn!','Cẩn thận!']],reward:{exp:600,bac:500,item:3}},
+  {id:'t13',npc:'phudoan',type:'boss',boss:'thanglong',title:'Hạ Đô úy Hắc Phong, chiếm kinh thành',d:[['黑风都尉不让百姓进皇城。','Hēifēng dūwèi bú ràng bǎixìng jìn huángchéng.','Đô úy Hắc Phong không cho dân vào Hoàng thành.'],['请你打败他！','Qǐng nǐ dǎbài tā!','Xin ngài đánh bại hắn!']],reward:{exp:1500,bac:1200,item:3}},
+  {id:'t14',npc:'phudoan',type:'talk',title:'Trấn thủ Thăng Long',d:[['升龙城是你的了！','Shēnglóng chéng shì nǐ de le!','Thành Thăng Long là của ngài rồi!'],['北边有古螺城。','Běibian yǒu Gǔluó chéng.','Phía bắc có thành Cổ Loa.']],reward:{exp:600,stone:12,rank:5}},
+  {id:'c1',npc:'ongtu',type:'talk',title:'Thành ốc Cổ Loa',d:[['这是安阳王的古城。','Zhè shì Ān Yáng Wáng de gǔchéng.','Đây là thành cổ của An Dương Vương.'],['城有三层，像螺一样。','Chéng yǒu sān céng, xiàng luó yíyàng.','Thành có ba vòng, giống như con ốc.']],reward:{exp:400,bac:300}},
+  {id:'c2',npc:'ongtu',type:'lesson',lesson:11,title:'Bài 11 · 书在桌子上',reward:{exp:500,stone:8}},
+  {id:'c3',npc:'truongthon',type:'kill',mob:'matroi',n:10,title:'Ma trơi rừng tây',d:[['晚上森林里有很多鬼火。','Wǎnshang sēnlín li yǒu hěn duō guǐhuǒ.','Ban đêm trong rừng có nhiều ma trơi.'],['我们很害怕。','Wǒmen hěn hàipà.','Chúng tôi rất sợ.']],reward:{exp:700,bac:500,item:3}},
+  {id:'c4',npc:'truongthon',type:'lesson',lesson:12,title:'Bài 12 · 现在几点',reward:{exp:550,stone:8}},
+  {id:'c5',npc:'ongtu',type:'talk',title:'Giếng Ngọc',d:[['这口井叫珠井。','Zhè kǒu jǐng jiào Zhū jǐng.','Giếng này gọi là Giếng Ngọc.'],['井里有一个很老的故事。','Jǐng li yǒu yí gè hěn lǎo de gùshi.','Trong giếng có một câu chuyện rất xưa.']],reward:{exp:400,stone:6}},
+  {id:'c6',npc:'truongthon',type:'kill',mob:'matroi',n:15,title:'Bãi tha ma',d:[['坟地里的鬼火最大。','Féndì li de guǐhuǒ zuì dà.','Ma trơi ở bãi tha ma to nhất.']],reward:{exp:900,bac:700,item:4}},
+  {id:'c7',npc:'ongtu',type:'boss',boss:'coloa',title:'Hạ Thạch Giáp tướng quân',d:[['石甲将军占了内城。','Shíjiǎ jiāngjūn zhàn le nèichéng.','Thạch Giáp tướng quân chiếm nội thành.'],['他的身体像石头一样硬！','Tā de shēntǐ xiàng shítou yíyàng yìng!','Thân hắn cứng như đá!']],reward:{exp:2500,bac:1500,item:4}},
+  {id:'c8',npc:'truongthon',type:'talk',title:'Chủ thành Cổ Loa',d:[['古螺城是你的了！','Gǔluó chéng shì nǐ de le!','Thành Cổ Loa là của ngài rồi!'],['东边的大海在等你。','Dōngbian de dàhǎi zài děng nǐ.','Biển lớn phía đông đang chờ ngài.']],reward:{exp:800,stone:12}},
   {id:'q30',npc:'cangchu',type:'talk',title:'Cửa biển Vân Đồn',d:[['这里是云屯港，有很多船。','Zhèli shì Yúntún gǎng, yǒu hěn duō chuán.','Đây là cảng Vân Đồn, có rất nhiều thuyền.']],reward:{exp:400,bac:400}},
-  {id:'q31',npc:'thuongthuyen',type:'lesson',lesson:11,title:'Bài 11 · 书在桌子上',reward:{exp:500,stone:8}},
   {id:'q32',npc:'baohiem',type:'lesson',lesson:18,title:'Bài đặc biệt · 保险 Bảo hộ hàng hóa',reward:{exp:600,stone:10,item:4}},
   {id:'q33',npc:'thuongthuyen',type:'sail',title:'Ra khơi',d:[['你会开船吗？','Nǐ huì kāi chuán ma?','Ngài biết lái thuyền không?'],['坐我的船去海上看看！','Zuò wǒ de chuán qù hǎi shang kànkan!','Ngồi thuyền tôi ra biển xem!']],reward:{exp:500,bac:500}},
-  {id:'q34',npc:'cangchu',type:'lesson',lesson:12,title:'Bài 12 · 现在几点',reward:{exp:550,stone:8}},
   {id:'q35',npc:'cangchu',type:'kill',mob:'haitac',n:10,title:'Hải tặc quấy cảng',d:[['海盗太多了！','Hǎidào tài duō le!','Hải tặc nhiều quá!']],reward:{exp:900,bac:800,item:4}},
   {id:'q36',npc:'thuongthuyen',type:'lesson',lesson:13,title:'Bài 13 · 天气怎么样',reward:{exp:600,stone:8}},
   {id:'q37',npc:'thuongthuyen',type:'lesson',lesson:14,title:'Bài 14 · Giấc mơ nghìn năm sau',reward:{exp:650,stone:10}},

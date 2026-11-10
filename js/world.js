@@ -109,7 +109,7 @@ function kimlien(){const W=260,H=200;const m=new Map('kimlien',W,H,'grass');cons
   m.zone(30,62,56,156,['soirung'],26,{lv:'4-6',lvAdd:3,name:'Rừng hoang'});m.zone(40,142,98,196,['soirung'],22,{lv:'4-6',lvAdd:3,name:'Rừng hoang'});
   m.zone(3,62,30,156,['soirung'],22,{lv:'7-9',lvAdd:6,name:'Rừng sâu'});m.zone(4,160,36,196,['soirung'],12,{lv:'10-12',lvAdd:9,elite:1,name:'Hang sói'});
   m.boss={x:141*T+T/2,y:99*T+T/2,key:'kimlien'};
-  m.portals.push({x:128,y:2,to:'thanglong',arrive:[70,104],need:'b1',zh:'升龙城',vi:'Đi Thăng Long'});
+  m.portals.push({x:128,y:2,to:'thanglong',arrive:[209,222],need:'b1',zh:'升龙城',vi:'Đi Thăng Long'});
   m.amb('trau',28,8,226,60,9,{tiles:['paddy','dirt']});m.amb('trau',38,152,90,192,3,{tiles:['paddy','dirt']});m.amb('co',28,8,226,60,16,{tiles:['paddy','lotus']});m.amb('co',100,156,160,186,6,{tiles:['lotus']});
   m.amb('vit',142,118,162,126,6,{water:1});m.amb('vit',104,160,156,180,8,{water:1});m.amb('ga',88,76,168,132,18,{tiles:['grass','meadow','dirt','floor','flowers','cobble']});
   m.amb('dan',88,76,168,132,26,{tiles:['dirt','floor','cobble']});m.amb('sampan',240,2,256,196,3,{water:1});
@@ -117,56 +117,116 @@ function kimlien(){const W=260,H=200;const m=new Map('kimlien',W,H,'grass');cons
   m.start=[128,108];return m;}
 
 // ================= KINH THÀNH THĂNG LONG =================
-function thanglong(){const W=140,H=110;const m=new Map('thanglong',W,H,'grass');const r=G.rng(1070);noiseFill(m,23,'grass',['meadow','meadow','flowers']);
-  const rx=y=>128+Math.round(3*Math.sin(y/12));
-  for(let y=0;y<H;y++){const c=rx(y);m.rect(c-3,y,W-1,y,'water');m.rect(c-5,y,c-4,y,'sand');m.rect(c-7,y,c-6,y,'dike');}
-  // hồ Dâm Đàm
-  m.blob(16,22,12,'water',31);m.ellipse(16,22,13,15,'water');m.ellipse(16,22,15,17,'shallow',['grass','meadow','flowers']);m.ellipse(20,14,3,2,'lotus');m.ellipse(10,30,3,2,'lotus');
-  // sông Tô Lịch
-  for(let x=26;x<rx(20)-2;x++){const y=21+Math.round(2*Math.sin(x/9));m.rect(x,y-1,x,y+1,'water');}
-  // tường thành đất & cổng
-  m.ring(34,28,112,100,'earthwall',2);m.rect(68,28,72,29,'cobble');m.rect(68,99,72,100,'cobble');m.rect(34,62,35,66,'cobble');m.rect(111,62,112,66,'cobble');
-  // phố phường
-  m.rect(36,30,110,98,'grass');noiseFill(m,77,'grass',['meadow']);
-  m.rect(69,30,71,98,'cobble');m.rect(36,63,110,65,'cobble');[46,94].forEach(x=>m.rect(x,30,x,98,'cobble'));[44,82].forEach(y=>m.rect(36,y,110,y,'cobble'));
-  m.path([[70,0],[70,28]],2,'dirt');m.path([[70,101],[70,109]],2,'dirt');m.path([[113,64],[rx(64)-6,64]],2,'dirt');m.path([[0,64],[33,64]],2,'dirt');
-  for(let x=68;x<=72;x++){const y=21+Math.round(2*Math.sin(x/9));m.rect(x,y-1,x,y+1,'bridge');}
-  for(let y=63;y<=65;y++)m.rect(rx(y)-7,y,rx(y)-6,y,'dike');
-  // Hoàng thành
-  m.rect(54,32,86,56,'stone');m.ring(54,32,86,56,'brick',1);m.rect(54,32,86,32,'walltop');m.rect(69,56,71,56,'stone');
-  m.obj('dien',70,42);m.reserve(70,46,2);m.obj('cotco',62,52);m.obj('cotco',78,52);m.obj('xoan',58,36);m.obj('xoan',82,36);m.obj('lantern',66,48);m.obj('lantern',74,48);m.obj('congthanh',70,58);
+// vòng tường đất hình elip (có cổng, có hào)
+function ellRing(m,cx,cy,rx,ry,t,th,gates,gw,moat){for(let a=0;a<Math.PI*2;a+=0.004){const g=gates.some(q=>Math.abs(((a-q+Math.PI*3)%(Math.PI*2))-Math.PI)<gw);for(let k=0;k<th;k++){const x=Math.round(cx+Math.cos(a)*(rx+k)),y=Math.round(cy+Math.sin(a)*(ry+k));if(g){if(!WATERY[m.get(x,y)])m.set(x,y,'dirt');}else m.set(x,y,t);}
+  if(moat){for(let k=th+1;k<th+3;k++){const x=Math.round(cx+Math.cos(a)*(rx+k)),y=Math.round(cy+Math.sin(a)*(ry+k));m.set(x,y,g?'bridge':'water');}}}}
+// rừng hoang dùng chung
+function wildForest(m,r,inF,dens){const FT=['grass','meadow','flowers','mud'];for(let i=0;i<dens.mud;i++){const x=2+r()*(m.w-4),y=2+r()*(m.h-4);if(inF(x|0,y|0))m.blob(x,y,2+r()*4,'mud',700+i,['grass','meadow','flowers']);}
+  const sc=(o,n,pad)=>{let k=0,t=0;while(k<n&&t<n*50){t++;const x=2+((r()*(m.w-4))|0),y=2+((r()*(m.h-4))|0);if(!inF(x,y))continue;if(!m.free(x-(pad||0),y-(pad||0),x+(pad||0),y,FT))continue;m.obj(o,x,y);k++;}};
+  sc('cothu',dens.tree,2);sc('bamboo',dens.bamboo||60,1);sc('banyan',dens.banyan||8,2);sc('bui',dens.bush,0);sc('rock',dens.rock||30,0);sc('xoan',dens.xoan||16,1);return sc;}
+
+// ================= KINH THÀNH THĂNG LONG (mở rộng) =================
+function thanglong(){const W=300,H=230;const m=new Map('thanglong',W,H,'grass');const r=G.rng(1070);noiseFill(m,23,'grass',['meadow','meadow','flowers']);
+  const rx=y=>286+Math.round(3*Math.sin(y/14));
+  // sông Hồng (Nhị Hà)
+  for(let y=0;y<H;y++){const c=rx(y);m.rect(c-4,y,W-1,y,'water');m.rect(c-6,y,c-5,y,'sand');m.rect(c-8,y,c-7,y,'dike');}
+  // hồ Dâm Đàm (Hồ Tây) ngoài thành phía tây bắc
+  m.blob(104,40,24,'water',31);m.ellipse(104,40,30,22,'water');m.ellipse(104,40,33,25,'shallow',['grass','meadow','flowers']);m.ellipse(84,28,5,3,'lotus');m.ellipse(124,56,5,3,'lotus');m.ellipse(104,40,4,3,'grass');
+  // sông Tô Lịch: từ hồ chảy xuống phía nam, men tường tây
+  for(let y=62;y<H;y++){const x=138+Math.round(3*Math.sin(y/11));m.rect(x-1,y,x+1,y,'water');}
+  // ruộng & xóm phía bắc (ngoài thành, yên bình)
+  for(let y=4;y<=52;y++)for(let x=150;x<=272;x++){if(m.get(x,y)!=='grass'&&m.get(x,y)!=='meadow'&&m.get(x,y)!=='flowers')continue;const dk=(x-150)%9===0||(y-4)%6===0;m.set(x,y,dk?'dirt':'paddy');}
+  // đường
+  m.path([[209,1],[209,229]],3,'dirt');m.path([[1,128],[150,128]],2,'dirt');m.path([[268,128],[rx(128)-8,128]],2,'dirt');
+  for(let y=126;y<=130;y++){const x=138+Math.round(3*Math.sin(y/11));m.rect(x-2,y,x+2,y,'bridge');}
+  // tường thành Đại La & cổng
+  m.ring(150,60,268,196,'earthwall',2);m.rect(206,60,212,61,'cobble');m.rect(206,195,212,196,'cobble');m.rect(150,125,151,131,'cobble');m.rect(267,125,268,131,'cobble');
+  m.rect(152,62,266,194,'grass');noiseFill(m,77,'grass',['meadow']);
+  m.rect(208,62,210,194,'cobble');m.rect(152,127,266,129,'cobble');[180,240].forEach(x=>m.rect(x,62,x,194,'cobble'));[95,165].forEach(y=>m.rect(152,y,266,y,'cobble'));
+  m.obj('congthanh',209,60);m.obj('congthanh',209,197);
+  // Hoàng thành: Điện Càn Nguyên, sân rồng (nơi Đô úy Hắc Phong chiếm giữ)
+  m.rect(182,64,238,112,'stone');m.ring(182,64,238,112,'brick',1);m.rect(182,64,238,64,'walltop');m.rect(207,112,211,112,'stone');
+  m.obj('dien',210,78);m.reserve(210,82,2);m.obj('cotco',196,96);m.obj('cotco',224,96);m.obj('xoan',188,70);m.obj('xoan',232,70);[[200,88],[220,88],[200,104],[220,104]].forEach(([x,y])=>m.obj('lantern',x,y));m.obj('statue',203,110);m.obj('statue',217,110);
+  m.reserve(210,100,4);
   // Văn Miếu – Quốc Tử Giám
-  m.rect(38,70,56,96,'tilered');m.ring(38,70,56,96,'brick',1);m.rect(46,96,48,96,'tilered');m.obj('vanmieu',47,76);m.rect(44,84,50,87,'water');
-  m.obj('bia',41,82);m.obj('bia',41,86);m.obj('bia',53,82);m.obj('bia',53,86);m.obj('areca',40,92);m.obj('areca',54,92);m.obj('statue',43,94);m.obj('statue',51,94);m.reserve(47,91,1);
-  // Chùa Diên Hựu (Một Cột) & tháp Báo Thiên
-  m.rect(86,34,96,46,'stone');m.rect(88,36,94,42,'lotus');m.rect(89,37,93,41,'water');m.obj('pagoda',91,39);m.rect(91,42,91,43,'bridge');m.reserve(91,45,1);m.obj('xoan',87,35);m.obj('xoan',95,35);
-  m.rect(92,72,100,80,'stone');m.obj('thapbaothien',96,77);m.obj('lantern',93,79);m.obj('lantern',99,79);
+  m.rect(154,138,178,172,'tilered');m.ring(154,138,178,172,'brick',1);m.rect(165,172,167,172,'tilered');m.obj('vanmieu',166,145);m.rect(162,152,170,156,'water');
+  m.obj('bia',157,152);m.obj('bia',157,156);m.obj('bia',175,152);m.obj('bia',175,156);m.obj('areca',157,168);m.obj('areca',175,168);m.obj('statue',162,168);m.obj('statue',170,168);m.reserve(166,162,1);
+  // chùa Diên Hựu (Một Cột)
+  m.rect(154,98,172,118,'stone');m.rect(158,102,168,112,'lotus');m.rect(159,103,167,111,'water');m.obj('pagoda',163,107);m.rect(163,112,163,114,'bridge');m.reserve(163,116,1);m.obj('xoan',155,99);m.obj('xoan',171,99);
+  // tháp Báo Thiên
+  m.rect(218,144,232,158,'stone');m.obj('thapbaothien',225,152);m.obj('lantern',220,156);m.obj('lantern',230,156);
   // chợ Cửa Đông
-  m.rect(96,57,110,71,'cobble');[[99,59],[103,59],[107,59],[99,69],[103,69],[107,69]].forEach(([x,y])=>m.obj('stall',x,y));m.stoves.push(m.obj('stove',108,71));m.reserve(102,64,1);
-  // lò rèn, cửa nam
-  m.obj('hut',60,90);m.stoves.push(m.obj('campfire',63,91));m.reserve(60,93,1);m.reserve(73,96,1);
-  // nhà phố
-  const inCity=(x,y)=>x>37&&x<109&&y>31&&y<97&&!(x>=53&&x<=87&&y>=31&&y<=57)&&!(x>=37&&x<=57&&y>=69&&y<=97)&&!(x>=85&&x<=101&&y>=33&&y<=81)&&!(x>=95&&y>=56&&y<=72);
-  m.reserve(70,104,2);houses(m,r,38,31,108,97,46,inCity);
-  for(let y=34;y<98;y+=6){[[68,y],[72,y]].forEach(([x,yy])=>{if(m.free(x,yy,x,yy))m.obj('lantern',x,yy);});}
-  // ngoài thành: rừng, phế tích, trại Hắc Phong
-  scatter(m,r,'banyan',30,2,116,17,10,['grass','meadow','flowers'],1);scatter(m,r,'xoan',30,2,116,17,16,['grass','meadow','flowers'],1);scatter(m,r,'bamboo',30,2,116,17,22,['grass','meadow','flowers']);scatter(m,r,'rock',30,2,116,17,8,['grass','meadow']);
-  scatter(m,r,'banyan',1,40,31,108,12,['grass','meadow','flowers'],1);scatter(m,r,'bamboo',1,40,31,108,30,['grass','meadow','flowers']);scatter(m,r,'caygao',1,40,31,108,6,['grass','meadow'],1);
-  scatter(m,r,'ruins',4,82,30,106,7,['grass','meadow']);scatter(m,r,'statue',4,82,30,106,6,['grass','meadow']);
-  m.rect(98,3,116,15,'dirt');m.obj('tent',101,6);m.obj('tent',110,6);m.obj('tent',104,13);m.obj('campfire',106,10);for(let x=97;x<=117;x++){if(x<104||x>108)m.obj('fence',x,16);}
-  scatter(m,r,'reeds',2,4,30,40,10,['shallow']);
+  m.rect(244,116,264,140,'cobble');[[248,119],[253,119],[258,119],[248,137],[253,137],[258,137],[262,123],[262,133]].forEach(([x,y])=>m.obj('stall',x,y));m.stoves.push(m.obj('stove',246,139));m.reserve(253,128,2);
+  // lò rèn, dịch trạm, nhà thuốc
+  m.rect(186,172,198,182,'dirt');m.obj('hut',190,174);m.stoves.push(m.obj('campfire',195,178));m.obj('barrel',186,180);m.reserve(192,179,1);
+  m.rect(213,184,224,193,'dirt');m.obj('hut',219,186);m.obj('fence',213,192);m.obj('fence',214,192);m.obj('hay',223,191);m.reserve(214,190,1);
+  m.obj('house',232,133);m.reserve(232,135,1);
+  [[210,118],[201,124],[166,160],[192,178],[252,128],[163,116],[232,135],[214,190],[204,124]].forEach(([x,y])=>m.reserve(x,y,1));
+  const inCity=(x,y)=>x>152&&x<266&&y>62&&y<194&&!(x>=180&&x<=240&&y>=62&&y<=114)&&!(x>=152&&x<=180&&y>=96&&y<=174)&&!(x>=216&&x<=234&&y>=142&&y<=160)&&!(x>=242&&y>=114&&y<=142);
+  m.reserve(209,222,2);houses(m,r,152,62,266,194,120,inCity);
+  for(let y=66;y<194;y+=6){[[206,y],[212,y]].forEach(([x,yy])=>{if(m.free(x,yy,x,yy))m.obj('lantern',x,yy);});}
+  scatter(m,r,'bunhin',150,4,272,52,10,['paddy']);houses(m,r,150,4,272,58,10,(x,y)=>y>40||x>262);
+  // ===== RỪNG HOANG TÂY THÀNH (hổ dữ) =====
+  const inF=(x,y)=>(x<=128&&y>=82)||(x<=60&&y<82);
+  m.ellipse(22,208,18,13,'dirt',['grass','meadow','flowers']);[[8,200],[36,200],[10,220],[34,218],[22,198]].forEach(([x,y])=>m.obj('karst',x,y));m.obj('ruins',22,210);
+  m.path([[128,128],[80,140],[40,170],[22,200]],1,'dirt');m.path([[60,128],[40,96],[20,60]],1,'dirt');
+  wildForest(m,r,inF,{mud:90,tree:280,bush:280,bamboo:80,banyan:12,rock:40,xoan:20});
+  scatter(m,r,'reeds',70,10,140,70,24,['shallow']);
   // bến Đông Bộ Đầu
-  const cd=rx(60);m.rect(cd-6,60,cd+4,60,'wood');m.obj('bigship',cd+10,68);m.obj('sailboat',cd+3,58);m.docks.push({x:cd+3,y:60});
-  for(let y=4;y<H-4;y+=5){const c=rx(y);if(r()<.5)m.obj('philao',c-8,y);}
-  m.fishSpots.push({x:28,y:22},{x:cd-2,y:60},{x:47,y:88},{x:rx(90)-4,y:90});
-  // quái
-  m.zone(2,42,31,78,['soi'],12);m.zone(32,2,96,17,['ho','soi'],10);m.zone(4,82,30,106,['tuongda'],8);m.zone(38,66,108,98,['thichkhach'],7,{night:1});m.zone(98,3,116,15,['thichkhach','ho'],6);m.zone(114,30,rx(60)-8,100,['tuongda','soi'],5);
-  m.boss={x:106*T,y:9*T,key:'thanglong'};m.worldBoss={x:(rx(84)-4)*T,y:84*T};
-  m.portals.push({x:70,y:109,to:'kimlien',arrive:[128,6],zh:'金莲村',vi:'Về Kim Liên'});
-  m.portals.push({x:cd+4,y:60,to:'vandon',arrive:[10,58],need:'b2',zh:'云屯港',vi:'Xuôi thuyền đi Vân Đồn'});
-  m.amb('dan',37,30,109,98,18,{tiles:['cobble']});m.amb('linh',55,33,85,55,4,{tiles:['stone']});m.amb('ga',38,66,108,98,6,{tiles:['grass','meadow','dirt']});m.amb('vit',4,8,28,36,7,{water:1});
-  m.amb('co',2,6,32,40,5,{tiles:['shallow','lotus']});m.amb('sampan',118,0,139,109,4,{water:1});m.amb('trau',114,20,122,100,3,{tiles:['grass','meadow','dike']});
-  m.start=[70,104];return m;}
+  const cd=rx(128);m.rect(cd-8,127,cd+2,129,'wood');m.obj('bigship',cd+8,136);m.obj('sailboat',cd+3,122);m.docks.push({x:cd+1,y:128});
+  for(let y=4;y<H-4;y+=5){const c=rx(y);if(r()<.5&&m.free(c-9,y,c-9,y))m.obj('philao',c-9,y);}
+  m.fishSpots.push({x:104,y:66},{x:cd-3,y:126},{x:166,y:157},{x:140,y:150},{x:72,y:44});
+  // quái: chỉ một loài – hổ dữ – trong rừng hoang
+  m.zone(96,84,128,226,['ho'],26,{lv:'10-12',name:'Bìa rừng Tây thành'});m.zone(50,84,96,226,['ho'],28,{lv:'13-15',lvAdd:3,name:'Rừng hoang'});
+  m.zone(3,84,50,188,['ho'],22,{lv:'16-18',lvAdd:6,name:'Rừng sâu'});m.zone(3,4,58,80,['ho'],12,{lv:'16-18',lvAdd:6,name:'Rừng sâu phía bắc'});m.zone(3,192,44,227,['ho'],12,{lv:'19-21',lvAdd:9,elite:1,name:'Hang hổ'});
+  m.boss={x:210*T+T/2,y:100*T+T/2,key:'thanglong'};m.worldBoss={x:(rx(170)+2)*T,y:170*T};
+  m.flags=[[206,113],[212,113],[204,58],[214,58],[204,199],[214,199],[148,124],[270,124]];
+  m.portals.push({x:209,y:228,to:'kimlien',arrive:[128,6],zh:'金莲村',vi:'Về Kim Liên'});
+  m.portals.push({x:209,y:2,to:'coloa',arrive:[150,218],need:'b2',zh:'古螺城',vi:'Đi thành Cổ Loa'});
+  m.portals.push({x:cd+2,y:128,to:'vandon',arrive:[10,58],need:'b4',zh:'云屯港',vi:'Xuôi thuyền đi Vân Đồn'});
+  m.labels=[[209,70,'Hoàng thành'],[166,136,'Văn Miếu'],[163,96,'Chùa Một Cột'],[254,112,'Chợ Cửa Đông'],[104,40,'Hồ Dâm Đàm'],[60,150,'RỪNG HOANG'],[22,226,'Hang hổ'],[278,60,'Sông Hồng'],[210,28,'Ruộng phía Bắc'],[225,162,'Tháp Báo Thiên']];
+  m.amb('dan',152,62,266,194,40,{tiles:['cobble']});m.amb('ga',152,62,266,194,8,{tiles:['grass','meadow','dirt']});m.amb('vit',80,20,128,60,10,{water:1});
+  m.amb('co',150,4,272,52,10,{tiles:['paddy']});m.amb('sampan',282,0,299,229,5,{water:1});m.amb('trau',150,4,272,52,6,{tiles:['paddy','dirt']});
+  m.start=[209,222];return m;}
+
+// ================= THÀNH CỔ LOA (thành ốc) =================
+function coloa(){const W=300,H=230;const m=new Map('coloa',W,H,'grass');const r=G.rng(257);noiseFill(m,41,'grass',['meadow','meadow','flowers']);
+  const CX=192,CY=108;
+  // ruộng giữa các vòng thành
+  for(let y=30;y<=190;y++)for(let x=110;x<=274;x++){const d1=((x-CX)/62)**2+((y-CY)/50)**2,d2=((x-CX)/42)**2+((y-CY)/33)**2;if(d1<1&&d2>1.15&&((x+y)%23<12)){const dk=(x-110)%8===0||(y-30)%6===0;m.set(x,y,dk?'dirt':'paddy');}}
+  // ba vòng thành đất xoáy ốc, có hào
+  ellRing(m,CX,CY,78,62,'earthwall',2,[Math.PI*0.62],0.05,true);
+  ellRing(m,CX,CY,52,41,'earthwall',2,[Math.PI*0.05],0.07,true);
+  ellRing(m,CX,CY,26,20,'earthwall',2,[Math.PI*0.5],0.14,false);
+  // đường xoáy: vào cổng ngoài (tây nam) – vòng qua – cổng giữa (đông) – cổng trong (nam)
+  m.path([[150,229],[150,178]],2,'dirt');m.path([[150,178],[160,162],[200,160],[240,140],[246,110]],2,'dirt');m.path([[246,110],[230,88],[200,80],[170,90],[176,122],[192,134],[192,128]],1,'dirt');
+  // nội thành: đền thờ An Dương Vương, giếng Ngọc, am Mỵ Châu
+  m.ellipse(CX,CY,24,18,'floor',['grass','meadow','flowers','dirt','paddy']);m.obj('dinh',CX,CY-6);m.reserve(CX,CY-2,2);m.obj('banyan',CX-17,CY-8);m.obj('banyan',CX+17,CY-8);
+  m.ellipse(CX+11,CY+9,3.5,2.5,'water');m.obj('well',CX+11,CY+6);m.obj('chua',CX-12,CY+9);m.obj('lantern',CX-5,CY+2);m.obj('lantern',CX+5,CY+2);m.obj('bia',CX-3,CY+14);m.obj('bia',CX+3,CY+14);
+  m.reserve(CX,CY+8,3);
+  // làng giữa vòng thành
+  const ring2=(x,y)=>{const d1=((x-CX)/74)**2+((y-CY)/58)**2,d2=((x-CX)/30)**2+((y-CY)/24)**2;return d1<1&&d2>1.2;};
+  [[188,146],[213,155],[170,72],[226,128],[160,120],[208,72],[230,96]].forEach(([x,y])=>m.reserve(x,y,1));
+  m.rect(204,150,222,160,'cobble');[[207,152],[212,152],[217,152],[207,158],[212,158]].forEach(([x,y])=>m.obj('stall',x,y));m.stoves.push(m.obj('stove',221,159));
+  m.rect(162,66,174,74,'dirt');m.obj('hut',166,67);m.stoves.push(m.obj('campfire',171,72));
+  houses(m,r,112,46,272,172,60,ring2);
+  // ===== RỪNG MA TRƠI phía tây & bãi tha ma =====
+  const inF=(x,y)=>x<=104||(y>=196&&x<=140);
+  m.rect(10,150,48,190,'dirt');for(let i=0;i<46;i++){const x=12+((r()*34)|0),y=152+((r()*36)|0);if(m.free(x,y,x,y))m.obj(r()<.75?'bia':'ruins',x,y);}m.obj('banyan',30,170);
+  m.path([[104,190],[70,172],[48,170]],1,'dirt');m.path([[104,108],[60,100],[20,80]],1,'dirt');
+  wildForest(m,r,inF,{mud:80,tree:250,bush:240,bamboo:60,banyan:16,rock:30,xoan:16});
+  // sông Hoàng Giang phía bắc
+  for(let x=0;x<W;x++){const y=8+Math.round(3*Math.sin(x/17));m.rect(x,y-2,x,y+2,'water');m.set(x,y-3,'sand');m.set(x,y+3,'sand');}
+  m.fishSpots.push({x:150,y:12},{x:CX+11,y:CY+12},{x:230,y:12});
+  // quái: ma trơi thành cổ
+  m.zone(76,20,104,226,['matroi'],24,{lv:'18-19',name:'Bìa rừng ma trơi'});m.zone(40,20,76,146,['matroi'],24,{lv:'20-21',lvAdd:2,name:'Rừng ma trơi'});
+  m.zone(104,196,140,226,['matroi'],10,{lv:'18-19',name:'Rừng phía nam'});m.zone(3,20,40,146,['matroi'],18,{lv:'22-23',lvAdd:4,name:'Rừng sâu'});m.zone(6,148,52,192,['matroi'],14,{lv:'24-26',lvAdd:6,elite:1,name:'Bãi tha ma'});
+  m.boss={x:CX*T+T/2,y:(CY+8)*T+T/2,key:'coloa'};
+  m.flags=[[CX-4,CY+21],[CX+4,CY+21],[146,176],[154,176]];
+  m.portals.push({x:150,y:228,to:'thanglong',arrive:[209,6],zh:'升龙城',vi:'Về Thăng Long'});
+  m.labels=[[CX,CY-22,'Đền An Dương Vương'],[CX+11,CY+5,'Giếng Ngọc'],[CX,52,'Thành Ốc (3 vòng)'],[52,90,'RỪNG MA TRƠI'],[28,194,'Bãi tha ma'],[150,4,'Sông Hoàng Giang'],[212,164,'Chợ làng Cổ Loa']];
+  m.amb('dan',112,46,272,172,26,{tiles:['dirt','cobble','floor']});m.amb('ga',112,46,272,172,10,{tiles:['grass','meadow','dirt']});m.amb('trau',112,46,272,172,6,{tiles:['paddy','dirt']});m.amb('co',112,46,272,172,10,{tiles:['paddy']});m.amb('vit',0,4,299,14,8,{water:1});
+  m.start=[150,218];return m;}
 
 // ================= THƯƠNG CẢNG VÂN ĐỒN =================
 function vandon(){const W=150,H=110;const m=new Map('vandon',W,H,'sea');const r=G.rng(1149);
@@ -205,14 +265,14 @@ function vandon(){const W=150,H=110;const m=new Map('vandon',W,H,'sea');const r=
   m.zone(26,4,44,106,['cua'],12,{onSand:1});m.zone(86,74,98,86,['haitac'],7);m.zone(124,46,140,58,['haitac'],6);m.zone(66,22,78,34,['cua','haitac'],4);
   m.zone(46,4,146,106,['thuyquy','camap'],14,{water:1});
   m.boss={x:133*T,y:51*T,key:'vandon'};
-  m.portals.push({x:1,y:58,to:'thanglong',arrive:[118,64],zh:'升龙城',vi:'Về Thăng Long'});
+  m.portals.push({x:1,y:58,to:'thanglong',arrive:[272,128],zh:'升龙城',vi:'Về Thăng Long'});
   m.amb('dan',4,40,32,76,10,{tiles:['cobble']});m.amb('ga',2,28,28,40,5,{tiles:['grass','meadow']});m.amb('sampan',44,2,146,106,6,{water:1});m.amb('co',30,2,46,30,4,{tiles:['shallow','sand']});
   m.start=[10,58];return m;}
 
-const BUILDERS={kimlien,thanglong,vandon};
+const BUILDERS={kimlien,thanglong,coloa,vandon};
 const CACHE={};
 G.getMap=function(id){if(CACHE[id])return CACHE[id];for(const k in CACHE){if(k!==id&&CACHE[k].ground){CACHE[k].ground.width=1;CACHE[k].ground=null;delete CACHE[k];}}const m=BUILDERS[id]();prerender(m);CACHE[id]=m;return m;};
-G.mapNeighbors={kimlien:['thanglong'],thanglong:['kimlien','vandon'],vandon:['thanglong']};
+G.mapNeighbors={kimlien:['thanglong'],thanglong:['kimlien','coloa','vandon'],coloa:['thanglong'],vandon:['thanglong']};
 function hash(x,y){let h=x*374761393+y*668265263;h=(h^(h>>13))*1274126177;return (h^(h>>16))>>>0;}
 function prerender(m){const P=4;const c=document.createElement('canvas');c.width=m.w*P;c.height=m.h*P;const x=c.getContext('2d');x.imageSmoothingEnabled=true;
   for(let ty=0;ty<m.h;ty++)for(let tx=0;tx<m.w;tx++){const t=m.get(tx,ty);const arr=G.TILES[t]||G.TILES.grass;const v=arr[hash(tx,ty)%arr.length];x.drawImage(G.tileAnim[t]?arr[0]:v,0,0,16,16,tx*P,ty*P,P,P);}

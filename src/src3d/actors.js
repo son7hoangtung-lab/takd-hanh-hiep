@@ -17,6 +17,9 @@ export const KINDS={
   takd0:{f:'adventurer',h:1.76,tint:{Green:'#6b5a3e',LightGreen:'#8a7a58',Brown:'#3a2a1a',Brown2:'#4a3a28',Black:'#2a2018',Grey:'#4a4a44',Gold:'#7a6a4a',Hair:'#141010'},hide:['Backpack']},
   takd1:{f:'adventurer',h:1.76,tint:{Green:'#6b5a3e',LightGreen:'#8a7a58',Brown:'#3a2a1a',Brown2:'#4a3a28',Black:'#2a2018',Grey:'#4a4a44',Gold:'#7a6a4a',Hair:'#141010'},hide:['Backpack'],weapon:'staff'},
   takd2:{f:'adventurer',h:1.78,tint:{Green:'#a8261a',LightGreen:'#d9a441',Brown:'#3a2416',Brown2:'#5a3420',Black:'#1a1210',Grey:'#5a5c64',Gold:'#e8b84a',Hair:'#141010'},hide:['Backpack'],weapon:'staff'},
+  douy:{f:'soldier',h:2.6,tint:{Character_Main:'#16161c',Red:'#8a1f14',Pants:'#0e0e12'},weapon:'spear',hat:'khan'},
+  thachgiap:{f:'yeti',h:3.4,tint:{Yeti_Main:'#7c776c',Yeti_Secondary:'#4e4a44'}},
+  matroi:{f:'ghost',h:1.5,trans:0.65,tintAll:'#8ff0d0'},
   cuonghao:{f:'soldier',h:2.35,tint:{Character_Main:'#1c1c24',Red:'#c9a040',Pants:'#2a1a12'},weapon:'hammer',hat:'khan'},
   horse:{f:'deer',h:2.05,tint:{Main:'#6e3c1c',Main_Light:'#8a5632',Main_Dark:'#2a160a',Hooves:'#1a1008'}},
   shiba:{f:'shiba',h:0.72},
@@ -45,7 +48,7 @@ export const KINDS={
   bossfrog:{f:'frog',h:3.2,tint:{Green:'#4a2a6a',Yellow:'#e9a8c0',Red:'#ff3b30'},crown:1},warlord:{f:'orc_brute',h:2.9,tint:{Orc_Main:'#5a6a4a',Orc_Secondary:'#2a2a33'}},
   pirateking:{f:'pirate',h:2.8,weapon:'sword'},serpent:{f:'dragon',h:5.5,tint:{Dragon_Main:'#2f6f62',Dragon_Secondary:'#d9a441'}},
 };
-export const ART2KIND={fox:'fox',rat:'fox',frog:'frog',snake:'frog',husky:'husky',dog:'wolf',wolf:'wolf',bandit:'bandit',tiger:'tiger',golem:'golem',crab:'crab',ghost:'ghost',shark:'shark',bossfrog:'bossfrog',lotusdemon:'bossfrog',warlord:'warlord',cuonghao:'cuonghao',shiba:'shiba',soldier:'soldier',serpent:'serpent',
+export const ART2KIND={fox:'fox',rat:'fox',frog:'frog',snake:'frog',husky:'husky',dog:'wolf',wolf:'wolf',bandit:'bandit',tiger:'tiger',golem:'golem',crab:'crab',ghost:'ghost',shark:'shark',bossfrog:'bossfrog',lotusdemon:'bossfrog',warlord:'warlord',cuonghao:'cuonghao',douy:'douy',thachgiap:'thachgiap',matroi:'matroi',shiba:'shiba',soldier:'soldier',serpent:'serpent',
   elder:'npc_elder',woman:'npc_woman',smith:'npc_smith',fisher:'npc_fisher',scholar:'npc_scholar',officer:'npc_officer',merchant:'npc_merchant',monk:'npc_monk',groom:'npc_groom',doctor:'npc_doctor'};
 const ANIM={idle:['Idle','Man_Idle','Frog_Idle','Flying_Idle','Idle_Neutral','Skeleton_Idle'],walk:['Walk','Man_Walk','Frog_Jump','Flying_Idle'],run:['Gallop','Run','Man_Run','Frog_Jump','Fast_Flying'],
   attack:['Attack','Sword_Slash','Weapon','Punch','Bite_Front','Frog_Attack','Attack_Headbutt','Headbutt','Man_SwordSlash','Dagger_Attack','Man_Punch'],hit:['HitRecieve','HitReact','Idle_HitReact_Left','RecieveHit','Hit'],

@@ -62,9 +62,9 @@ const _give=G.giveReward;G.giveReward=function(r){_give(r);if(!r)return;const s=
   if(r.rank!=null&&r.rank>(s.rank||0))G.setRank(r.rank);};
 G.setRank=function(n){const s=S();s.rank=n;const r=G.RANKS[n];G.ui.big&&G.ui.big('Thăng danh hiệu',r[2],r[0]+' '+r[1]);G.ui.toast(`🎖️ Danh hiệu mới: <b>${r[2]}</b> <span class="zs">${r[0]} ${r[1]}</span>`,4000);G.audio.sfx('gong');G.audio.say(r[0]);};
 // ===== CHIẾM THÀNH =====
-G.TAX={kimlien:30,thanglong:80,vandon:120};
+G.TAX={kimlien:30,thanglong:80,coloa:100,vandon:120};
 G.conquer=function(id){const s=S();if(s.conq[id])return;s.conq[id]=Date.now();s.taxTs[id]=Date.now();const reg=G.REGIONS[id];
-  G.ui.big&&G.ui.big('Chiếm được',reg.vi,'占领 '+reg.zh);G.ui.toast(`🚩 Cờ Muay Việt đã cắm trên <b>${reg.vi}</b>!<br>Mỗi giờ thu <b>${G.TAX[id]||30} lượng</b> thuế – gặp Lý trưởng để thu.`,5000);
+  G.ui.big&&G.ui.big('Chiếm được',reg.vi,'占领 '+reg.zh);G.ui.toast(`🚩 Cờ Muay Việt đã cắm trên <b>${reg.vi}</b>!<br>Mỗi giờ thu <b>${G.TAX[id]||30} lượng</b> thuế – gặp ${(G.npcs.find(n=>n.role==='tax')||{vi:'trưởng làng'}).vi} để thu.`,5000);
   if((s.rank||0)<4)G.setRank(4);G.audio.say('占领'+reg.zh);
   // lính về theo
   (G.NPCS[id]||[]).filter(n=>n.cond==='conq').forEach(n=>{if(!G.npcs.find(x=>x.id===n.id))G.npcs.push(Object.assign({},n,{x:n.x*T+T/2,y:n.y*T+T/2,f:0}));});G.save();};

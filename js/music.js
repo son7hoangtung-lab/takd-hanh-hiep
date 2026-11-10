@@ -62,7 +62,7 @@ M.play=function(song,opt){opt=opt||{};const c=A();if(!c)return 0;M.stop();const 
         if(du>=1.5)zheng(f/2,t+beat*0.5,beat,0.05,dest);t+=du*beat;});});t+=beat*0.6;});
   const total=(t-c.currentTime)*1000;if(opt.onEnd)M.timers.push(setTimeout(opt.onEnd,total+200));return total;};
 // ---- nhạc nền theo vùng / ngày đêm ----
-const MOODS={village:['molihua','chunxiao'],night:['jingyesi','songbie'],city:['songbie','molihua'],sea:['dengguanque','jingyesi']};
+const MOODS={ancient:['jingyesi','songbie','chunxiao'],village:['molihua','chunxiao'],night:['jingyesi','songbie'],city:['songbie','molihua'],sea:['dengguanque','jingyesi']};
 let bgMood=null,bgIdx=0,plays=0,bgT=0;
 function nextBg(){if(!bgMood||!MOODS[bgMood])return;const S=G.S;if(S&&S.settings.music===0){bgT=setTimeout(nextBg,8000);return;}if(G.ui&&G.ui.cur==='songs'){bgT=setTimeout(nextBg,5000);return;}
   const list=MOODS[bgMood];const id=list[bgIdx%list.length];bgIdx++;const song=SONGS.find(s=>s.id===id);plays++;

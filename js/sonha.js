@@ -3,14 +3,14 @@
 // mỗi vùng: 1 thủ lĩnh trong thành + 1 loài quái ở rừng hoang ngoài thành
 G.PROVINCES=[
   {id:'kimlien',vi:'Làng Kim Liên',zh:'金莲村',py:'Jīnlián cūn',ll:[105.70,20.86],boss:['Ác bá Râu Hùm','虎须恶霸'],mob:['Sói rừng','野狼'],ch:'HSK 1 · Bài 1–6',map:'kimlien',lv:'1–12'},
-  {id:'thanglong',vi:'Kinh thành Thăng Long',zh:'升龙城',py:'Shēnglóng chéng',ll:[105.86,21.05],boss:['Hắc Phong trại chủ','黑风寨主'],mob:['Hổ dữ','老虎'],ch:'HSK 1 · Bài 7–10',map:'thanglong',lv:'10–22',after:'kimlien'},
-  {id:'coloa',vi:'Thành Cổ Loa',zh:'古螺城',py:'Gǔluó chéng',ll:[105.93,21.25],boss:['Thạch Giáp tướng quân','石甲将军'],mob:['Ma trơi thành cổ','古城鬼火'],ch:'HSK 2 · Bài 1–3',lv:'22–30',after:'thanglong'},
-  {id:'nhunguyet',vi:'Phòng tuyến Như Nguyệt',zh:'如月江',py:'Rúyuè jiāng',ll:[106.2,21.32],boss:['Thủy tặc Hắc Sa','黑沙水寇'],mob:['Cóc sông Cầu','江蟾'],ch:'HSK 2 · Bài 4–6',lv:'30–38',after:'coloa'},
-  {id:'chilang',vi:'Ải Chi Lăng',zh:'支棱关',py:'Zhīléng guān',ll:[106.55,21.68],boss:['Đầu lĩnh Ải Bắc','关北贼首'],mob:['Sơn tiêu','山魈'],ch:'HSK 2 · Bài 7–9',lv:'38–46',after:'nhunguyet'},
-  {id:'vandon',vi:'Thương cảng Vân Đồn',zh:'云屯港',py:'Yúntún gǎng',ll:[107.42,21.07],boss:['Xích Tu Hải Tặc Vương','赤须海盗王'],mob:['Cua đá','石蟹'],ch:'HSK 1 · Bài 11–15 + Bảo hiểm',map:'vandon',lv:'20–30',after:'thanglong'},
-  {id:'bachdang',vi:'Sông Bạch Đằng',zh:'白藤江',py:'Báiténg jiāng',ll:[106.78,20.9],boss:['Giao Long','蛟龙'],mob:['Cá dữ','恶鱼'],ch:'HSK 2 · Bài 10–12',lv:'46–54',after:'vandon'},
-  {id:'hoalu',vi:'Cố đô Hoa Lư',zh:'华闾',py:'Huálǘ',ll:[105.9,20.28],boss:['Cửu Vĩ Hồ Vương','九尾狐王'],mob:['Cáo núi','山狐'],ch:'HSK 2 · Bài 13–15',lv:'54–62',after:'bachdang'},
-  {id:'aichau',vi:'Ái Châu',zh:'爱州',py:'Àizhōu',ll:[105.72,19.8],boss:['Trại chủ núi Nưa','那山寨主'],mob:['Chó rừng','豺狗'],ch:'HSK 3 · Bài 1–5',lv:'62–70',after:'hoalu'},
+  {id:'thanglong',vi:'Kinh thành Thăng Long',zh:'升龙城',py:'Shēnglóng chéng',ll:[105.86,21.05],boss:['Đô úy Hắc Phong','黑风都尉'],mob:['Hổ dữ','老虎'],ch:'HSK 1 · Bài 7–10 + Giang hồ ★',map:'thanglong',lv:'10–22',after:'kimlien'},
+  {id:'coloa',vi:'Thành Cổ Loa',zh:'古螺城',py:'Gǔluó chéng',ll:[105.93,21.25],boss:['Thạch Giáp tướng quân','石甲将军'],mob:['Ma trơi thành cổ','古城鬼火'],ch:'HSK 1 · Bài 11–12',map:'coloa',lv:'18–27',after:'thanglong'},
+  {id:'nhunguyet',vi:'Phòng tuyến Như Nguyệt',zh:'如月江',py:'Rúyuè jiāng',ll:[106.2,21.32],boss:['Thủy tặc Hắc Sa','黑沙水寇'],mob:['Cóc sông Cầu','江蟾'],ch:'HSK 2 · Bài 1–3',lv:'30–38',after:'vandon'},
+  {id:'chilang',vi:'Ải Chi Lăng',zh:'支棱关',py:'Zhīléng guān',ll:[106.55,21.68],boss:['Đầu lĩnh Ải Bắc','关北贼首'],mob:['Sơn tiêu','山魈'],ch:'HSK 2 · Bài 4–6',lv:'38–46',after:'nhunguyet'},
+  {id:'vandon',vi:'Thương cảng Vân Đồn',zh:'云屯港',py:'Yúntún gǎng',ll:[107.42,21.07],boss:['Xích Tu Hải Tặc Vương','赤须海盗王'],mob:['Cua đá','石蟹'],ch:'HSK 1 · Bài 13–15 + Bảo hiểm',map:'vandon',lv:'22–30',after:'coloa'},
+  {id:'bachdang',vi:'Sông Bạch Đằng',zh:'白藤江',py:'Báiténg jiāng',ll:[106.78,20.9],boss:['Giao Long','蛟龙'],mob:['Cá dữ','恶鱼'],ch:'HSK 2 · Bài 7–9',lv:'46–54',after:'chilang'},
+  {id:'hoalu',vi:'Cố đô Hoa Lư',zh:'华闾',py:'Huálǘ',ll:[105.9,20.28],boss:['Cửu Vĩ Hồ Vương','九尾狐王'],mob:['Cáo núi','山狐'],ch:'HSK 2 · Bài 10–12',lv:'54–62',after:'bachdang'},
+  {id:'aichau',vi:'Ái Châu',zh:'爱州',py:'Àizhōu',ll:[105.72,19.8],boss:['Trại chủ núi Nưa','那山寨主'],mob:['Chó rừng','豺狗'],ch:'HSK 2 · Bài 13–15',lv:'62–70',after:'hoalu'},
   {id:'tong',vi:'Đất Tống',zh:'大宋',py:'Dà Sòng',ll:[106.3,23.25],boss:['?','?'],mob:['?','?'],ch:'HSK 3–4',far:1,after:'chilang'},
   {id:'mongco',vi:'Thảo nguyên Mông Cổ',zh:'蒙古',py:'Měnggǔ',ll:[103.3,23.3],boss:['?','?'],mob:['?','?'],ch:'HSK 4–5',far:1,after:'tong'},
   {id:'chiem',vi:'Chiêm Thành',zh:'占城',py:'Zhànchéng',ll:[105.85,18.85],boss:['?','?'],mob:['?','?'],ch:'HSK 5–6',far:1,after:'aichau'}
